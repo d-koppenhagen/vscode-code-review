@@ -9,5 +9,24 @@
   // Turn off tsc task auto detection since we have the necessary tasks as npm scripts
   "typescript.tsc.autoDetect": "off",
   "editor.formatOnSave": true,
-  "editor.defaultFormatter": "esbenp.prettier-vscode"
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "workbench.colorCustomizations": {
+    "activityBar.activeBackground": "#6b6dbb",
+    "activityBar.activeBorder": "#6d3234",
+    "activityBar.background": "#6b6dbb",
+    "activityBar.foreground": "#e7e7e7",
+    "activityBar.inactiveForeground": "#e7e7e799",
+    "activityBarBadge.background": "#6d3234",
+    "activityBarBadge.foreground": "#e7e7e7",
+    "statusBar.background": "#4d4fa6",
+    "statusBar.border": "#4d4fa6",
+    "statusBar.foreground": "#e7e7e7",
+    "statusBarItem.hoverBackground": "#6b6dbb",
+    "titleBar.activeBackground": "#4d4fa6",
+    "titleBar.activeForeground": "#e7e7e7",
+    "titleBar.border": "#4d4fa6",
+    "titleBar.inactiveBackground": "#4d4fa699",
+    "titleBar.inactiveForeground": "#e7e7e799"
+  },
+  "peacock.color": "#4d4fa6"
 }
