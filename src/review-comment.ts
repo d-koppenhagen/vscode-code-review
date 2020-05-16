@@ -14,10 +14,13 @@ export class ReviewCommentService {
    */
   async addComment() {
     this.checkFileExists();
-
-    let lineOrLines = 0;
+    let selections = '';
     if (window.activeTextEditor) {
-      lineOrLines = window.activeTextEditor.selection.active.line;
+      // 2:2-12:2|19:0-19:0
+      selections = window.activeTextEditor.selections.reduce((acc, cur) => {
+        const tmp = acc ? `${acc}|` : '';
+        return `${tmp}${cur.start.line}:${cur.start.character}-${cur.end.line}:${cur.end.character}`;
+      }, '');
     }
 
     let activeFileName = '';
@@ -26,16 +29,11 @@ export class ReviewCommentService {
     }
 
     const comment: string | undefined = await this.prompt();
-    if (!comment) {
-      return;
-    }
+    if (!comment) return;
 
     // escape double quotes
     const commentExcaped = comment.replace(/"/g, '\\"');
-    const lineOrLinesString: string = Array.isArray(lineOrLines)
-      ? `${lineOrLines[0]}-${lineOrLines[lineOrLines.length - 1]}`
-      : `${lineOrLines}`;
-    fs.appendFileSync(this.reviewFile, `"${activeFileName}","${lineOrLinesString}","${commentExcaped}",1\r\n`);
+    fs.appendFileSync(this.reviewFile, `"${activeFileName}","${selections}","${commentExcaped}",1\r\n`);
   }
 
   editComment(/*lineOrLines, comment*/) {}

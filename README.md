@@ -8,6 +8,18 @@ Simply right click somewhere in the opened file and choose the option "Code Revi
 You will be prompted for your note you wanna add.
 A file `code-review.csv` will be created containing your comments and the file and line references.
 
+The result will look like this:
+
+```csv
+filename,line(s),comment,priority
+"/test/a.txt","1:2-4:3","ttt",1
+"/test/a.txt","1:0-1:4|4:0-4:3","bbbb",1
+```
+
+The line column indicates an array of selected ranges or cursor positions separated by a `|` sign.
+E.g. `"1:0-1:4|4:0-4:3"` means that the comment is related to the range marked from line 1 position 0 to line 1 position 4 and line 4 position 0 to line 4 position 3.
+
+
 ## Extension Settings
 
 Currently there are no settings to configure.
