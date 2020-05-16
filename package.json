@@ -1,12 +1,12 @@
 {
-  "name": "code-review",
+  "name": "vscode-code-review",
   "displayName": "code-review",
   "description": "Create expert reviews / code reviews for a workspace that can be exported as a document for handing over to customers",
   "version": "0.0.1",
   "author": "Danny Koppenhagen <mail@d-koppenhagen.de> (https://d-koppenhagen.de)",
-  "homepage": "https://github.com/d-koppenhagen/code-review",
+  "homepage": "https://github.com/d-koppenhagen/vscode-code-review",
   "bugs": {
-    "url": "https://github.com/d-koppenhagen/code-review/issues",
+    "url": "https://github.com/d-koppenhagen/vscode-code-review/issues",
     "email": "mail@d-koppenhagen.de"
   },
   "license": "SEE LICENSE IN LICENSE",

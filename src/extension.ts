@@ -37,20 +37,3 @@ export function activate(context: ExtensionContext) {
 
 // this method is called when your extension is deactivated
 export function deactivate() {}
-
-/*
-export const createCodeReviewFile = () => {
-  const wsedit = new vscode.WorkspaceEdit();
-
-  if (vscode.workspace.workspaceFolders) {
-    const wsPath = vscode.workspace.workspaceFolders[0].uri.fsPath; // gets the path of the first workspace folder
-    const filePath = vscode.Uri.file(wsPath + 'code-review.csv');
-    vscode.window.showInformationMessage(filePath.toString());
-    wsedit.createFile(filePath, { ignoreIfExists: true });
-    vscode.workspace.applyEdit(wsedit);
-    vscode.window.showInformationMessage('Created a new file: code-review.csv');
-  } else {
-    vscode.window.showErrorMessage('Could not create file "code-review.csv"');
-  }
-};
-*/
