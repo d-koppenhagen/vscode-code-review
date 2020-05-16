@@ -3,6 +3,7 @@
   "displayName": "code-review",
   "description": "Create expert reviews / code reviews for a workspace that can be exported as a document for handing over to customers",
   "version": "0.0.2",
+  "publisher": "d-koppenhagen",
   "author": "Danny Koppenhagen <mail@d-koppenhagen.de> (https://d-koppenhagen.de)",
   "homepage": "https://github.com/d-koppenhagen/vscode-code-review",
   "bugs": {
@@ -20,6 +21,11 @@
     "onCommand:code-review.addNote"
   ],
   "main": "./out/extension.js",
+  "keywords": [
+    "code review",
+    "review",
+    "comments"
+  ],
   "contributes": {
     "commands": [
       {
@@ -44,7 +50,8 @@
     "watch": "tsc -watch -p ./",
     "pretest": "npm run compile && npm run lint",
     "test": "node ./out/test/runTest.js",
-    "release": "standard-version"
+    "release": "standard-version",
+    "publish": "vsce package && vsce publish"
   },
   "devDependencies": {
     "@commitlint/cli": "^8.3.5",
@@ -66,7 +73,8 @@
     "pretty-quick": "^2.0.1",
     "standard-version": "^8.0.0",
     "typescript": "^3.8.3",
-    "vscode-test": "^1.3.0"
+    "vscode-test": "^1.3.0",
+    "vsce": "latest"
   },
   "husky": {
     "hooks": {
