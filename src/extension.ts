@@ -1,10 +1,16 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
-import * as vscode from 'vscode';
+
+import { commands, workspace, window, ExtensionContext, WorkspaceFolder } from 'vscode';
+import { FileGenerator } from './file-generator';
+import { ReviewCommentService } from './review-comment';
+import { getWorkspaceFolder } from './utils/workspace-util';
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
-export function activate(context: vscode.ExtensionContext) {
+export function activate(context: ExtensionContext) {
+  const workspaceRoot: string = getWorkspaceFolder(workspace.workspaceFolders as WorkspaceFolder[]);
+  const generator = new FileGenerator(workspaceRoot, window);
   // Use the console to output diagnostic information (console.log) and errors (console.error)
   // This line of code will only be executed once when your extension is activated
   console.log('Congratulations, your extension "code-review" is now active!');
@@ -12,11 +18,18 @@ export function activate(context: vscode.ExtensionContext) {
   // The command has been defined in the package.json file
   // Now provide the implementation of the command with registerCommand
   // The commandId parameter must match the command field in package.json
-  let disposable = vscode.commands.registerCommand('code-review.helloWorld', () => {
+  let disposable = commands.registerCommand('code-review.addNote', () => {
     // The code you place here will be executed every time your command is executed
 
-    // Display a message box to the user
-    vscode.window.showInformationMessage('Hello World from code-review!');
+    // create a new file if not already exist
+    const reviewFile = generator.execute();
+    const commentService = new ReviewCommentService(reviewFile, workspaceRoot);
+
+    commentService.addComment();
+
+    // this will call the dispose function of our DuckGenerator
+    // when the extension is being destroyed
+    context.subscriptions.push(generator);
   });
 
   context.subscriptions.push(disposable);
@@ -24,3 +37,20 @@ export function activate(context: vscode.ExtensionContext) {
 
 // this method is called when your extension is deactivated
 export function deactivate() {}
+
+/*
+export const createCodeReviewFile = () => {
+  const wsedit = new vscode.WorkspaceEdit();
+
+  if (vscode.workspace.workspaceFolders) {
+    const wsPath = vscode.workspace.workspaceFolders[0].uri.fsPath; // gets the path of the first workspace folder
+    const filePath = vscode.Uri.file(wsPath + 'code-review.csv');
+    vscode.window.showInformationMessage(filePath.toString());
+    wsedit.createFile(filePath, { ignoreIfExists: true });
+    vscode.workspace.applyEdit(wsedit);
+    vscode.window.showInformationMessage('Created a new file: code-review.csv');
+  } else {
+    vscode.window.showErrorMessage('Could not create file "code-review.csv"');
+  }
+};
+*/

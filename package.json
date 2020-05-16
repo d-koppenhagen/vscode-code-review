@@ -17,16 +17,25 @@
     "Other"
   ],
   "activationEvents": [
-    "onCommand:code-review.helloWorld"
+    "onCommand:code-review.addNote"
   ],
   "main": "./out/extension.js",
   "contributes": {
     "commands": [
       {
-        "command": "code-review.helloWorld",
-        "title": "Hello World"
+        "command": "code-review.addNote",
+        "title": "Code Review: Add Note"
       }
-    ]
+    ],
+    "menus": {
+      "editor/context": [
+        {
+          "when": "",
+          "command": "code-review.addNote",
+          "group": "cmdGroup@1"
+        }
+      ]
+    }
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",
