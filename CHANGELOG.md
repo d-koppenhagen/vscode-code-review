@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.5](https://github.com/d-koppenhagen/vscode-code-review/compare/v0.0.4...v0.0.5) (2020-05-16)
+
+
+### Features
+
+* allow multiline and multi range selections ([13f60bd](https://github.com/d-koppenhagen/vscode-code-review/commit/13f60bddb221e6017dade3c7d1e8fa83f87fff54))
+
 ### [0.0.4](https://github.com/d-koppenhagen/vscode-code-review/compare/v0.0.3...v0.0.4) (2020-05-16)
 
 ### [0.0.3](https://github.com/d-koppenhagen/vscode-code-review/compare/v0.0.2...v0.0.3) (2020-05-16)
