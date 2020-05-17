@@ -44,7 +44,6 @@ To easily add a *new* comment, you can use the keybinding combination `ctrl` + `
 
 * Overview of the notes in the left explorer area
 * generate a report (e.g. PDF)
-* Add priorities
 * allow general comments
 * edit existing comments
 * delete existing comments

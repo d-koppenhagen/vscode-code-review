@@ -9,7 +9,9 @@ export class FileGenerator {
 
   constructor(private workspaceRoot: string, private window: VSCodeWindow) {
     const configFileName = workspace.getConfiguration().get('code-review.filename') as string;
-    if (configFileName) this.defaultFileName = configFileName;
+    if (configFileName) {
+      this.defaultFileName = configFileName;
+    }
   }
 
   /**
