@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.9](https://github.com/d-koppenhagen/vscode-code-review/compare/v0.0.8...v0.0.9) (2020-05-17)
+
+
+### Features
+
+* add keybinding for new note ([ec51a8b](https://github.com/d-koppenhagen/vscode-code-review/commit/ec51a8b8500e1c442f54701d402367966f2a760f)), closes [#6](https://github.com/d-koppenhagen/vscode-code-review/issues/6)
+
 ### [0.0.8](https://github.com/d-koppenhagen/vscode-code-review/compare/v0.0.7...v0.0.8) (2020-05-17)
 
 
