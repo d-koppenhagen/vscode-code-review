@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.8](https://github.com/d-koppenhagen/vscode-code-review/compare/v0.0.7...v0.0.8) (2020-05-17)
+
+
+### Features
+
+* allow filename configuration ([027b7a0](https://github.com/d-koppenhagen/vscode-code-review/commit/027b7a07329d32da6a940728898865d27510d677)), closes [#1](https://github.com/d-koppenhagen/vscode-code-review/issues/1)
+
 ### [0.0.7](https://github.com/d-koppenhagen/vscode-code-review/compare/v0.0.6...v0.0.7) (2020-05-17)
 
 ### [0.0.6](https://github.com/d-koppenhagen/vscode-code-review/compare/v0.0.5...v0.0.6) (2020-05-17)
