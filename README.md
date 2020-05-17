@@ -11,9 +11,9 @@ A file `code-review.csv` will be created containing your comments and the file a
 The result will look like this:
 
 ```csv
-filename,line(s),comment,priority
-"/test/a.txt","1:2-4:3","ttt",1
-"/test/a.txt","1:0-1:4|4:0-4:3","bbbb",1
+filename,lines,title,comment,priority,additional
+"/test/a.txt","1:2-4:3","foo","this should be refactored",1,"see http://foo.bar"
+"/test/a.txt","1:0-1:4|4:0-4:3","bar","wrong format",1,""
 ```
 
 The line column indicates an array of selected ranges or cursor positions separated by a `|` sign.
