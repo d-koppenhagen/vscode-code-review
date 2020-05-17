@@ -27,7 +27,14 @@ E.g. `"1:0-1:4|4:0-4:3"` means that the comment is related to the range marked f
 
 ## Extension Settings
 
-Currently there are no settings to configure.
+The following settings can be adjusted via the configuration file `.vscode/settings.json` or globally when configuring vscode.
+The listing below shows the default configuration:
+
+```json
+{
+    "code-review.filename": "code-review"
+}
+```
 
 ## Future Features
 

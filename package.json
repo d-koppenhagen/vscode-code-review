@@ -50,6 +50,19 @@
           "group": "cmdGroup@1"
         }
       ]
+    },
+    "configuration": {
+      "id": "core-review",
+      "type": "object",
+      "title": "Code Review",
+      "properties": {
+        "filename": {
+          "type": "string",
+          "title": "The filename for teh csv file",
+          "description": "The name will be used for the file with the *.csv extension that contains the stored code review notes",
+          "default": "code-review"
+        }
+      }
     }
   },
   "scripts": {

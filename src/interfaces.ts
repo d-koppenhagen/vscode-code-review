@@ -6,6 +6,10 @@ export interface VSCodeWindow {
   showInputBox(options?: InputBoxOptions): Thenable<string | undefined>;
 }
 
+export interface CodeReviewConfig {
+  filename: string;
+}
+
 export interface ReviewComment {
   title?: string;
   description: string;

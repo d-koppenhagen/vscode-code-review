@@ -1,12 +1,16 @@
 import * as fs from 'fs';
-import { VSCodeWindow } from './interfaces';
+import { VSCodeWindow, CodeReviewConfig } from './interfaces';
 import { toAbsolutePath } from './utils/workspace-util';
+import { workspace } from 'vscode';
 
 export class FileGenerator {
   private readonly defaultFileExtension = '.csv';
-  private readonly defaultFileName = 'code-review';
+  private defaultFileName = 'code-review';
 
-  constructor(private workspaceRoot: string, private window: VSCodeWindow) {}
+  constructor(private workspaceRoot: string, private window: VSCodeWindow) {
+    const configFileName = workspace.getConfiguration().get('code-review.filename') as string;
+    if (configFileName) this.defaultFileName = configFileName;
+  }
 
   /**
    * leveraging all of the other functions to execute
