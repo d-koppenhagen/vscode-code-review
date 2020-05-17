@@ -1,6 +1,6 @@
 {
   "name": "vscode-code-review",
-  "displayName": "code-review",
+  "displayName": "Code Review",
   "description": "Create expert reviews / code reviews for a workspace that can be exported as a document for handing over to customers",
   "version": "0.0.11",
   "publisher": "d-koppenhagen",
