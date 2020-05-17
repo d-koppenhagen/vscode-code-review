@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.6](https://github.com/d-koppenhagen/vscode-code-review/compare/v0.0.5...v0.0.6) (2020-05-17)
+
+
+### Features
+
+* provide webview form ([7e8cd29](https://github.com/d-koppenhagen/vscode-code-review/commit/7e8cd2954beb9f7e95f8e64e6673ce1cc5174066)), closes [#4](https://github.com/d-koppenhagen/vscode-code-review/issues/4)
+
 ### [0.0.5](https://github.com/d-koppenhagen/vscode-code-review/compare/v0.0.4...v0.0.5) (2020-05-16)
 
 
