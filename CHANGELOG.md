@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.10](https://github.com/d-koppenhagen/vscode-code-review/compare/v0.0.9...v0.0.10) (2020-05-17)
+
+
+### Features
+
+* priority selection as traffic light ([c641d06](https://github.com/d-koppenhagen/vscode-code-review/commit/c641d06d98b03fc04f754ed6ea1ed47b35e43e28)), closes [#8](https://github.com/d-koppenhagen/vscode-code-review/issues/8)
+
 ### [0.0.9](https://github.com/d-koppenhagen/vscode-code-review/compare/v0.0.8...v0.0.9) (2020-05-17)
 
 
