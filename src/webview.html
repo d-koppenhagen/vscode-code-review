@@ -110,44 +110,52 @@
         background-color: #00ff00;
         box-shadow: 0 0 3em #33ff33;
       }
+
+      /* form arrangement */
+      .form-container {
+        display: flex;
+      }
+
+      .col-right {
+        padding-left: 20px;
+        justify-self: center;
+      }
     </style>
   </head>
 
   <body>
     <form class="note-form">
-      <label for="title">Title</label>
-      <input id="title" name="title" type="text" placeholder="A short description (e.g. 'Method too complex')" />
+      <div class="form-container">
+        <div class="col-left">
+          <label for="title">Title</label>
+          <input id="title" name="title" type="text" placeholder="A short description (e.g. 'Method too complex')" />
 
-      <label for="description">Description</label>
-      <textarea
-        id="description"
-        name="description"
-        placeholder="A detailled description (e.g. 'Split method into smaller functions and utils')"
-        rows="5"
-      ></textarea>
+          <label for="description">Description</label>
+          <textarea
+            id="description"
+            name="description"
+            placeholder="A detailled description (e.g. 'Split method into smaller functions and utils')"
+            rows="5"
+          ></textarea>
 
-      <label for="priority">Priority</label>
-      <select id="priority" name="priority">
-        <option value="0" selected>unset</option>
-        <option value="1">low</option>
-        <option value="2">medium</option>
-        <option value="3">high</option>
-      </select>
+          <label for="additional">Additional Info</label>
+          <input
+            id="additional"
+            name="additional"
+            type="text"
+            placeholder="An additional info or Link (e.g. 'http://example.com')"
+          />
+        </div>
+        <div class="col-right">
+          <label for="priority">Priority</label>
 
-      <label for="additional">Additional Info</label>
-      <input
-        id="additional"
-        name="additional"
-        type="text"
-        placeholder="An additional info or Link (e.g. 'http://example.com')"
-      />
-
-      <!-- <div id="traffic-light">
-        <input type="radio" class="traffic-light-color" name="traffic-light-color" id="color1" value="1" />
-        <input type="radio" class="traffic-light-color" name="traffic-light-color" id="color2" value="2" />
-        <input type="radio" class="traffic-light-color" name="traffic-light-color" id="color3" value="3" />
-      </div> -->
-
+          <div id="traffic-light">
+            <input type="radio" class="traffic-light-color" name="traffic-light-color" id="color1" value="1" />
+            <input type="radio" class="traffic-light-color" name="traffic-light-color" id="color2" value="2" />
+            <input type="radio" class="traffic-light-color" name="traffic-light-color" id="color3" value="3" />
+          </div>
+        </div>
+      </div>
       <button class="action-btn primary" tabindex="0" role="button" onclick="addNote()">
         Add Note
       </button>
@@ -164,7 +172,8 @@
 
       const title = document.getElementById('title').value;
       const description = document.getElementById('description').value;
-      const priority = document.getElementById('priority').value;
+      const trafficLightEl = document.querySelector('input[name=traffic-light-color]:checked');
+      const priority = trafficLightEl ? document.querySelector('input[name=traffic-light-color]:checked').value : 0;
       const additional = document.getElementById('additional').value;
 
       const formData = {
