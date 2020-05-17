@@ -5,3 +5,10 @@ export interface VSCodeWindow {
   showInformationMessage(message: string): Thenable<string>;
   showInputBox(options?: InputBoxOptions): Thenable<string | undefined>;
 }
+
+export interface ReviewComment {
+  title?: string;
+  description: string;
+  priority?: number;
+  additional?: string;
+}

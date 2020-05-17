@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import { window } from 'vscode';
 
-import { InputBoxOptions } from 'vscode';
+import { ReviewComment } from './interfaces';
 
 export class ReviewCommentService {
   constructor(private reviewFile: string, private workspaceRoot: string) {}
@@ -12,7 +12,7 @@ export class ReviewCommentService {
    * @param lineOrLines the line or lines the comment is related to
    * @param comment the comment message
    */
-  async addComment() {
+  async addComment(comment: ReviewComment) {
     this.checkFileExists();
     let selections = '';
     if (window.activeTextEditor) {
@@ -28,27 +28,21 @@ export class ReviewCommentService {
       activeFileName = window.activeTextEditor.document.fileName.replace(this.workspaceRoot, '');
     }
 
-    const comment: string | undefined = await this.prompt();
-    if (!comment) return;
-
     // escape double quotes
-    const commentExcaped = comment.replace(/"/g, '\\"');
-    fs.appendFileSync(this.reviewFile, `"${activeFileName}","${selections}","${commentExcaped}",1\r\n`);
+    const commentExcaped = comment.description.replace(/"/g, '\\"');
+    const titleExcaped = comment.title ? comment.title.replace(/"/g, '\\"') : '';
+    const priority = comment.priority || '';
+    const additional = comment.additional ? comment.additional.replace(/"/g, '\\"') : '';
+
+    fs.appendFileSync(
+      this.reviewFile,
+      `"${activeFileName}","${selections}","${titleExcaped}","${commentExcaped}","${priority}","${additional}"\r\n`,
+    );
   }
 
   editComment(/*lineOrLines, comment*/) {}
 
   removeComment(/*lineOrLines, comment*/) {}
-
-  async prompt(): Promise<string | undefined> {
-    const options: InputBoxOptions = {
-      ignoreFocusOut: true,
-      placeHolder: 'your comment',
-      prompt: `Please enter your comment`,
-    };
-
-    return await window.showInputBox(options);
-  }
 
   private checkFileExists() {
     if (!fs.existsSync(this.reviewFile)) {

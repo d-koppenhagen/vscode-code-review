@@ -5,12 +5,14 @@ import { commands, workspace, window, ExtensionContext, WorkspaceFolder } from '
 import { FileGenerator } from './file-generator';
 import { ReviewCommentService } from './review-comment';
 import { getWorkspaceFolder } from './utils/workspace-util';
+import { WebViewComponent } from './webview';
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
 export function activate(context: ExtensionContext) {
   const workspaceRoot: string = getWorkspaceFolder(workspace.workspaceFolders as WorkspaceFolder[]);
   const generator = new FileGenerator(workspaceRoot, window);
+  const webview = new WebViewComponent(context);
   // Use the console to output diagnostic information (console.log) and errors (console.error)
   // This line of code will only be executed once when your extension is activated
   console.log('Congratulations, your extension "code-review" is now active!');
@@ -24,8 +26,7 @@ export function activate(context: ExtensionContext) {
     // create a new file if not already exist
     const reviewFile = generator.execute();
     const commentService = new ReviewCommentService(reviewFile, workspaceRoot);
-
-    commentService.addComment();
+    webview.addComment(commentService);
 
     // this will call the dispose function of our DuckGenerator
     // when the extension is being destroyed

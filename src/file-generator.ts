@@ -30,7 +30,7 @@ export class FileGenerator {
     }
 
     try {
-      fs.writeFileSync(absoluteFilePath, `filename,line(s),comment,priority\r\n`);
+      fs.writeFileSync(absoluteFilePath, `filename,lines,title,comment,priority,additional\r\n`);
       this.window.showInformationMessage(`Code review file: '${absoluteFilePath}' successfully created`);
     } catch (err) {
       this.window.showErrorMessage(`Error when trying to create code review file: '${absoluteFilePath}': ${err}`);
