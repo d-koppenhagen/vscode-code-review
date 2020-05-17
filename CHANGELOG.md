@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.11](https://github.com/d-koppenhagen/vscode-code-review/compare/v0.0.10...v0.0.11) (2020-05-17)
+
+
+### Bug Fixes
+
+* display panel by using inline template ([08f3fe9](https://github.com/d-koppenhagen/vscode-code-review/commit/08f3fe973227759f6aace505f279a936b4ba783c))
+
 ### [0.0.10](https://github.com/d-koppenhagen/vscode-code-review/compare/v0.0.9...v0.0.10) (2020-05-17)
 
 
