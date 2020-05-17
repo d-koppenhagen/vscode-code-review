@@ -2,7 +2,7 @@
   "name": "vscode-code-review",
   "displayName": "Code Review",
   "description": "Create expert reviews / code reviews for a workspace that can be exported as a document for handing over to customers",
-  "version": "0.0.11",
+  "version": "0.0.12",
   "publisher": "d-koppenhagen",
   "author": "Danny Koppenhagen <mail@d-koppenhagen.de> (https://d-koppenhagen.de)",
   "homepage": "https://github.com/d-koppenhagen/vscode-code-review",
