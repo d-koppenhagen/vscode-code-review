@@ -40,7 +40,6 @@ Currently there are no settings to configure.
 * color mark lines that already have been commented (shot preview of the message)
 * include GIT SHA
 * Define a shortcut
-* specify comment in webview
 * include the marked code in the review report as code snippets
 
 
