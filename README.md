@@ -36,6 +36,10 @@ The listing below shows the default configuration:
 }
 ```
 
+## Keybindings
+
+To easily add a *new* comment, you can use the keybinding combination `ctrl` + `shift` + `n`.
+
 ## Future Features
 
 * Overview of the notes in the left explorer area

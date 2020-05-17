@@ -63,7 +63,14 @@
           "default": "code-review"
         }
       }
-    }
+    },
+    "keybindings": [
+      {
+        "command": "code-review.addNote",
+        "key": "ctrl+shift+n",
+        "mac": "ctrl+shift+n"
+      }
+    ]
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",
