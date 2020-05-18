@@ -52,9 +52,6 @@ To easily add a *new* comment, you can use the keybinding combination `ctrl` + `
 * edit existing comments
 * delete existing comments
 * color mark lines that already have been commented (shot preview of the message)
-* include GIT SHA
-* Define a shortcut
 * include the marked code in the review report as code snippets
-
 
 **Enjoy!**
