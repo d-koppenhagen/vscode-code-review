@@ -1,7 +1,8 @@
 import * as fs from 'fs';
-import { VSCodeWindow, CodeReviewConfig } from './interfaces';
-import { toAbsolutePath } from './utils/workspace-util';
 import { workspace } from 'vscode';
+
+import { VSCodeWindow } from './interfaces';
+import { toAbsolutePath } from './utils/workspace-util';
 
 export class FileGenerator {
   private readonly defaultFileExtension = '.csv';
@@ -36,8 +37,10 @@ export class FileGenerator {
     }
 
     try {
-      fs.writeFileSync(absoluteFilePath, `filename,lines,title,comment,priority,additional\r\n`);
-      this.window.showInformationMessage(`Code review file: '${absoluteFilePath}' successfully created`);
+      fs.writeFileSync(absoluteFilePath, `sha,filename,url,lines,title,comment,priority,additional\r\n`);
+      this.window.showInformationMessage(
+        `Code review file: '${this.defaultFileName}${this.defaultFileExtension}' successfully created.`,
+      );
     } catch (err) {
       this.window.showErrorMessage(`Error when trying to create code review file: '${absoluteFilePath}': ${err}`);
     }

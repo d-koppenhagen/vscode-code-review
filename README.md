@@ -15,9 +15,9 @@ A file `code-review.csv` will be created containing your comments and the file a
 The result will look like this:
 
 ```csv
-filename,lines,title,comment,priority,additional
-"/test/a.txt","1:2-4:3","foo","this should be refactored",1,"see http://foo.bar"
-"/test/a.txt","1:0-1:4|4:0-4:3","bar","wrong format",1,""
+sha,filename,url,lines,title,comment,priority,additional
+"b45d2822d6c87770af520d7e2acc49155f0b4362","/test/a.txt","https://github.com/d-koppenhagen/vscode-code-review/tree/b45d2822d6c87770af520d7e2acc49155f0b4362/test/a.txt","1:2-4:3","foo","this should be refactored",1,"see http://foo.bar"
+"b45d2822d6c87770af520d7e2acc49155f0b4362","/test/b.txt","https://github.com/d-koppenhagen/vscode-code-review/tree/b45d2822d6c87770af520d7e2acc49155f0b4362/test/b.txt","1:0-1:4|4:0-4:3","bar","wrong format",1,""
 ```
 
 The line column indicates an array of selected ranges or cursor positions separated by a `|` sign.
@@ -32,7 +32,11 @@ The listing below shows the default configuration:
 
 ```json
 {
-    "code-review.filename": "code-review"
+  // filename will lead into "code-review.csv"
+  "code-review.filename": "code-review",
+  // CSV column "url" will contain the remote link like this: "https://github.com/foo/bar/tree/e023a1831a3d5299407cac4379e83df07b383475/foo/bar.txt
+  // If the project is not a git project, the SHA is empty (e.g. "code-review.baseUrl": "https://my-url/" => will become: "https://my-url/foo/bar.txt)
+  "code-review.baseUrl": "https://github.com/foo/bar/tree/"
 }
 ```
 
