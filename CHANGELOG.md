@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.13](https://github.com/d-koppenhagen/vscode-code-review/compare/v0.0.12...v0.0.13) (2020-05-18)
+
+
+### Features
+
+* inlcude SHA and remoteUrl containing the full link ([884298e](https://github.com/d-koppenhagen/vscode-code-review/commit/884298ee2924270a98cd73afd19d9e05bebe4cfe)), closes [#9](https://github.com/d-koppenhagen/vscode-code-review/issues/9)
+
 ### [0.0.12](https://github.com/d-koppenhagen/vscode-code-review/compare/v0.0.11...v0.0.12) (2020-05-17)
 
 ### [0.0.11](https://github.com/d-koppenhagen/vscode-code-review/compare/v0.0.10...v0.0.11) (2020-05-17)
