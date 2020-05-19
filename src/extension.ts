@@ -6,6 +6,7 @@ import { FileGenerator } from './file-generator';
 import { ReviewCommentService } from './review-comment';
 import { getWorkspaceFolder } from './utils/workspace-util';
 import { WebViewComponent } from './webview';
+import { HtmlExporter } from './htmlExport';
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -32,8 +33,13 @@ export function activate(context: ExtensionContext) {
     // when the extension is being destroyed
     context.subscriptions.push(generator);
   });
-
   context.subscriptions.push(disposable);
+
+  let disposable2 = commands.registerCommand('code-review.exportAsHtml', () => {
+    const exporter = new HtmlExporter(workspaceRoot);
+    exporter.export();
+  });
+  context.subscriptions.push(disposable2);
 }
 
 // this method is called when your extension is deactivated
