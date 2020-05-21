@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.14](https://github.com/d-koppenhagen/vscode-code-review/compare/v0.0.13...v0.0.14) (2020-05-21)
+
+
+### Features
+
+* basic HTML export ([cdde92c](https://github.com/d-koppenhagen/vscode-code-review/commit/cdde92c3cd768e56c80978afc00c33f276a576d2))
+* export as style HTML bny using handlebars template internally ([0e8c817](https://github.com/d-koppenhagen/vscode-code-review/commit/0e8c81741317f8a05b3c56f17db2d8881b327485)), closes [#5](https://github.com/d-koppenhagen/vscode-code-review/issues/5) [#13](https://github.com/d-koppenhagen/vscode-code-review/issues/13)
+* let users choose a handlebars template ([19d6d71](https://github.com/d-koppenhagen/vscode-code-review/commit/19d6d711f67f1b885634ca2b860eaa4decfe898f)), closes [#13](https://github.com/d-koppenhagen/vscode-code-review/issues/13)
+
 ### [0.0.13](https://github.com/d-koppenhagen/vscode-code-review/compare/v0.0.12...v0.0.13) (2020-05-18)
 
 
