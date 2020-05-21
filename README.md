@@ -8,6 +8,8 @@ This extension allows you to create a code review file you can hand over to a cu
 
 ## Features
 
+### create review notes
+
 Simply right click somewhere in the opened file and choose the option "Code Review: Add Note".
 You will be prompted for your note you wanna add.
 A file `code-review.csv` will be created containing your comments and the file and line references.
@@ -24,6 +26,31 @@ The line column indicates an array of selected ranges or cursor positions separa
 E.g. `"1:0-1:4|4:0-4:3"` means that the comment is related to the range marked from line 1 position 0 to line 1 position 4 and line 4 position 0 to line 4 position 3.
 
 ![Demo](./images/demo.gif)
+
+### export created notes as HTML
+
+Once you finished your review and added your notes, you can export the results as an HTML report.
+Therefore open the [VSCode Command Palette](https://code.visualstudio.com/docs/getstarted/tips-and-tricks#_command-palette) (macOS: ⇧+⌘+P, others: ⇧+Ctrl+P) and search for "Code Review":
+
+![Code Review: Export as HTML](./images/export.png)
+
+#### Default template
+
+When you choose to generate the report using the default template, it will look like this in the end:
+
+![Code Review HTML Export: Default Template](./images/default-template.png)
+
+#### Custom handlebars template
+
+You can also choose to export the HTML report by using a custom [Handlebars](https://handlebarsjs.com/) template.
+One you choose this option you cot prompted to choose the template file (file extension must be either `*.hbs`, `*.handlebars`, `*.html` or `*.htm`)
+
+![Code Review HTML Export: Use a custom Handlebars template](./images/template.png)
+
+The used structure to fill the template placholders is an array of [`ReviewFileExportSection`](https://github.com/d-koppenhagen/vscode-code-review/blob/master/src/interfaces.ts#L31-L44).
+
+Check out the example template file 
+[`template.example.hbs`](https://github.com/d-koppenhagen/vscode-code-review/blob/master/template.example.hbs), to see how your template should basically look like.
 
 ## Extension Settings
 

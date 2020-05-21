@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>My Code Review</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    /* add your style */
+  </style>
+</head>
+<body>
+  <h1>Code Review Results</h1>
+  {{#each this as |item|}}
+  <section>
+    <h2>
+      <a href="{{item.url}}">{{item.filename}}</a>
+    </h2>
+    {{#each item.lines as |line|}}
+    <table>
+      <tr>
+        <td>Position</td>
+        <td>{{line.lines}}</td>
+      </tr>
+      <tr>
+        <td>Priority</td>
+        <td>{{line.priority}}</td>
+      </tr>
+      <tr>
+        <td>Title</td>
+        <td>{{line.title}}</td>
+      </tr>
+      <tr>
+        <td>Description</td>
+        <td>{{line.comment}}</td>
+      </tr>
+      {{#if line.additional}}
+      <tr>
+        <td>Additional Info</td>
+        <td>{{line.additional}}</td>
+      </tr>
+      {{/if}}
+      <tr>
+        <td>SHA</td>
+        <td>{{line.sha}}</td>
+      </tr>
+    </table>
+    {{/each}}
+  </section>
+  {{/each}}
+</body>
+</html>
