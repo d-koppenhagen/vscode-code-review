@@ -20,7 +20,7 @@ export interface ReviewComment {
 export interface CsvEntry {
   sha: string;
   filename: string;
-  url: number;
+  url: string;
   lines: string;
   title: string;
   comment: string;
@@ -28,10 +28,17 @@ export interface CsvEntry {
   additional: string;
 }
 
-export type ReviewForLineInFile = Omit<CsvEntry, 'filename' | 'lines'>;
-
 export interface ReviewFileExportSection {
-  [filename: string]: {
-    [lines: string]: ReviewForLineInFile[];
-  };
+  filename: string;
+  url: string;
+  lines: {
+    sha: string;
+    filename: string;
+    url: string;
+    lines: string;
+    title: string;
+    comment: string;
+    priority: string;
+    additional: string;
+  }[];
 }

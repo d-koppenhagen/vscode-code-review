@@ -35,11 +35,14 @@ export function activate(context: ExtensionContext) {
   });
   context.subscriptions.push(disposable);
 
-  let disposable2 = commands.registerCommand('code-review.exportAsHtml', () => {
+  /**
+   * allow users to export the report as HTML using the default output or a specific handlebars template
+   */
+  let disposableExport = commands.registerCommand('code-review.exportAsHtml', () => {
     const exporter = new HtmlExporter(workspaceRoot);
     exporter.export();
   });
-  context.subscriptions.push(disposable2);
+  context.subscriptions.push(disposableExport);
 }
 
 // this method is called when your extension is deactivated
