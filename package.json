@@ -28,7 +28,8 @@
   ],
   "activationEvents": [
     "onCommand:code-review.addNote",
-    "onCommand:code-review.exportAsHtml"
+    "onCommand:code-review.exportAsHtmlWithDefaultTemplate",
+    "onCommand:code-review.exportAsHtmlWithHandlebarsTemplate"
   ],
   "main": "./out/extension.js",
   "keywords": [
@@ -43,8 +44,12 @@
         "title": "Code Review: Add Note"
       },
       {
-        "command": "code-review.exportAsHtml",
-        "title": "Code Review: Export as HTML"
+        "command": "code-review.exportAsHtmlWithDefaultTemplate",
+        "title": "Code Review: Export as HTML (default template)"
+      },
+      {
+        "command": "code-review.exportAsHtmlWithHandlebarsTemplate",
+        "title": "Code Review: Export as HTML with Handlebars template"
       }
     ],
     "menus": {

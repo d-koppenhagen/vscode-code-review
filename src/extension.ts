@@ -21,7 +21,7 @@ export function activate(context: ExtensionContext) {
   // The command has been defined in the package.json file
   // Now provide the implementation of the command with registerCommand
   // The commandId parameter must match the command field in package.json
-  let disposable = commands.registerCommand('code-review.addNote', () => {
+  let disposableAddNote = commands.registerCommand('code-review.addNote', () => {
     // The code you place here will be executed every time your command is executed
 
     // create a new file if not already exist
@@ -33,16 +33,38 @@ export function activate(context: ExtensionContext) {
     // when the extension is being destroyed
     context.subscriptions.push(generator);
   });
-  context.subscriptions.push(disposable);
+  context.subscriptions.push(disposableAddNote);
 
   /**
-   * allow users to export the report as HTML using the default output or a specific handlebars template
+   * allow users to export the report as HTML using the default output
    */
-  let disposableExport = commands.registerCommand('code-review.exportAsHtml', () => {
+  let disposableExportDefault = commands.registerCommand('code-review.exportAsHtmlWithDefaultTemplate', () => {
     const exporter = new HtmlExporter(workspaceRoot);
     exporter.export();
   });
-  context.subscriptions.push(disposableExport);
+  context.subscriptions.push(disposableExportDefault);
+
+  /**
+   * allow users to export the report as HTML using a specific handlebars template
+   */
+  let disposableExportHbs = commands.registerCommand('code-review.exportAsHtmlWithHandlebarsTemplate', () => {
+    window
+      .showOpenDialog({
+        canSelectFolders: false,
+        canSelectFiles: true,
+        canSelectMany: false,
+        openLabel: 'Use template',
+        filters: {
+          Template: ['hbs', 'html', 'htm', 'handlebars'],
+        },
+      })
+      .then((files) => {
+        const template = files && files.length ? files[0] : undefined;
+        const exporter = new HtmlExporter(workspaceRoot, template);
+        exporter.export();
+      });
+  });
+  context.subscriptions.push(disposableExportHbs);
 }
 
 // this method is called when your extension is deactivated

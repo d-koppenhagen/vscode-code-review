@@ -1,6 +1,6 @@
 import * as fs from 'fs';
 import * as Handlebars from 'handlebars';
-import { workspace } from 'vscode';
+import { workspace, Uri, window } from 'vscode';
 import { parseFile } from '@fast-csv/parse';
 import { toAbsolutePath } from './utils/workspace-util';
 import { CsvEntry, ReviewFileExportSection } from './interfaces';
@@ -10,7 +10,7 @@ export class HtmlExporter {
   /**
    * for trying out: https://stackblitz.com/edit/code-review-template
    */
-  private readonly hbsDefaultTemplate = `<!DOCTYPE html>
+  private hbsDefaultTemplate = `<!DOCTYPE html>
 <html>
 <head>
   <meta charset="utf-8">
@@ -129,7 +129,14 @@ export class HtmlExporter {
 </body>
 </html>`;
 
-  constructor(private workspaceRoot: string) {
+  constructor(private workspaceRoot: string, private template?: Uri) {
+    if (template) {
+      const data = fs.readFileSync(template.fsPath, 'utf8');
+      if (!data) {
+        window.showErrorMessage(`Error when reading the template file: '${template.fsPath}'`);
+      }
+      this.hbsDefaultTemplate = data;
+    }
     const configFileName = workspace.getConfiguration().get('code-review.filename') as string;
     if (configFileName) {
       this.defaultFileName = configFileName;
