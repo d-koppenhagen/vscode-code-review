@@ -131,24 +131,24 @@ export class WebViewComponent {
             user-select: none;
             outline: none;
           }
-          input#color1 {
+          input#high {
             background-color: #b30000;
           }
-          input#color1:checked {
+          input#high:checked {
             background-color: #ff0000;
             box-shadow: 0 0 3em #ff3333;
           }
-          input#color2 {
+          input#medium {
             background-color: #b2b300;
           }
-          input#color2:checked {
+          input#medium:checked {
             background-color: #ffff00;
             box-shadow: 0 0 3em #ffff33;
           }
-          input#color3 {
+          input#low {
             background-color: #00b300;
           }
-          input#color3:checked {
+          input#low:checked {
             background-color: #00ff00;
             box-shadow: 0 0 3em #33ff33;
           }
