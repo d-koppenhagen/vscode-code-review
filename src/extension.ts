@@ -17,7 +17,7 @@ export function activate(context: ExtensionContext) {
   // The command has been defined in the package.json file
   // Now provide the implementation of the command with registerCommand
   // The commandId parameter must match the command field in package.json
-  commands.registerCommand('codeReview.addNote', () => {
+  const addNoteRegistration = commands.registerCommand('codeReview.addNote', () => {
     // The code you place here will be executed every time your command is executed
 
     // create a new file if not already exist
@@ -29,31 +29,46 @@ export function activate(context: ExtensionContext) {
   /**
    * allow users to export the report as HTML using the default output
    */
-  commands.registerCommand('codeReview.exportAsHtmlWithDefaultTemplate', () => {
-    const exporter = new HtmlExporter(workspaceRoot);
-    exporter.export();
-  });
+  const exportAsHtmlWithDefaultTemplateRegistration = commands.registerCommand(
+    'codeReview.exportAsHtmlWithDefaultTemplate',
+    () => {
+      const exporter = new HtmlExporter(workspaceRoot);
+      exporter.export();
+    },
+  );
 
   /**
    * allow users to export the report as HTML using a specific handlebars template
    */
-  commands.registerCommand('codeReview.exportAsHtmlWithHandlebarsTemplate', () => {
-    window
-      .showOpenDialog({
-        canSelectFolders: false,
-        canSelectFiles: true,
-        canSelectMany: false,
-        openLabel: 'Use template',
-        filters: {
-          Template: ['hbs', 'html', 'htm', 'handlebars'],
-        },
-      })
-      .then((files) => {
-        const template = files && files.length ? files[0] : undefined;
-        const exporter = new HtmlExporter(workspaceRoot, template);
-        exporter.export();
-      });
-  });
+  const exportAsHtmlWithHandlebarsTemplateRegistration = commands.registerCommand(
+    'codeReview.exportAsHtmlWithHandlebarsTemplate',
+    () => {
+      window
+        .showOpenDialog({
+          canSelectFolders: false,
+          canSelectFiles: true,
+          canSelectMany: false,
+          openLabel: 'Use template',
+          filters: {
+            Template: ['hbs', 'html', 'htm', 'handlebars'],
+          },
+        })
+        .then((files) => {
+          const template = files && files.length ? files[0] : undefined;
+          const exporter = new HtmlExporter(workspaceRoot, template);
+          exporter.export();
+        });
+    },
+  );
+
+  /**
+   * push all registration into subscriptions
+   */
+  context.subscriptions.push(
+    addNoteRegistration,
+    exportAsHtmlWithDefaultTemplateRegistration,
+    exportAsHtmlWithHandlebarsTemplateRegistration,
+  );
 }
 
 // this method is called when your extension is deactivated
