@@ -14,40 +14,30 @@ export function activate(context: ExtensionContext) {
   const workspaceRoot: string = getWorkspaceFolder(workspace.workspaceFolders as WorkspaceFolder[]);
   const generator = new FileGenerator(workspaceRoot, window);
   const webview = new WebViewComponent(context);
-  // Use the console to output diagnostic information (console.log) and errors (console.error)
-  // This line of code will only be executed once when your extension is activated
-  console.log('Congratulations, your extension "code-review" is now active!');
-
   // The command has been defined in the package.json file
   // Now provide the implementation of the command with registerCommand
   // The commandId parameter must match the command field in package.json
-  let disposableAddNote = commands.registerCommand('code-review.addNote', () => {
+  commands.registerCommand('codeReview.addNote', () => {
     // The code you place here will be executed every time your command is executed
 
     // create a new file if not already exist
     const reviewFile = generator.execute();
     const commentService = new ReviewCommentService(reviewFile, workspaceRoot);
     webview.addComment(commentService);
-
-    // this will call the dispose function of our DuckGenerator
-    // when the extension is being destroyed
-    context.subscriptions.push(generator);
   });
-  context.subscriptions.push(disposableAddNote);
 
   /**
    * allow users to export the report as HTML using the default output
    */
-  let disposableExportDefault = commands.registerCommand('code-review.exportAsHtmlWithDefaultTemplate', () => {
+  commands.registerCommand('codeReview.exportAsHtmlWithDefaultTemplate', () => {
     const exporter = new HtmlExporter(workspaceRoot);
     exporter.export();
   });
-  context.subscriptions.push(disposableExportDefault);
 
   /**
    * allow users to export the report as HTML using a specific handlebars template
    */
-  let disposableExportHbs = commands.registerCommand('code-review.exportAsHtmlWithHandlebarsTemplate', () => {
+  commands.registerCommand('codeReview.exportAsHtmlWithHandlebarsTemplate', () => {
     window
       .showOpenDialog({
         canSelectFolders: false,
@@ -64,7 +54,6 @@ export function activate(context: ExtensionContext) {
         exporter.export();
       });
   });
-  context.subscriptions.push(disposableExportHbs);
 }
 
 // this method is called when your extension is deactivated
