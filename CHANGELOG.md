@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.17](https://github.com/d-koppenhagen/vscode-code-review/compare/v0.0.16...v0.0.17) (2020-05-22)
+
+
+### Bug Fixes
+
+* subscribe to registrations ([a001dc1](https://github.com/d-koppenhagen/vscode-code-review/commit/a001dc17f325dad5781d55d39874da985c9c1f93))
+
 ### [0.0.16](https://github.com/d-koppenhagen/vscode-code-review/compare/v0.0.15...v0.0.16) (2020-05-22)
 
 
