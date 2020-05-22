@@ -192,9 +192,9 @@ export class WebViewComponent {
               <label for="priority">Priority</label>
     
               <div id="traffic-light">
-                <input type="radio" class="traffic-light-color" name="traffic-light-color" id="color1" value="1" />
-                <input type="radio" class="traffic-light-color" name="traffic-light-color" id="color2" value="2" />
-                <input type="radio" class="traffic-light-color" name="traffic-light-color" id="color3" value="3" />
+                <input type="radio" class="traffic-light-color" name="traffic-light-color" id="high" value="3" />
+                <input type="radio" class="traffic-light-color" name="traffic-light-color" id="medium" value="2" />
+                <input type="radio" class="traffic-light-color" name="traffic-light-color" id="low" value="1" />
               </div>
             </div>
           </div>

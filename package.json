@@ -45,7 +45,7 @@
       },
       {
         "command": "code-review.exportAsHtmlWithDefaultTemplate",
-        "title": "Code Review: Export as HTML (default template)"
+        "title": "Code Review: Export as HTML with default template"
       },
       {
         "command": "code-review.exportAsHtmlWithHandlebarsTemplate",
