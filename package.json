@@ -27,9 +27,7 @@
     "Other"
   ],
   "activationEvents": [
-    "onCommand:codeReview.addNote",
-    "onCommand:codeReview.exportAsHtmlWithDefaultTemplate",
-    "onCommand:codeReview.exportAsHtmlWithHandlebarsTemplate"
+    "*"
   ],
   "main": "./out/extension.js",
   "keywords": [
