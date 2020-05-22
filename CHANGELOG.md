@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.18](https://github.com/d-koppenhagen/vscode-code-review/compare/v0.0.17...v0.0.18) (2020-05-22)
+
+
+### Bug Fixes
+
+* activate all events ([40402eb](https://github.com/d-koppenhagen/vscode-code-review/commit/40402eb0187254b443c267de30d37eb8e9681cdc))
+* cleanup dependencies ([d88064f](https://github.com/d-koppenhagen/vscode-code-review/commit/d88064fabb7a987fea9046175f90d7a44301e6d3))
+
 ### [0.0.17](https://github.com/d-koppenhagen/vscode-code-review/compare/v0.0.16...v0.0.17) (2020-05-22)
 
 
