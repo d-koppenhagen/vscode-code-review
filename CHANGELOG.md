@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.15](https://github.com/d-koppenhagen/vscode-code-review/compare/v0.0.14...v0.0.15) (2020-05-22)
+
+
+### Bug Fixes
+
+* use correct id's fot trafffic light style ([0c20826](https://github.com/d-koppenhagen/vscode-code-review/commit/0c208267562978351d5287a1025cabf0d5b59d5a))
+* use correct traffic light values ([da8bb07](https://github.com/d-koppenhagen/vscode-code-review/commit/da8bb07dea02ce370bb0ffbec4103a858a6bc584))
+
 ### [0.0.14](https://github.com/d-koppenhagen/vscode-code-review/compare/v0.0.13...v0.0.14) (2020-05-21)
 
 
