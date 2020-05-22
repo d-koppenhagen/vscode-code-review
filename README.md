@@ -69,16 +69,6 @@ The listing below shows the default configuration:
 
 ## Keybindings
 
-To easily add a *new* comment, you can use the keybinding combination `ctrl` + `shift` + `n`.
-
-## Future Features
-
-* Overview of the notes in the left explorer area
-* generate a report (e.g. PDF)
-* allow general comments
-* edit existing comments
-* delete existing comments
-* color mark lines that already have been commented (shot preview of the message)
-* include the marked code in the review report as code snippets
+To easily add a *new* comment, you can use the keybinding combination `ctrl` + ⇧ + `n`.
 
 **Enjoy!**
