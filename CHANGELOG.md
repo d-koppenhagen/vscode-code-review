@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.0.0](https://github.com/d-koppenhagen/vscode-code-review/compare/v0.0.18...v1.0.0) (2020-05-24)
+
+
+### Features
+
+* apply line references in built URL ([68ae1db](https://github.com/d-koppenhagen/vscode-code-review/commit/68ae1db96d5d2535ea226e938c3c67c7656084cb)), closes [#11](https://github.com/d-koppenhagen/vscode-code-review/issues/11)
+* open generated HTML report in preview window ([94ed5fc](https://github.com/d-koppenhagen/vscode-code-review/commit/94ed5fc690c5b3c92e176345a891ebd433ddf6d9)), closes [#14](https://github.com/d-koppenhagen/vscode-code-review/issues/14)
+
 ### [0.0.18](https://github.com/d-koppenhagen/vscode-code-review/compare/v0.0.17...v0.0.18) (2020-05-22)
 
 
