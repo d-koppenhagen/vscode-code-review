@@ -1,6 +1,6 @@
 import * as fs from 'fs';
 import * as Handlebars from 'handlebars';
-import { workspace, Uri, window } from 'vscode';
+import { workspace, Uri, window, ViewColumn } from 'vscode';
 import { parseFile } from '@fast-csv/parse';
 import { toAbsolutePath } from './utils/workspace-util';
 import { CsvEntry, ReviewFileExportSection } from './interfaces';
@@ -176,12 +176,19 @@ export class HtmlExporter {
         }
       })
       .on('end', (_rowCount: number) => {
-        console.log(reviewExportData);
         const template = Handlebars.compile(this.hbsDefaultTemplate);
 
-        console.log(template);
         const htmlOut = template(reviewExportData);
         fs.writeFileSync(outputFile, htmlOut);
+
+        window.showInformationMessage(`Code review file: '${outputFile}' successfully created.`);
+
+        this.showPreview(outputFile);
       });
+  }
+
+  showPreview(outputFile: string) {
+    const panel = window.createWebviewPanel('text', 'Code Review HTML Report', { viewColumn: ViewColumn.Beside });
+    panel.webview.html = fs.readFileSync(outputFile, 'utf8');
   }
 }
