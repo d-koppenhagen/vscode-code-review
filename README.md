@@ -71,4 +71,18 @@ The listing below shows the default configuration:
 
 To easily add a *new* comment, you can use the keybinding combination `ctrl` + ⇧ + `n`.
 
+## The review approach
+
+If you got a customer request for doing a code review you will ideally receive read access to it's github / gitlab repoistory or similar.
+To create a code review with a report you should install this extension and go on with the following steps:
+
+- Download / clone the customer code and checkout the correct branch
+- Open the project in vscode
+- [Configure th `baseURL` option](#extension-settings) with the remote URL
+  - this will cause that the link in the report is generate with the correct target including SHA, file and line reference
+- [Start creating your review notes](#create-review-notes).
+- [Export the report](#export-created-notes-as-html).
+  - [Probably create an own template first](#custom-handlebars-template)
+- Send it to the customer and make the customer happy ♥️
+
 **Enjoy!**
