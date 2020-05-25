@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.1.0](https://github.com/d-koppenhagen/vscode-code-review/compare/v1.0.1...v1.1.0) (2020-05-25)
+
+
+### Features
+
+* export GitLab importable file ([e281d47](https://github.com/d-koppenhagen/vscode-code-review/commit/e281d47f89cef63747fb4658ee7e88860ed78fb0)), closes [#16](https://github.com/d-koppenhagen/vscode-code-review/issues/16)
+* export review as JIRA importable CSV file ([61d730c](https://github.com/d-koppenhagen/vscode-code-review/commit/61d730cd000931e70c9ce035258173d6a3add960)), closes [#17](https://github.com/d-koppenhagen/vscode-code-review/issues/17)
+
+
+### Bug Fixes
+
+* subscibe to registration ([b4eb3de](https://github.com/d-koppenhagen/vscode-code-review/commit/b4eb3de47e30f7552d3fa5f6c721e0d1453a4e47))
+
 ### [1.0.1](https://github.com/d-koppenhagen/vscode-code-review/compare/v1.0.0...v1.0.1) (2020-05-25)
 
 ## [1.0.0](https://github.com/d-koppenhagen/vscode-code-review/compare/v0.0.18...v1.0.0) (2020-05-24)
