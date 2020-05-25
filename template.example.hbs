@@ -6,6 +6,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
     /* add your style */
+    p {
+      white-space: pre-wrap;
+    }
   </style>
 </head>
 <body>
@@ -31,7 +34,9 @@
       </tr>
       <tr>
         <td>Description</td>
-        <td>{{line.comment}}</td>
+        <td>
+          <p>{{line.comment}}</p>
+        </td>
       </tr>
       {{#if line.additional}}
       <tr>

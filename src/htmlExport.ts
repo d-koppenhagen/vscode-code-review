@@ -29,6 +29,9 @@ export class HtmlExporter {
     }
     h3 {
       font-size: 16px;
+    },
+    p {
+      white-space: pre-wrap;
     }
 
     /* links in headlines */
@@ -107,7 +110,9 @@ export class HtmlExporter {
       {{#if line.comment}}
       <tr class="row-description">
         <td class="caption">Description</td>
-        <td class="text">{{line.comment}}</td>
+        <td class="text">
+          <p>{{line.comment}}</p>
+        </td>
       </tr>
       {{/if}}
       {{#if line.additional}}
