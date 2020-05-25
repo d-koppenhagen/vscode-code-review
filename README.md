@@ -52,6 +52,18 @@ The used structure to fill the template placholders is an array of [`ReviewFileE
 Check out the example template file 
 [`template.example.hbs`](https://github.com/d-koppenhagen/vscode-code-review/blob/master/template.example.hbs), to see how your template should basically look like.
 
+### Export for Issue Tracking System
+
+#### export created notes as GitLab importable CSV file
+
+Once you finished your code review, you can export the results to a formatted csv file that's [importable into Gitlab issues](https://docs.gitlab.com/ee/user/project/issues/csv_import.html).
+
+![Code Review GitLab importable CSV export](./images/export-gitlab.png)
+
+Once exported, you can imported the file in the GitLab project
+
+![GitLab import CSV file](./images/gitlab-import.png)
+
 ## Extension Settings
 
 The following settings can be adjusted via the configuration file `.vscode/settings.json` or globally when configuring vscode.
@@ -83,6 +95,6 @@ To create a code review with a report you should install this extension and go o
 - [Start creating your review notes](#create-review-notes).
 - [Export the report](#export-created-notes-as-html).
   - [Probably create an own template first](#custom-handlebars-template)
-- Send it to the customer and make the customer happy ♥️
+- Send it to the customer or [import the notes in your issue tracking system](#export-for-issue-tracking-system) and make the customer happy ♥️
 
 **Enjoy!**

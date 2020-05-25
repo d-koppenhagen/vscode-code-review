@@ -48,6 +48,10 @@
       {
         "command": "codeReview.exportAsHtmlWithHandlebarsTemplate",
         "title": "Code Review: Export as HTML with Handlebars template"
+      },
+      {
+        "command": "codeReview.exportAsGitLabImportableCsv",
+        "title": "Code Review: Export as GitLab importable CSV file"
       }
     ],
     "menus": {

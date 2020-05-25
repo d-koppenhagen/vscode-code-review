@@ -1,11 +1,12 @@
 import * as fs from 'fs';
 import * as Handlebars from 'handlebars';
 import { workspace, Uri, window, ViewColumn } from 'vscode';
-import { parseFile } from '@fast-csv/parse';
+import { parseFile, parse } from '@fast-csv/parse';
 import { toAbsolutePath } from './utils/workspace-util';
 import { CsvEntry, ReviewFileExportSection } from './interfaces';
+import { EOL } from 'os';
 
-export class HtmlExporter {
+export class ExportFactory {
   private defaultFileName = 'code-review';
   /**
    * for trying out: https://stackblitz.com/edit/code-review-template
@@ -147,7 +148,7 @@ export class HtmlExporter {
       this.defaultFileName = configFileName;
     }
   }
-  export() {
+  exportAsHtml() {
     const reviewExportData: ReviewFileExportSection[] = [];
     const inputFile = `${toAbsolutePath(this.workspaceRoot, this.defaultFileName)}.csv`;
     const outputFile = `${toAbsolutePath(this.workspaceRoot, this.defaultFileName)}.html`;
@@ -155,20 +156,7 @@ export class HtmlExporter {
       .on('error', (error) => console.error(error))
       .on('data', (row: CsvEntry) => {
         const matchingFile = reviewExportData.find((fileRef) => fileRef.filename === row.filename);
-        switch (row.priority) {
-          case '1':
-            row.priority = 'low';
-            break;
-          case '2':
-            row.priority = 'medium';
-            break;
-          case '3':
-            row.priority = 'high';
-            break;
-          default:
-            row.priority = 'none';
-            break;
-        }
+        row.priority = this.priorityName(row.priority);
 
         if (matchingFile) {
           matchingFile.lines.push(row);
@@ -192,7 +180,51 @@ export class HtmlExporter {
       });
   }
 
-  showPreview(outputFile: string) {
+  exportAsGitLabCsv() {
+    const reviewExportData: ReviewFileExportSection[] = [];
+    const inputFile = `${toAbsolutePath(this.workspaceRoot, this.defaultFileName)}.csv`;
+    const outputFile = `${toAbsolutePath(this.workspaceRoot, this.defaultFileName)}.gitlab.csv`;
+
+    fs.writeFileSync(outputFile, `title,description${EOL}`);
+
+    parseFile(inputFile, { delimiter: ',', ignoreEmpty: true, headers: true })
+      .on('error', (error) => console.error(error))
+      .on('data', (row: CsvEntry) => {
+        // cut the description (100 chars max) along with '...' at the end
+        const descShort = row.comment.length > 100 ? `${row.comment.substring(0, 100)}...` : row.comment;
+        // use the title when provided but max 255 characters (as GitLab supports this length for titles), otherwise use the shortened description
+        const title = row.title ? row.title.substring(0, 255) : descShort;
+
+        const fileRow = row.url ? `- file: [${row.filename}](${row.url})${EOL}` : `${row.filename}${EOL}`;
+        const linesRow = `- lines: ${row.lines}${EOL}`;
+        const shaRow = row.sha ? `- SHA: ${row.sha}${EOL}${EOL}` : '';
+        const commentSection = `## Comment${EOL}${row.comment}${EOL}`;
+        const additional = row.additional ? `# Additional information${EOL}${row.additional}${EOL}` : '';
+        const priority = row.priority ? `## Priority${EOL}${this.priorityName(row.priority)}${EOL}${EOL}` : '';
+
+        const description = `${priority}## Affected${EOL}${fileRow}${linesRow}${shaRow}${commentSection}${EOL}${additional}`;
+
+        fs.appendFileSync(outputFile, `"[code review] ${title}","${description}"${EOL}`);
+      })
+      .on('end', (_rowCount: number) => {
+        window.showInformationMessage(`GitLab CSV file: '${outputFile}' successfully created.`);
+      });
+  }
+
+  private priorityName(priority: string) {
+    switch (priority) {
+      case '1':
+        return 'low';
+      case '2':
+        return 'medium';
+      case '3':
+        return 'high';
+      default:
+        return 'none';
+    }
+  }
+
+  private showPreview(outputFile: string) {
     const panel = window.createWebviewPanel('text', 'Code Review HTML Report', { viewColumn: ViewColumn.Beside });
     panel.webview.html = fs.readFileSync(outputFile, 'utf8');
   }

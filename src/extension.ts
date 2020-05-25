@@ -6,7 +6,7 @@ import { FileGenerator } from './file-generator';
 import { ReviewCommentService } from './review-comment';
 import { getWorkspaceFolder } from './utils/workspace-util';
 import { WebViewComponent } from './webview';
-import { HtmlExporter } from './htmlExport';
+import { ExportFactory } from './ExportFactory';
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -32,8 +32,8 @@ export function activate(context: ExtensionContext) {
   const exportAsHtmlWithDefaultTemplateRegistration = commands.registerCommand(
     'codeReview.exportAsHtmlWithDefaultTemplate',
     () => {
-      const exporter = new HtmlExporter(workspaceRoot);
-      exporter.export();
+      const exportFactory = new ExportFactory(workspaceRoot);
+      exportFactory.exportAsHtml();
     },
   );
 
@@ -55,11 +55,19 @@ export function activate(context: ExtensionContext) {
         })
         .then((files) => {
           const template = files && files.length ? files[0] : undefined;
-          const exporter = new HtmlExporter(workspaceRoot, template);
-          exporter.export();
+          const exportFactory = new ExportFactory(workspaceRoot, template);
+          exportFactory.exportAsHtml();
         });
     },
   );
+
+  /**
+   * allow users to export the report as HTML using a specific handlebars template
+   */
+  const exportAsGitLabImportableCsv = commands.registerCommand('codeReview.exportAsGitLabImportableCsv', () => {
+    const exportFactory = new ExportFactory(workspaceRoot);
+    exportFactory.exportAsGitLabCsv();
+  });
 
   /**
    * push all registration into subscriptions
