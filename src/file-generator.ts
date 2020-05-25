@@ -1,4 +1,5 @@
 import * as fs from 'fs';
+import { EOL } from 'os';
 import { workspace } from 'vscode';
 
 import { VSCodeWindow } from './interfaces';
@@ -37,7 +38,7 @@ export class FileGenerator {
     }
 
     try {
-      fs.writeFileSync(absoluteFilePath, `sha,filename,url,lines,title,comment,priority,additional\r\n`);
+      fs.writeFileSync(absoluteFilePath, `sha,filename,url,lines,title,comment,priority,additional${EOL}`);
       this.window.showInformationMessage(
         `Code review file: '${this.defaultFileName}${this.defaultFileExtension}' successfully created.`,
       );

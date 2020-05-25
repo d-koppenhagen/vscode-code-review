@@ -1,4 +1,5 @@
 import * as fs from 'fs';
+import { EOL } from 'os';
 import { window, workspace } from 'vscode';
 const gitCommitId = require('git-commit-id');
 
@@ -54,7 +55,7 @@ export class ReviewCommentService {
 
     fs.appendFileSync(
       this.reviewFile,
-      `"${sha}","${activeFileName}","${remoteUrl}","${selections}","${titleExcaped}","${commentExcaped}","${priority}","${additional}"\r\n`,
+      `"${sha}","${activeFileName}","${remoteUrl}","${selections}","${titleExcaped}","${commentExcaped}","${priority}","${additional}"${EOL}`,
     );
   }
 
