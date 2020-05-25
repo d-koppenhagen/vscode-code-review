@@ -64,6 +64,12 @@ Once exported, you can imported the file in the GitLab project
 
 ![GitLab import CSV file](./images/gitlab-import.png)
 
+#### export created notes as JIRA importable CSV file
+
+You can also export the notes as a CSV file to [import them into your JIRA issue tracking system](https://confluence.atlassian.com/adminjiracloud/importing-data-from-csv-776636762.html).
+
+![Code Review JIRA importable CSV export](./images/export-jira.png)
+
 ## Extension Settings
 
 The following settings can be adjusted via the configuration file `.vscode/settings.json` or globally when configuring vscode.

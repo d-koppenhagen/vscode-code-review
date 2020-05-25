@@ -52,6 +52,10 @@
       {
         "command": "codeReview.exportAsGitLabImportableCsv",
         "title": "Code Review: Export as GitLab importable CSV file"
+      },
+      {
+        "command": "codeReview.exportAsJiraImportableCsv",
+        "title": "Code Review: Export as JIRA importable CSV file"
       }
     ],
     "menus": {

@@ -64,9 +64,20 @@ export function activate(context: ExtensionContext) {
   /**
    * allow users to export the report as HTML using a specific handlebars template
    */
-  const exportAsGitLabImportableCsv = commands.registerCommand('codeReview.exportAsGitLabImportableCsv', () => {
+  const exportAsGitLabImportableCsvRegistration = commands.registerCommand(
+    'codeReview.exportAsGitLabImportableCsv',
+    () => {
+      const exportFactory = new ExportFactory(workspaceRoot);
+      exportFactory.exportAsGitLabCsv();
+    },
+  );
+
+  /**
+   * allow users to export the report as HTML using a specific handlebars template
+   */
+  const exportAsJiraImportableCsvRegistration = commands.registerCommand('codeReview.exportAsJiraImportableCsv', () => {
     const exportFactory = new ExportFactory(workspaceRoot);
-    exportFactory.exportAsGitLabCsv();
+    exportFactory.exportAsJiraCsv();
   });
 
   /**
@@ -76,7 +87,8 @@ export function activate(context: ExtensionContext) {
     addNoteRegistration,
     exportAsHtmlWithDefaultTemplateRegistration,
     exportAsHtmlWithHandlebarsTemplateRegistration,
-    exportAsGitLabImportableCsv,
+    exportAsGitLabImportableCsvRegistration,
+    exportAsJiraImportableCsvRegistration,
   );
 }
 

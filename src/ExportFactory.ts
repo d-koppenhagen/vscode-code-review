@@ -181,7 +181,6 @@ export class ExportFactory {
   }
 
   exportAsGitLabCsv() {
-    const reviewExportData: ReviewFileExportSection[] = [];
     const inputFile = `${toAbsolutePath(this.workspaceRoot, this.defaultFileName)}.csv`;
     const outputFile = `${toAbsolutePath(this.workspaceRoot, this.defaultFileName)}.gitlab.csv`;
 
@@ -199,7 +198,7 @@ export class ExportFactory {
         const linesRow = `- lines: ${row.lines}${EOL}`;
         const shaRow = row.sha ? `- SHA: ${row.sha}${EOL}${EOL}` : '';
         const commentSection = `## Comment${EOL}${row.comment}${EOL}`;
-        const additional = row.additional ? `# Additional information${EOL}${row.additional}${EOL}` : '';
+        const additional = row.additional ? `## Additional information${EOL}${row.additional}${EOL}` : '';
         const priority = row.priority ? `## Priority${EOL}${this.priorityName(row.priority)}${EOL}${EOL}` : '';
 
         const description = `${priority}## Affected${EOL}${fileRow}${linesRow}${shaRow}${commentSection}${EOL}${additional}`;
@@ -208,6 +207,52 @@ export class ExportFactory {
       })
       .on('end', (_rowCount: number) => {
         window.showInformationMessage(`GitLab CSV file: '${outputFile}' successfully created.`);
+      });
+  }
+
+  exportAsJiraCsv() {
+    const inputFile = `${toAbsolutePath(this.workspaceRoot, this.defaultFileName)}.csv`;
+    const outputFile = `${toAbsolutePath(this.workspaceRoot, this.defaultFileName)}.jira.csv`;
+
+    fs.writeFileSync(outputFile, `Summary, Description, Priority${EOL}`);
+
+    parseFile(inputFile, { delimiter: ',', ignoreEmpty: true, headers: true })
+      .on('error', (error) => console.error(error))
+      .on('data', (row: CsvEntry) => {
+        // cut the description (100 chars max) along with '...' at the end
+        const descShort = row.comment.length > 100 ? `${row.comment.substring(0, 100)}...` : row.comment;
+        // use the title when provided but max 255 characters (as GitLab supports this length for titles), otherwise use the shortened description
+        const title = row.title ? row.title.substring(0, 255) : descShort;
+
+        const fileRow = row.url ? `* file: [${row.filename}|${row.url}]${EOL}` : `${row.filename}${EOL}`;
+        const linesRow = `* lines: ${row.lines}${EOL}`;
+        const shaRow = row.sha ? `* SHA: ${row.sha}${EOL}${EOL}` : '';
+        const commentSection = `h2. Comment${EOL}${row.comment}${EOL}`;
+        const additional = row.additional ? `h2. Additional information${EOL}${row.additional}${EOL}` : '';
+
+        const description = `h2. Affected${EOL}${fileRow}${linesRow}${shaRow}${commentSection}${EOL}${additional}`;
+
+        // JIRA prioritys are the other way around
+        let priority = 3;
+        switch (row.priority) {
+          case '1':
+            priority = 3;
+            break;
+          case '2':
+            priority = 2;
+            break;
+          case '3':
+            priority = 1;
+            break;
+          default:
+            priority = 3;
+            break;
+        }
+
+        fs.appendFileSync(outputFile, `"[code review] ${title}","${description}","${priority}"${EOL}`);
+      })
+      .on('end', (_rowCount: number) => {
+        window.showInformationMessage(`GitLab JIRA file: '${outputFile}' successfully created.`);
       });
   }
 
