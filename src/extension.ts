@@ -76,6 +76,7 @@ export function activate(context: ExtensionContext) {
     addNoteRegistration,
     exportAsHtmlWithDefaultTemplateRegistration,
     exportAsHtmlWithHandlebarsTemplateRegistration,
+    exportAsGitLabImportableCsv,
   );
 }
 
