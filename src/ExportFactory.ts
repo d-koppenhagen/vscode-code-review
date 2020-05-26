@@ -214,7 +214,7 @@ export class ExportFactory {
     const inputFile = `${toAbsolutePath(this.workspaceRoot, this.defaultFileName)}.csv`;
     const outputFile = `${toAbsolutePath(this.workspaceRoot, this.defaultFileName)}.jira.csv`;
 
-    fs.writeFileSync(outputFile, `Summary, Description, Priority${EOL}`);
+    fs.writeFileSync(outputFile, `Summary,Description,Priority,sha,filename,url,lines,title,comment,additional${EOL}`);
 
     parseFile(inputFile, { delimiter: ',', ignoreEmpty: true, headers: true })
       .on('error', (error) => console.error(error))
@@ -249,7 +249,10 @@ export class ExportFactory {
             break;
         }
 
-        fs.appendFileSync(outputFile, `"[code review] ${title}","${description}","${priority}"${EOL}`);
+        fs.appendFileSync(
+          outputFile,
+          `"[code review] ${title}","${description}","${priority}","${row.sha}","${row.filename}","${row.url}","${row.lines}","${row.title}","${row.comment}","${row.additional}"${EOL}`,
+        );
       })
       .on('end', (_rowCount: number) => {
         window.showInformationMessage(`GitLab JIRA file: '${outputFile}' successfully created.`);
