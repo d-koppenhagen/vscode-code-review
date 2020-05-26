@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.2.0](https://github.com/d-koppenhagen/vscode-code-review/compare/v1.1.0...v1.2.0) (2020-05-26)
+
+
+### Features
+
+* export all fields for JIRA CSV ([e2c8acf](https://github.com/d-koppenhagen/vscode-code-review/commit/e2c8acf2d5631599321a15d68266df93f1dd7a1f)), closes [#17](https://github.com/d-koppenhagen/vscode-code-review/issues/17)
+
 ## [1.1.0](https://github.com/d-koppenhagen/vscode-code-review/compare/v1.0.1...v1.1.0) (2020-05-25)
 
 
