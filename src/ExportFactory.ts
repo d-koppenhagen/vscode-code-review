@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import * as Handlebars from 'handlebars';
 import { workspace, Uri, window, ViewColumn } from 'vscode';
-import { parseFile, parse } from '@fast-csv/parse';
+import { parseFile } from '@fast-csv/parse';
 import { toAbsolutePath } from './utils/workspace-util';
 import { CsvEntry, ReviewFileExportSection } from './interfaces';
 import { EOL } from 'os';
@@ -27,6 +27,7 @@ export class ExportFactory {
     }
     h2 {
       font-size: 20px;
+      color: green;
     }
     h3 {
       font-size: 16px;
@@ -36,17 +37,16 @@ export class ExportFactory {
     }
 
     /* links in headlines */
-    h2 > a {
-      color: green;
-      text-decoration: none;
-    }
-    h2 > a:hover {
-      text-decoration: underline;
-    }
     h3.lines-headline {
-      color: #005bbb;
       padding-left: 5px;
       margin-bottom: 5px;
+    }
+    h3.lines-headline > a {
+      color: #005bbb;
+      text-decoration: none;
+    }
+    h3.lines-headline > a:hover {
+      text-decoration: underline;
     }
 
     /* table style */
@@ -90,11 +90,11 @@ export class ExportFactory {
   <h1 class="main-headline">Code Review Results</h1>
   {{#each this as |item|}}
   <section class="file-section">
-    <h2 class="file-section-headline">
-      <a href="{{item.url}}">{{item.filename}}</a>
-    </h2>
+    <h2 class="file-section-headline">{{item.filename}}</h2>
     {{#each item.lines as |line|}}
-    <h3 class="lines-headline">Position: {{line.lines}}</h3>
+    <h3 class="lines-headline">
+      <a href="{{line.url}}">Position: {{line.lines}}</a>
+    </h3>
     <table class="review-table">
       <tr class="row-priority">
         <td class="caption">Priority</td>
