@@ -15,6 +15,7 @@ export interface ReviewComment {
   description: string;
   priority?: number;
   additional?: string;
+  category?: string;
 }
 
 export interface CsvEntry {
@@ -25,6 +26,7 @@ export interface CsvEntry {
   title: string;
   comment: string;
   priority: string;
+  category: string;
   additional: string;
 }
 
@@ -39,6 +41,7 @@ export interface ReviewFileExportSection {
     title: string;
     comment: string;
     priority: string;
+    category: string;
     additional: string;
   }[];
 }

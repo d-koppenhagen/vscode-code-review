@@ -43,6 +43,7 @@ export class ReviewCommentService {
     const titleExcaped = comment.title ? comment.title.replace(/"/g, '\\"') : '';
     const priority = comment.priority || '';
     const additional = comment.additional ? comment.additional.replace(/"/g, '\\"') : '';
+    const category = comment.category || '';
     let sha = '';
     try {
       sha = gitCommitId({ cwd: this.workspaceRoot });
@@ -55,7 +56,7 @@ export class ReviewCommentService {
 
     fs.appendFileSync(
       this.reviewFile,
-      `"${sha}","${activeFileName}","${remoteUrl}","${selections}","${titleExcaped}","${commentExcaped}","${priority}","${additional}"${EOL}`,
+      `"${sha}","${activeFileName}","${remoteUrl}","${selections}","${titleExcaped}","${commentExcaped}","${priority}","${category}","${additional}"${EOL}`,
     );
   }
 

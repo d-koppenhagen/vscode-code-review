@@ -38,7 +38,7 @@ export class FileGenerator {
     }
 
     try {
-      fs.writeFileSync(absoluteFilePath, `sha,filename,url,lines,title,comment,priority,additional${EOL}`);
+      fs.writeFileSync(absoluteFilePath, `sha,filename,url,lines,title,comment,priority,category,additional${EOL}`);
       this.window.showInformationMessage(
         `Code review file: '${this.defaultFileName}${this.defaultFileExtension}' successfully created.`,
       );

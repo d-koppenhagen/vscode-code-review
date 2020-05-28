@@ -83,6 +83,22 @@
           "title": "The base URL for a referenced file without the SHA",
           "description": "The base URL is used to build a full link to the file (e.g. \"https://github.com/foo/bar/tree/\"). It will be appended with the GIT SHA if available followed by the relative path of the file",
           "default": ""
+        },
+        "code-review.categories": {
+          "type": "array",
+          "title": "Categories",
+          "description": "Configure categories to choose for review categorization",
+          "default": [
+            "Architecture",
+            "Best Practices",
+            "Code-Style",
+            "Complexity",
+            "Error Handling",
+            "Maintainability",
+            "Performance",
+            "Reliability",
+            "Separation of concerns"
+          ]
         }
       }
     },

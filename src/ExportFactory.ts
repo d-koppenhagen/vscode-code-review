@@ -108,6 +108,12 @@ export class ExportFactory {
         <td class="text">{{line.title}}</td>
       </tr>
       {{/if}}
+      {{#if line.category}}
+      <tr class="row-category">
+        <td class="caption">Category</td>
+        <td class="text">{{line.category}}</td>
+      </tr>
+      {{/if}}
       {{#if line.comment}}
       <tr class="row-description">
         <td class="caption">Description</td>
@@ -200,8 +206,9 @@ export class ExportFactory {
         const commentSection = `## Comment${EOL}${row.comment}${EOL}`;
         const additional = row.additional ? `## Additional information${EOL}${row.additional}${EOL}` : '';
         const priority = row.priority ? `## Priority${EOL}${this.priorityName(row.priority)}${EOL}${EOL}` : '';
+        const category = row.category ? `## Category${EOL}${row.category}${EOL}${EOL}` : '';
 
-        const description = `${priority}## Affected${EOL}${fileRow}${linesRow}${shaRow}${commentSection}${EOL}${additional}`;
+        const description = `${priority}${category}## Affected${EOL}${fileRow}${linesRow}${shaRow}${commentSection}${EOL}${additional}`;
 
         fs.appendFileSync(outputFile, `"[code review] ${title}","${description}"${EOL}`);
       })
@@ -214,7 +221,10 @@ export class ExportFactory {
     const inputFile = `${toAbsolutePath(this.workspaceRoot, this.defaultFileName)}.csv`;
     const outputFile = `${toAbsolutePath(this.workspaceRoot, this.defaultFileName)}.jira.csv`;
 
-    fs.writeFileSync(outputFile, `Summary,Description,Priority,sha,filename,url,lines,title,comment,additional${EOL}`);
+    fs.writeFileSync(
+      outputFile,
+      `Summary,Description,Priority,sha,filename,url,lines,title,category,comment,additional${EOL}`,
+    );
 
     parseFile(inputFile, { delimiter: ',', ignoreEmpty: true, headers: true })
       .on('error', (error) => console.error(error))
@@ -227,10 +237,11 @@ export class ExportFactory {
         const fileRow = row.url ? `* file: [${row.filename}|${row.url}]${EOL}` : `${row.filename}${EOL}`;
         const linesRow = `* lines: ${row.lines}${EOL}`;
         const shaRow = row.sha ? `* SHA: ${row.sha}${EOL}${EOL}` : '';
+        const categorySection = `h2. Category${EOL}${row.category}${EOL}${EOL}`;
         const commentSection = `h2. Comment${EOL}${row.comment}${EOL}`;
         const additional = row.additional ? `h2. Additional information${EOL}${row.additional}${EOL}` : '';
 
-        const description = `h2. Affected${EOL}${fileRow}${linesRow}${shaRow}${commentSection}${EOL}${additional}`;
+        const description = `h2. Affected${EOL}${fileRow}${linesRow}${shaRow}${categorySection}${commentSection}${EOL}${additional}`;
 
         // JIRA prioritys are the other way around
         let priority = 3;
@@ -251,7 +262,7 @@ export class ExportFactory {
 
         fs.appendFileSync(
           outputFile,
-          `"[code review] ${title}","${description}","${priority}","${row.sha}","${row.filename}","${row.url}","${row.lines}","${row.title}","${row.comment}","${row.additional}"${EOL}`,
+          `"[code review] ${title}","${description}","${priority}","${row.sha}","${row.filename}","${row.url}","${row.lines}","${row.title}","${row.category}","${row.comment}","${row.additional}"${EOL}`,
         );
       })
       .on('end', (_rowCount: number) => {

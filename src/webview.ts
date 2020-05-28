@@ -1,9 +1,13 @@
-import { window, ViewColumn, ExtensionContext } from 'vscode';
+import { window, ViewColumn, ExtensionContext, workspace } from 'vscode';
 import { ReviewCommentService } from './review-comment';
 import { ReviewComment } from './interfaces';
 
 export class WebViewComponent {
-  constructor(public context: ExtensionContext) {}
+  private categories: string[] = [];
+
+  constructor(public context: ExtensionContext) {
+    this.categories = workspace.getConfiguration().get('code-review.categories') as string[];
+  }
   addComment(commentService: ReviewCommentService) {
     // initialize new web tab
     const panel = window.createWebviewPanel(
@@ -40,6 +44,11 @@ export class WebViewComponent {
   }
 
   getWebviewContent() {
+    let selectListString = '';
+    this.categories.forEach((category) => {
+      selectListString += `<option value="${category}">${category}</option>`;
+    });
+
     return `<!DOCTYPE html>
     <html lang="en">
       <head>
@@ -172,6 +181,12 @@ export class WebViewComponent {
               <label for="title">Title</label>
               <input id="title" name="title" type="text" placeholder="A short description (e.g. 'Method too complex')" />
     
+              <label for="category">Kategorie</label>
+              <select id="category" name="category">
+                <option value="">Keine</option>
+                ${selectListString}
+              </select>
+
               <label for="description">Description</label>
               <textarea
                 id="description"
@@ -216,11 +231,13 @@ export class WebViewComponent {
           const description = document.getElementById('description').value;
           const trafficLightEl = document.querySelector('input[name=traffic-light-color]:checked');
           const priority = trafficLightEl ? document.querySelector('input[name=traffic-light-color]:checked').value : 0;
+          const category = document.getElementById('category').value;
           const additional = document.getElementById('additional').value;
     
           const formData = {
             title,
             description,
+            category,
             priority,
             additional,
           };

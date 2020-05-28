@@ -86,7 +86,12 @@ The listing below shows the default configuration:
   "code-review.filename": "code-review",
   // CSV column "url" will contain the remote link like this: "https://github.com/foo/bar/tree/e023a1831a3d5299407cac4379e83df07b383475/foo/bar.txt
   // If the project is not a git project, the SHA is empty (e.g. "code-review.baseUrl": "https://my-url/" => will become: "https://my-url/foo/bar.txt)
-  "code-review.baseUrl": "https://github.com/foo/bar/tree/"
+  "code-review.baseUrl": "https://github.com/foo/bar/tree/",
+  "code-review.categories": [
+      "Architecture",
+      "Best Practices",
+      ...
+   ],
 }
 ```
 
