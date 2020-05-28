@@ -72,13 +72,13 @@
       "type": "object",
       "title": "Code Review",
       "properties": {
-        "filename": {
+        "code-review.filename": {
           "type": "string",
           "title": "The filename for teh csv file",
           "description": "The name will be used for the file with the *.csv extension that contains the stored code review notes",
           "default": "code-review"
         },
-        "baseUrl": {
+        "code-review.baseUrl": {
           "type": "string",
           "title": "The base URL for a referenced file without the SHA",
           "description": "The base URL is used to build a full link to the file (e.g. \"https://github.com/foo/bar/tree/\"). It will be appended with the GIT SHA if available followed by the relative path of the file",
