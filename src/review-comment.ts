@@ -23,7 +23,7 @@ export class ReviewCommentService {
       // 2:2-12:2|19:0-19:0
       selections = window.activeTextEditor.selections.reduce((acc, cur) => {
         const tmp = acc ? `${acc}|` : '';
-        return `${tmp}${cur.start.line}:${cur.start.character}-${cur.end.line}:${cur.end.character}`;
+        return `${tmp}${cur.start.line + 1}:${cur.start.character}-${cur.end.line + 1}:${cur.end.character}`;
       }, '');
 
       // use the first line selection for building an anker for the target URL
