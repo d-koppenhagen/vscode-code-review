@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.3.0](https://github.com/d-koppenhagen/vscode-code-review/compare/v1.2.0...v1.3.0) (2020-05-28)
+
+
+### Features
+
+* add category field with configurable options ([9d70f60](https://github.com/d-koppenhagen/vscode-code-review/commit/9d70f60d5cb3ee1dfb3aaecc72ae3384d9d0c338)), closes [#20](https://github.com/d-koppenhagen/vscode-code-review/issues/20)
+
+
+### Bug Fixes
+
+* use correct line number in CSV file ([e3d90ff](https://github.com/d-koppenhagen/vscode-code-review/commit/e3d90ff3513181d970498ce28c6bd72cf8468726)), closes [#23](https://github.com/d-koppenhagen/vscode-code-review/issues/23)
+* use correct prop names ([b0ee481](https://github.com/d-koppenhagen/vscode-code-review/commit/b0ee481267685b1ad7b78b814c8fc61310c618a9))
+* use URL links per comment ref in default template ([451c1a7](https://github.com/d-koppenhagen/vscode-code-review/commit/451c1a78aca87ff7922464067b07d2f18c83282c)), closes [#22](https://github.com/d-koppenhagen/vscode-code-review/issues/22)
+
 ## [1.2.0](https://github.com/d-koppenhagen/vscode-code-review/compare/v1.1.0...v1.2.0) (2020-05-26)
 
 
