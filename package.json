@@ -88,6 +88,9 @@
           "type": "array",
           "title": "Categories",
           "description": "Configure categories to choose for review categorization",
+          "items": {
+            "type": "string"
+          },
           "default": [
             "Architecture",
             "Best Practices",
