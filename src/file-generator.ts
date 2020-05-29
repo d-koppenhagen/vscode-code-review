@@ -3,11 +3,12 @@ import { EOL } from 'os';
 import { workspace } from 'vscode';
 
 import { VSCodeWindow } from './interfaces';
-import { toAbsolutePath } from './utils/workspace-util';
+import { toAbsolutePath, getFirstLine } from './utils/workspace-util';
 
 export class FileGenerator {
   private readonly defaultFileExtension = '.csv';
   private defaultFileName = 'code-review';
+  private csvFileHeader = 'sha,filename,url,lines,title,comment,priority,category,additional';
 
   constructor(private workspaceRoot: string, private window: VSCodeWindow) {
     const configFileName = workspace.getConfiguration().get('code-review.filename') as string;
@@ -34,11 +35,21 @@ export class FileGenerator {
   create(absoluteFilePath: string) {
     if (fs.existsSync(absoluteFilePath)) {
       console.log(`File: '${absoluteFilePath}' already exists`);
+
+      getFirstLine(absoluteFilePath).then((lineContent) => {
+        if (lineContent !== this.csvFileHeader) {
+          this.window.showErrorMessage(
+            `CSV header "${lineContent}" is not matching "${this.csvFileHeader}" format. Please adjust it manually`,
+          );
+        } else {
+          console.log(`CSV header "${lineContent}" is OK`);
+        }
+      });
       return;
     }
 
     try {
-      fs.writeFileSync(absoluteFilePath, `sha,filename,url,lines,title,comment,priority,category,additional${EOL}`);
+      fs.writeFileSync(absoluteFilePath, `${this.csvFileHeader}${EOL}`);
       this.window.showInformationMessage(
         `Code review file: '${this.defaultFileName}${this.defaultFileExtension}' successfully created.`,
       );
