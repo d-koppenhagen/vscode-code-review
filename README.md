@@ -96,6 +96,8 @@ The listing below shows the default configuration:
 }
 ```
 
+![Visual Studio Code - Code Review Extension Settings](./images/extension-settings.png)
+
 ## Keybindings
 
 To easily add a *new* comment, you can use the keybinding combination `ctrl` + ⇧ + `n`.
