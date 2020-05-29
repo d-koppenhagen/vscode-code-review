@@ -8,6 +8,7 @@ import { EOL } from 'os';
 
 export class ExportFactory {
   private defaultFileName = 'code-review';
+  private groupBy: null | keyof Pick<CsvEntry, 'category' | 'priority'> = null;
   /**
    * for trying out: https://stackblitz.com/edit/code-review-template
    */
@@ -31,7 +32,7 @@ export class ExportFactory {
     }
     h3 {
       font-size: 16px;
-    },
+    }
     p {
       white-space: pre-wrap;
     }
@@ -90,7 +91,7 @@ export class ExportFactory {
   <h1 class="main-headline">Code Review Results</h1>
   {{#each this as |item|}}
   <section class="file-section">
-    <h2 class="file-section-headline">{{item.filename}}</h2>
+    <h2 class="file-section-headline">{{item.group}}</h2>
     {{#each item.lines as |line|}}
     <h3 class="lines-headline">
       <a href="{{line.url}}">Position: {{line.lines}}</a>
@@ -153,28 +154,31 @@ export class ExportFactory {
     if (configFileName) {
       this.defaultFileName = configFileName;
     }
+    let groupByConfig = workspace.getConfiguration().get('code-review.groupBy') as string;
+    if (groupByConfig !== '-') {
+      this.groupBy = groupByConfig as keyof Pick<CsvEntry, 'category' | 'priority'>;
+    }
   }
   exportAsHtml() {
-    const reviewExportData: ReviewFileExportSection[] = [];
+    const rows: CsvEntry[] = [];
     const inputFile = `${toAbsolutePath(this.workspaceRoot, this.defaultFileName)}.csv`;
     const outputFile = `${toAbsolutePath(this.workspaceRoot, this.defaultFileName)}.html`;
     parseFile(inputFile, { delimiter: ',', ignoreEmpty: true, headers: true })
       .on('error', (error) => console.error(error))
       .on('data', (row: CsvEntry) => {
-        const matchingFile = reviewExportData.find((fileRef) => fileRef.filename === row.filename);
-        row.priority = this.priorityName(row.priority);
-
-        if (matchingFile) {
-          matchingFile.lines.push(row);
-        } else {
-          reviewExportData.push({
-            filename: row.filename,
-            url: row.url,
-            lines: [row],
-          });
-        }
+        rows.push(row);
       })
       .on('end', (_rowCount: number) => {
+        // check if grouping should be applied
+        let reviewExportData: ReviewFileExportSection[] = [];
+
+        if (this.groupBy) {
+          reviewExportData = this.groupResults(rows, this.groupBy);
+        } else {
+          reviewExportData = this.groupResults(rows, 'filename');
+        }
+
+        console.log(reviewExportData);
         const template = Handlebars.compile(this.hbsDefaultTemplate);
 
         const htmlOut = template(reviewExportData);
@@ -268,6 +272,25 @@ export class ExportFactory {
       .on('end', (_rowCount: number) => {
         window.showInformationMessage(`GitLab JIRA file: '${outputFile}' successfully created.`);
       });
+  }
+
+  private groupResults(rows: CsvEntry[], groupAttribute: keyof CsvEntry): ReviewFileExportSection[] {
+    const reviewExportData: ReviewFileExportSection[] = [];
+
+    rows.forEach((row) => {
+      row.priority = this.priorityName(row.priority);
+      row.category = row.category || 'Other';
+      const match = reviewExportData.find((fileRef) => fileRef.group === row[groupAttribute]);
+      if (match) {
+        match.lines.push(row);
+      } else {
+        reviewExportData.push({
+          group: row[groupAttribute],
+          lines: [row],
+        });
+      }
+    });
+    return reviewExportData;
   }
 
   private priorityName(priority: string) {

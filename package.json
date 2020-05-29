@@ -99,6 +99,17 @@
             "Reliability",
             "Separation of concerns"
           ]
+        },
+        "code-review.groupBy": {
+          "type": "string",
+          "enum": [
+            "-",
+            "priority",
+            "category"
+          ],
+          "default": "-",
+          "title": "Group report results",
+          "description": "You can choose one of the available options to group the report results by this property."
         }
       }
     },

@@ -31,8 +31,7 @@ export interface CsvEntry {
 }
 
 export interface ReviewFileExportSection {
-  filename: string;
-  url: string;
+  group: string;
   lines: {
     sha: string;
     filename: string;
