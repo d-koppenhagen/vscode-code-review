@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.4.0](https://github.com/d-koppenhagen/vscode-code-review/compare/v1.3.0...v1.4.0) (2020-05-29)
+
+
+### Features
+
+* allow to group by priority and category ([a21377b](https://github.com/d-koppenhagen/vscode-code-review/commit/a21377b29ab7c777daa001f4a42b0e4eb3297b43)), closes [#21](https://github.com/d-koppenhagen/vscode-code-review/issues/21)
+
 ## [1.3.0](https://github.com/d-koppenhagen/vscode-code-review/compare/v1.2.0...v1.3.0) (2020-05-28)
 
 
