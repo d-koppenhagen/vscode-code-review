@@ -60,10 +60,6 @@ export class ReviewCommentService {
     );
   }
 
-  editComment(/*lineOrLines, comment*/) {}
-
-  removeComment(/*lineOrLines, comment*/) {}
-
   /**
    * Build the remote URL
    * @param sha a git SHA that's included in the URL

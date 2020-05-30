@@ -6,13 +6,13 @@ import { FileGenerator } from './file-generator';
 import { ReviewCommentService } from './review-comment';
 import { getWorkspaceFolder } from './utils/workspace-util';
 import { WebViewComponent } from './webview';
-import { ExportFactory } from './ExportFactory';
+import { ExportFactory } from './export-factory';
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
 export function activate(context: ExtensionContext) {
   const workspaceRoot: string = getWorkspaceFolder(workspace.workspaceFolders as WorkspaceFolder[]);
-  const generator = new FileGenerator(workspaceRoot, window);
+  const generator = new FileGenerator(workspaceRoot);
   const webview = new WebViewComponent(context);
   // The command has been defined in the package.json file
   // Now provide the implementation of the command with registerCommand

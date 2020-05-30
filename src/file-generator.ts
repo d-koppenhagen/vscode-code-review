@@ -1,8 +1,7 @@
 import * as fs from 'fs';
 import { EOL } from 'os';
-import { workspace } from 'vscode';
+import { workspace, window } from 'vscode';
 
-import { VSCodeWindow } from './interfaces';
 import { toAbsolutePath, getFirstLine } from './utils/workspace-util';
 
 export class FileGenerator {
@@ -10,7 +9,7 @@ export class FileGenerator {
   private defaultFileName = 'code-review';
   private csvFileHeader = 'sha,filename,url,lines,title,comment,priority,category,additional';
 
-  constructor(private workspaceRoot: string, private window: VSCodeWindow) {
+  constructor(private workspaceRoot: string) {
     const configFileName = workspace.getConfiguration().get('code-review.filename') as string;
     if (configFileName) {
       this.defaultFileName = configFileName;
@@ -38,7 +37,7 @@ export class FileGenerator {
 
       getFirstLine(absoluteFilePath).then((lineContent) => {
         if (lineContent !== this.csvFileHeader) {
-          this.window.showErrorMessage(
+          window.showErrorMessage(
             `CSV header "${lineContent}" is not matching "${this.csvFileHeader}" format. Please adjust it manually`,
           );
         } else {
@@ -50,11 +49,11 @@ export class FileGenerator {
 
     try {
       fs.writeFileSync(absoluteFilePath, `${this.csvFileHeader}${EOL}`);
-      this.window.showInformationMessage(
+      window.showInformationMessage(
         `Code review file: '${this.defaultFileName}${this.defaultFileExtension}' successfully created.`,
       );
     } catch (err) {
-      this.window.showErrorMessage(`Error when trying to create code review file: '${absoluteFilePath}': ${err}`);
+      window.showErrorMessage(`Error when trying to create code review file: '${absoluteFilePath}': ${err}`);
     }
   }
 
