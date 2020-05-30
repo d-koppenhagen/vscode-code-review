@@ -56,6 +56,10 @@
       {
         "command": "codeReview.exportAsJiraImportableCsv",
         "title": "Code Review: Export as JIRA importable CSV file"
+      },
+      {
+        "command": "codeReview.exportAsJson",
+        "title": "Code Review: Export as JSON file"
       }
     ],
     "menus": {

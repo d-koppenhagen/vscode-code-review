@@ -217,7 +217,7 @@ export class ExportFactory {
         fs.appendFileSync(outputFile, `"[code review] ${title}","${description}"${EOL}`);
       })
       .on('end', (_rowCount: number) => {
-        window.showInformationMessage(`GitLab CSV file: '${outputFile}' successfully created.`);
+        window.showInformationMessage(`GitLab importable CSV file: '${outputFile}' successfully created.`);
       });
   }
 
@@ -270,7 +270,22 @@ export class ExportFactory {
         );
       })
       .on('end', (_rowCount: number) => {
-        window.showInformationMessage(`GitLab JIRA file: '${outputFile}' successfully created.`);
+        window.showInformationMessage(`JIRA importable file: '${outputFile}' successfully created.`);
+      });
+  }
+
+  exportAsJson() {
+    const inputFile = `${toAbsolutePath(this.workspaceRoot, this.defaultFileName)}.csv`;
+    const outputFile = `${toAbsolutePath(this.workspaceRoot, this.defaultFileName)}.json`;
+
+    const data: CsvEntry[] = [];
+
+    parseFile(inputFile, { delimiter: ',', ignoreEmpty: true, headers: true })
+      .on('error', (error) => console.error(error))
+      .on('data', (row: CsvEntry) => data.push(row))
+      .on('end', (_rowCount: number) => {
+        fs.writeFileSync(outputFile, JSON.stringify(data, null, 2));
+        window.showInformationMessage(`GitLab CSV file: '${outputFile}' successfully created.`);
       });
   }
 

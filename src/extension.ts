@@ -81,6 +81,14 @@ export function activate(context: ExtensionContext) {
   });
 
   /**
+   * allow users to export the report as HTML using a specific handlebars template
+   */
+  const exportAsJsonRegistration = commands.registerCommand('codeReview.exportAsJson', () => {
+    const exportFactory = new ExportFactory(workspaceRoot);
+    exportFactory.exportAsJson();
+  });
+
+  /**
    * push all registration into subscriptions
    */
   context.subscriptions.push(
@@ -89,6 +97,7 @@ export function activate(context: ExtensionContext) {
     exportAsHtmlWithHandlebarsTemplateRegistration,
     exportAsGitLabImportableCsvRegistration,
     exportAsJiraImportableCsvRegistration,
+    exportAsJsonRegistration,
   );
 }
 
