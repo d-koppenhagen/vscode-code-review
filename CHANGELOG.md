@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.5.0](https://github.com/d-koppenhagen/vscode-code-review/compare/v1.4.1...v1.5.0) (2020-05-30)
+
+
+### Features
+
+* export as github CSV ([730dfd4](https://github.com/d-koppenhagen/vscode-code-review/commit/730dfd4e946f4713cd25675f443b7ad558da0562)), closes [#18](https://github.com/d-koppenhagen/vscode-code-review/issues/18)
+* export as JSON ([75d24dd](https://github.com/d-koppenhagen/vscode-code-review/commit/75d24ddd61072745b172c813fa73ebfb0115debb)), closes [#10](https://github.com/d-koppenhagen/vscode-code-review/issues/10)
+* validate description field in webview ([2ff006f](https://github.com/d-koppenhagen/vscode-code-review/commit/2ff006f9b2935b892c317c8909157dfe9c1c7d8e))
+
 ### [1.4.1](https://github.com/d-koppenhagen/vscode-code-review/compare/v1.4.0...v1.4.1) (2020-05-29)
 
 ## [1.4.0](https://github.com/d-koppenhagen/vscode-code-review/compare/v1.3.0...v1.4.0) (2020-05-29)
