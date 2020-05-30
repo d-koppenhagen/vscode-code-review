@@ -181,13 +181,13 @@ export class WebViewComponent {
               <label for="title">Title</label>
               <input id="title" name="title" type="text" placeholder="A short description (e.g. 'Method too complex')" />
     
-              <label for="category">Kategorie</label>
+              <label for="category">Category</label>
               <select id="category" name="category">
                 <option value="">Keine</option>
                 ${selectListString}
               </select>
 
-              <label for="description">Description</label>
+              <label for="description">Description *</label>
               <textarea
                 id="description"
                 name="description"
@@ -213,7 +213,7 @@ export class WebViewComponent {
               </div>
             </div>
           </div>
-          <button class="action-btn primary" tabindex="0" role="button" onclick="addNote()">
+          <button class="action-btn primary" tabindex="0" id="add" role="button" onclick="addNote()">
             Add Note
           </button>
     
@@ -224,6 +224,17 @@ export class WebViewComponent {
       </body>
     
       <script>
+        document.getElementById("add").disabled = true;
+
+        const descriptionEl = document.getElementById('description');
+        descriptionEl.addEventListener('input', () => {
+          if (descriptionEl.value) {
+            document.getElementById("add").disabled = false;
+          } else {
+            document.getElementById("add").disabled = true;
+          }
+        });
+
         function addNote() {
           const vscode = acquireVsCodeApi();
     
