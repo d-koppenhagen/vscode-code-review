@@ -221,6 +221,37 @@ export class ExportFactory {
       });
   }
 
+  exportAsGitHubCsv() {
+    const inputFile = `${toAbsolutePath(this.workspaceRoot, this.defaultFileName)}.csv`;
+    const outputFile = `${toAbsolutePath(this.workspaceRoot, this.defaultFileName)}.github.csv`;
+
+    fs.writeFileSync(outputFile, `title,description,labels,state,assignee${EOL}`);
+
+    parseFile(inputFile, { delimiter: ',', ignoreEmpty: true, headers: true })
+      .on('error', (error) => console.error(error))
+      .on('data', (row: CsvEntry) => {
+        // cut the description (100 chars max) along with '...' at the end
+        const descShort = row.comment.length > 100 ? `${row.comment.substring(0, 100)}...` : row.comment;
+        // use the title when provided but max 255 characters (as GitLab supports this length for titles), otherwise use the shortened description
+        const title = row.title ? row.title.substring(0, 255) : descShort;
+
+        const fileRow = row.url ? `- file: [${row.filename}](${row.url})${EOL}` : `${row.filename}${EOL}`;
+        const linesRow = `- lines: ${row.lines}${EOL}`;
+        const shaRow = row.sha ? `- SHA: ${row.sha}${EOL}${EOL}` : '';
+        const commentSection = `## Comment${EOL}${row.comment}${EOL}`;
+        const additional = row.additional ? `## Additional information${EOL}${row.additional}${EOL}` : '';
+        const priority = row.priority ? `## Priority${EOL}${this.priorityName(row.priority)}${EOL}${EOL}` : '';
+        const category = row.category ? `## Category${EOL}${row.category}${EOL}${EOL}` : '';
+
+        const description = `${priority}${category}## Affected${EOL}${fileRow}${linesRow}${shaRow}${commentSection}${EOL}${additional}`;
+
+        fs.appendFileSync(outputFile, `"[code review] ${title}","${description}","code-review","open",""${EOL}`);
+      })
+      .on('end', (_rowCount: number) => {
+        window.showInformationMessage(`GitHub importable CSV file: '${outputFile}' successfully created.`);
+      });
+  }
+
   exportAsJiraCsv() {
     const inputFile = `${toAbsolutePath(this.workspaceRoot, this.defaultFileName)}.csv`;
     const outputFile = `${toAbsolutePath(this.workspaceRoot, this.defaultFileName)}.jira.csv`;

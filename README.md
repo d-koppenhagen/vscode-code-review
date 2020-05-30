@@ -64,6 +64,12 @@ Once exported, you can import the file in the GitLab project
 
 ![GitLab import CSV file](./images/gitlab-import.png)
 
+#### export created notes as GitHub importable CSV file
+
+You can export the code review results to a formatted csv file that's [importable into GitHub by using `github-csv-tools`](https://github.com/gavinr/github-csv-tools).
+
+![Code Review GitLab importable CSV export](./images/export-github.png)
+
 #### export created notes as JIRA importable CSV file
 
 You can also export the notes as a CSV file to [import them into your JIRA issue tracking system](https://confluence.atlassian.com/adminjiracloud/importing-data-from-csv-776636762.html).

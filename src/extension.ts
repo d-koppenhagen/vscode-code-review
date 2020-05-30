@@ -62,7 +62,7 @@ export function activate(context: ExtensionContext) {
   );
 
   /**
-   * allow users to export the report as HTML using a specific handlebars template
+   * allow users to export the report as GitLab importable CSV file
    */
   const exportAsGitLabImportableCsvRegistration = commands.registerCommand(
     'codeReview.exportAsGitLabImportableCsv',
@@ -73,7 +73,19 @@ export function activate(context: ExtensionContext) {
   );
 
   /**
-   * allow users to export the report as HTML using a specific handlebars template
+   * allow users to export the report as GitHub importable CSV file
+   * @see https://github.com/gavinr/github-csv-tools
+   */
+  const exportAsGitHubImportableCsvRegistration = commands.registerCommand(
+    'codeReview.exportAsGitHubImportableCsv',
+    () => {
+      const exportFactory = new ExportFactory(workspaceRoot);
+      exportFactory.exportAsGitHubCsv();
+    },
+  );
+
+  /**
+   * allow users to export the report as JIRA importable CSV file
    */
   const exportAsJiraImportableCsvRegistration = commands.registerCommand('codeReview.exportAsJiraImportableCsv', () => {
     const exportFactory = new ExportFactory(workspaceRoot);
@@ -81,7 +93,7 @@ export function activate(context: ExtensionContext) {
   });
 
   /**
-   * allow users to export the report as HTML using a specific handlebars template
+   * allow users to export the report as JSON file
    */
   const exportAsJsonRegistration = commands.registerCommand('codeReview.exportAsJson', () => {
     const exportFactory = new ExportFactory(workspaceRoot);
@@ -96,6 +108,7 @@ export function activate(context: ExtensionContext) {
     exportAsHtmlWithDefaultTemplateRegistration,
     exportAsHtmlWithHandlebarsTemplateRegistration,
     exportAsGitLabImportableCsvRegistration,
+    exportAsGitHubImportableCsvRegistration,
     exportAsJiraImportableCsvRegistration,
     exportAsJsonRegistration,
   );
