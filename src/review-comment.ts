@@ -4,6 +4,7 @@ import { window, workspace } from 'vscode';
 const gitCommitId = require('git-commit-id');
 
 import { ReviewComment } from './interfaces';
+import { removeLeadingAndTrailingSlash, removeTrailingSlash } from './utils/workspace-util';
 
 export class ReviewCommentService {
   constructor(private reviewFile: string, private workspaceRoot: string) {}
@@ -68,15 +69,24 @@ export class ReviewCommentService {
    * @param end the last line from the first selection
    */
   private remoteUrl(sha: string, filePath: string, start?: number, end?: number) {
+    const customUrl = workspace.getConfiguration().get('code-review.customUrl') as string;
     const baseUrl = workspace.getConfiguration().get('code-review.baseUrl') as string;
-    if (!baseUrl) {
+
+    const filePathWithoutLeadingAndTrailingSlash = removeLeadingAndTrailingSlash(filePath);
+
+    if (!baseUrl && !customUrl) {
       return '';
+    } else if (customUrl) {
+      return customUrl
+        .replace('{sha}', sha)
+        .replace('{file}', filePathWithoutLeadingAndTrailingSlash)
+        .replace('{start}', start ? start.toString() : '0')
+        .replace('{end}', end ? end.toString() : '0');
     } else {
-      const baseUrlWithoutTrailingSlash = baseUrl.replace(/\/$/, '');
-      const filePathWithoutLeadingAnfTrailingSlash = filePath.replace(/^\/|\/$/g, '');
+      const baseUrlWithoutTrailingSlash = removeTrailingSlash(baseUrl);
       const shaPart = sha ? `${sha}/` : '';
       const ankerPart = start && end ? `#L${start}-L${end}` : '';
-      return `${baseUrlWithoutTrailingSlash}/${shaPart}${filePathWithoutLeadingAnfTrailingSlash}${ankerPart}`;
+      return `${baseUrlWithoutTrailingSlash}/${shaPart}${filePathWithoutLeadingAndTrailingSlash}${ankerPart}`;
     }
   }
 

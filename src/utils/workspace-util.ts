@@ -42,3 +42,7 @@ export const getFirstLine = async (pathToFile: string) => {
   readable.close();
   return line;
 };
+
+export const removeTrailingSlash = (s: string): string => s.replace(/\/$/, '');
+export const removeLeadingSlash = (s: string): string => s.replace(/^\//, '');
+export const removeLeadingAndTrailingSlash = (s: string): string => s.replace(/^\/|\/$/g, '');

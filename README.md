@@ -90,9 +90,15 @@ The listing below shows the default configuration:
 {
   // filename will lead into "code-review.csv"
   "code-review.filename": "code-review",
-  // CSV column "url" will contain the remote link like this: "https://github.com/foo/bar/tree/e023a1831a3d5299407cac4379e83df07b383475/foo/bar.txt
-  // If the project is not a git project, the SHA is empty (e.g. "code-review.baseUrl": "https://my-url/" => will become: "https://my-url/foo/bar.txt)
+  // The base URL is used to build a full link to the file (e.g. "https://github.com/foo/bar/blob/b0b4...0175/src/file.txt#L12-L19"). It will be appended with the GIT SHA if available followed by the relative path of the file and the selected lines as an anker. This setting is skipped when the setting `code-review.customUrl` is defined.
   "code-review.baseUrl": "https://github.com/foo/bar/tree/",
+  // The custom URL is used to build a full link to the file. The following placeholders are available:
+  // - '{sha}': insert the SHA ref for the file
+  // - '{file}': insert the file name/path
+  // - 'start': insert the start of the lines selection as an anker
+  // - 'end': insert the end of the lines selection as an anker
+  // e.g. "https://gitlab.com/foo/bar/baz/-/blob/{sha}/src/{file}#L{start}-{end}" becomes this in the end: "https://gitlab.com/foo/bar/baz/-/blob/b0b4...0175/src/file.txt#L12-19"
+  "code-review.customUrl": "https://gitlab.com/foo/bar/baz/-/blob/{sha}/src/{file}#L{start}-{end}",
   "code-review.categories": [
       "Architecture",
       "Best Practices",
