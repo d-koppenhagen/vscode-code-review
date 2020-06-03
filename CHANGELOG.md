@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.6.0](https://github.com/d-koppenhagen/vscode-code-review/compare/v1.5.0...v1.6.0) (2020-06-03)
+
+
+### Features
+
+* allow to configure custom URL masks ([5d573c9](https://github.com/d-koppenhagen/vscode-code-review/commit/5d573c91ad255b6fef342b6cc7bf95246475e6f7)), closes [/gitlab.com/foo/bar/baz/-/blob/b0b4/src/file.txt#L12-19](https://github.com/d-koppenhagen//gitlab.com/foo/bar/baz/-/blob/b0b4/src/file.txt/issues/L12-19) [#25](https://github.com/d-koppenhagen/vscode-code-review/issues/25) [#26](https://github.com/d-koppenhagen/vscode-code-review/issues/26)
+
 ## [1.5.0](https://github.com/d-koppenhagen/vscode-code-review/compare/v1.4.1...v1.5.0) (2020-05-30)
 
 
