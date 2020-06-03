@@ -28,5 +28,8 @@
     "titleBar.inactiveBackground": "#4d4fa699",
     "titleBar.inactiveForeground": "#e7e7e799"
   },
-  "peacock.color": "#4d4fa6"
+  "peacock.color": "#4d4fa6",
+  "[markdown]": {
+    "editor.defaultFormatter": null
+  }
 }

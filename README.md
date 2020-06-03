@@ -6,6 +6,19 @@
 
 This extension allows you to create a code review file you can hand over to a customer.
 
+<hr>
+
+- [vscode-code-review](#vscode-code-review) 
+- [Features](#features)
+  - [create review notes](#create-review-notes)
+  - [export created notes as HTML](#export-created-notes-as-html)    
+  - [Export for Issue Tracking System](#export-for-issue-tracking-system)    
+- [Extension Settings](#extension-settings)
+- [Keybindings](#keybindings)
+- [The review approach](#the-review-approach)
+
+<hr>
+
 ## Features
 
 ### create review notes
@@ -86,29 +99,77 @@ After exporting, you can import the file in your JIRA instance and probably map 
 The following settings can be adjusted via the configuration file `.vscode/settings.json` or globally when configuring vscode.
 The listing below shows the default configuration:
 
+![Visual Studio Code - Code Review Extension Settings](./images/extension-settings.png)
+
+### `code-review.filename`
+
+The filename for the `*.csv` file that stores all comments.
+By default `"code-review"` is used.
+
 ```json
 {
-  // filename will lead into "code-review.csv"
-  "code-review.filename": "code-review",
-  // The base URL is used to build a full link to the file (e.g. "https://github.com/foo/bar/blob/b0b4...0175/src/file.txt#L12-L19"). It will be appended with the GIT SHA if available followed by the relative path of the file and the selected lines as an anker. This setting is skipped when the setting `code-review.customUrl` is defined.
-  "code-review.baseUrl": "https://github.com/foo/bar/tree/",
-  // The custom URL is used to build a full link to the file. The following placeholders are available:
-  // - '{sha}': insert the SHA ref for the file
-  // - '{file}': insert the file name/path
-  // - 'start': insert the start of the lines selection as an anker
-  // - 'end': insert the end of the lines selection as an anker
-  // e.g. "https://gitlab.com/foo/bar/baz/-/blob/{sha}/src/{file}#L{start}-{end}" becomes this in the end: "https://gitlab.com/foo/bar/baz/-/blob/b0b4...0175/src/file.txt#L12-19"
-  "code-review.customUrl": "https://gitlab.com/foo/bar/baz/-/blob/{sha}/src/{file}#L{start}-{end}",
+  "code-review.filename": "my-review-file"
+}
+```
+
+### `code-review.baseUrl`
+
+The base-URL is used to build a full link to the file.
+It will be appended with the git SHA if available followed by the relative path of the file and the selected lines as an anker.
+This setting is skipped when the setting `code-review.customUrl` is defined which is more configurable.
+
+```json
+{
+  "code-review.baseUrl": "https://github.com/foo/bar/blob"
+}
+```
+
+This setting would lead into something like this: `https://github.com/foo/bar/blob/b0b4...0175/src/file.txt#L12-L19`.
+
+### `code-review.customUrl`
+
+The custom URL is used to build a full link to the file.
+The following placeholders are available:
+- `{sha}`: insert the SHA ref for the file
+- `{file}`: insert the file name/path
+- `{start}`: insert the start of the lines selection as an anker
+- `{end}`: insert the end of the lines selection as an anker
+
+```json
+{
+  "code-review.customUrl": "https://gitlab.com/foo/bar/baz/-/blob/{sha}/src/{file}#L{start}-{end}"
+}
+```
+
+This setting would lead into something like this: `https://gitlab.com/foo/bar/baz/-/blob/b0b4...0175/src/file.txt#L12-19`
+
+### `code-review.groupBy`
+
+This setting is used when [generating a report](#export-created-notes-as-html).
+The comments will be grouped by either:
+- `-`: default, group by filename
+- `priority`: grouping by priorities
+- `category`: grouping by the used categories
+
+```json
+{
+  "code-review.groupBy": "category"
+}
+```
+
+### `code-review.categories`
+
+Here you can define the categories that will be available for selection when you create comments.
+
+```json
+{
   "code-review.categories": [
       "Architecture",
       "Best Practices",
       ...
    ],
-   "code-review.groupBy": "-"
 }
 ```
-
-![Visual Studio Code - Code Review Extension Settings](./images/extension-settings.png)
 
 ## Keybindings
 
