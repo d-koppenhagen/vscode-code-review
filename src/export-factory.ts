@@ -2,7 +2,7 @@ import * as fs from 'fs';
 import * as Handlebars from 'handlebars';
 import { workspace, Uri, window, ViewColumn } from 'vscode';
 import { parseFile } from '@fast-csv/parse';
-import { toAbsolutePath } from './utils/workspace-util';
+import { toAbsolutePath, getFileContentForRange, removeLeadingSlash } from './utils/workspace-util';
 import { CsvEntry, ReviewFileExportSection } from './interfaces';
 import { EOL } from 'os';
 
@@ -32,16 +32,23 @@ export class ExportFactory {
     }
     h3 {
       font-size: 16px;
-    }
-    p {
-      white-space: pre-wrap;
-    }
-
-    /* links in headlines */
-    h3.lines-headline {
       padding-left: 5px;
       margin-bottom: 5px;
     }
+    p {
+      white-space: pre-wrap;
+      margin: 0;
+    }
+    pre {
+      margin: 0
+    }
+    code {
+      margin-left: 10px;
+      border: 1px solid #999;
+      display: block;
+    }
+
+    /* links in headlines */
     h3.lines-headline > a {
       color: #005bbb;
       text-decoration: none;
@@ -136,6 +143,12 @@ export class ExportFactory {
       </tr>
       {{/if}}
     </table>
+    {{#if line.code}}
+    <h3 class="code-headline">Code</h3>
+    <pre>
+      <code>{{line.code}}</code>
+    </pre>
+    {{/if}}
     {{/each}}
   </section>
   {{/each}}
@@ -326,6 +339,7 @@ export class ExportFactory {
     rows.forEach((row) => {
       row.priority = this.priorityName(row.priority);
       row.category = row.category || 'Other';
+      row.code = this.getCodeForFile(row.filename, row.lines);
       const match = reviewExportData.find((fileRef) => fileRef.group === row[groupAttribute]);
       if (match) {
         match.lines.push(row);
@@ -337,6 +351,24 @@ export class ExportFactory {
       }
     });
     return reviewExportData;
+  }
+
+  private getCodeForFile(filename: string, lines: string): string {
+    let result = '';
+    const lineRanges = lines.split('|'); // split: 2:2-12:2|8:0-18:5
+    const filePath = toAbsolutePath(this.workspaceRoot, removeLeadingSlash(filename));
+    lineRanges.forEach((range: string) => {
+      const [start, end] = range.split('-'); // split: 2:2-12:2
+      const [startLine] = start.split(':'); // split: 2:2
+      const [endLine] = end.split(':'); // split: 2:2
+      const fileContent = getFileContentForRange(filePath, Number(startLine), Number(endLine));
+      if (result) {
+        result = `${result}${EOL}...${EOL}${fileContent}`;
+      } else {
+        result = fileContent;
+      }
+    });
+    return result;
   }
 
   private priorityName(priority: string) {

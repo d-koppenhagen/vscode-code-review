@@ -20,6 +20,7 @@ export interface CsvEntry {
   priority: string;
   category: string;
   additional: string;
+  code: string;
 }
 
 export interface ReviewFileExportSection {
