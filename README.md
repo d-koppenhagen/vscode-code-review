@@ -181,6 +181,10 @@ Define weather to include the code selection(s) in generated reports or not.
 }
 ```
 
+> Attention: This feature can may cause problems when characters in code will obtain that the code block is closed.
+> This can happen in case the e.g. the review is related to an HTML code block that just contains `</code>` or e.g. to a code block that contains `",`.
+> In that case you should disable the `code-review.reportWithCodeSelection` option to not break the general report.
+
 ## Keybindings
 
 To easily add a *new* comment, you can use the keybinding combination `ctrl` + ⇧ + `n`.
