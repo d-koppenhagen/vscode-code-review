@@ -3,12 +3,13 @@ import * as Handlebars from 'handlebars';
 import { workspace, Uri, window, ViewColumn } from 'vscode';
 import { parseFile } from '@fast-csv/parse';
 import { toAbsolutePath, getFileContentForRange, removeLeadingSlash } from './utils/workspace-util';
-import { CsvEntry, ReviewFileExportSection } from './interfaces';
+import { CsvEntry, ReviewFileExportSection, GroupBy } from './interfaces';
 import { EOL } from 'os';
 
 export class ExportFactory {
   private defaultFileName = 'code-review';
-  private groupBy: null | keyof Pick<CsvEntry, 'category' | 'priority'> = null;
+  private groupBy: null | GroupBy = null;
+  private includeCodeSelection = false;
   /**
    * for trying out: https://stackblitz.com/edit/code-review-template
    */
@@ -169,8 +170,9 @@ export class ExportFactory {
     }
     let groupByConfig = workspace.getConfiguration().get('code-review.groupBy') as string;
     if (groupByConfig !== '-') {
-      this.groupBy = groupByConfig as keyof Pick<CsvEntry, 'category' | 'priority'>;
+      this.groupBy = groupByConfig as GroupBy;
     }
+    this.includeCodeSelection = workspace.getConfiguration().get('code-review.reportWithCodeSelection') as boolean;
   }
   exportAsHtml() {
     const rows: CsvEntry[] = [];
@@ -179,6 +181,7 @@ export class ExportFactory {
     parseFile(inputFile, { delimiter: ',', ignoreEmpty: true, headers: true })
       .on('error', (error) => console.error(error))
       .on('data', (row: CsvEntry) => {
+        row.code = this.includeCodeSelection ? this.getCodeForFile(row.filename, row.lines) : '';
         rows.push(row);
       })
       .on('end', (_rowCount: number) => {
@@ -333,13 +336,12 @@ export class ExportFactory {
       });
   }
 
-  private groupResults(rows: CsvEntry[], groupAttribute: keyof CsvEntry): ReviewFileExportSection[] {
+  private groupResults(rows: CsvEntry[], groupAttribute: GroupBy): ReviewFileExportSection[] {
     const reviewExportData: ReviewFileExportSection[] = [];
 
     rows.forEach((row) => {
       row.priority = this.priorityName(row.priority);
       row.category = row.category || 'Other';
-      row.code = this.getCodeForFile(row.filename, row.lines);
       const match = reviewExportData.find((fileRef) => fileRef.group === row[groupAttribute]);
       if (match) {
         match.lines.push(row);
@@ -363,7 +365,7 @@ export class ExportFactory {
       const [endLine] = end.split(':'); // split: 2:2
       const fileContent = getFileContentForRange(filePath, Number(startLine), Number(endLine));
       if (result) {
-        result = `${result}${EOL}...${EOL}${fileContent}`;
+        result = `${result}${EOL}...${EOL}${EOL}${fileContent}`;
       } else {
         result = fileContent;
       }

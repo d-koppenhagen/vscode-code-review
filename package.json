@@ -127,6 +127,12 @@
           "default": "-",
           "title": "Group report results",
           "description": "You can choose one of the available options to group the report results by this property."
+        },
+        "code-review.reportWithCodeSelection": {
+          "type": "boolean",
+          "title": "Inlcude Code Selection in Report",
+          "description": "Define weather to include the code selection(s) in generated reports or not.",
+          "default": false
         }
       }
     },

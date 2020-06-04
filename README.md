@@ -171,6 +171,16 @@ Here you can define the categories that will be available for selection when you
 }
 ```
 
+### `code-review.reportWithCodeSelection`
+
+Define weather to include the code selection(s) in generated reports or not.
+
+```json
+{
+  "code-review.reportWithCodeSelection": true
+}
+```
+
 ## Keybindings
 
 To easily add a *new* comment, you can use the keybinding combination `ctrl` + ⇧ + `n`.

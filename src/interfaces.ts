@@ -20,10 +20,12 @@ export interface CsvEntry {
   priority: string;
   category: string;
   additional: string;
-  code: string;
+  code?: string;
 }
 
 export interface ReviewFileExportSection {
   group: string;
   lines: CsvEntry[];
 }
+
+export type GroupBy = keyof Pick<CsvEntry, 'category' | 'priority' | 'filename'>;
