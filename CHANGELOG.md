@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.7.0](https://github.com/d-koppenhagen/vscode-code-review/compare/v1.6.0...v1.7.0) (2020-06-04)
+
+
+### Features
+
+* allow to configure weather to include code selection in report ([972201e](https://github.com/d-koppenhagen/vscode-code-review/commit/972201e06d3bd07a151b465c612d88a2ac55a288)), closes [#24](https://github.com/d-koppenhagen/vscode-code-review/issues/24)
+* allow to include code in other exports ([521b6ac](https://github.com/d-koppenhagen/vscode-code-review/commit/521b6ac8e6692e90ab9110bb3100833e3ec279eb)), closes [#24](https://github.com/d-koppenhagen/vscode-code-review/issues/24)
+* inlcude source code in HTML report ([b1a3ea5](https://github.com/d-koppenhagen/vscode-code-review/commit/b1a3ea55d9fbaf2a7154f27dfb1e961af3281e89)), closes [#24](https://github.com/d-koppenhagen/vscode-code-review/issues/24)
+
 ## [1.6.0](https://github.com/d-koppenhagen/vscode-code-review/compare/v1.5.0...v1.6.0) (2020-06-03)
 
 

@@ -3,6 +3,7 @@ import * as path from 'path';
 import * as fs from 'fs';
 import * as readline from 'readline';
 import { WorkspaceFolder } from 'vscode';
+import { EOL } from 'os';
 
 // workspace root, assumed to be the first item in the array
 export const getWorkspaceFolder = (folders: WorkspaceFolder[] | undefined): string => {
@@ -20,11 +21,8 @@ export const getWorkspaceFolder = (folders: WorkspaceFolder[] | undefined): stri
  * takes a filename or relative path and returns an absolute path
  * @param filename the name of the file
  */
-export const toAbsolutePath = (workspaceRoot: string, filename: string): string => {
-  // if it's just the name of the duck,
-  // assume that it will be in 'src/state/ducks/'
-  return path.resolve(workspaceRoot, filename);
-};
+export const toAbsolutePath = (workspaceRoot: string, filename: string): string =>
+  path.resolve(workspaceRoot, filename);
 
 /**
  * get the content of the first line in file
@@ -41,6 +39,12 @@ export const getFirstLine = async (pathToFile: string) => {
   });
   readable.close();
   return line;
+};
+
+export const getFileContentForRange = (pathToFile: string, start: number, end: number): string => {
+  const fileContent = fs.readFileSync(pathToFile, 'utf8');
+  const fileContentLines = fileContent.split(EOL);
+  return fileContentLines.slice(start - 1, end + 1).join(EOL);
 };
 
 export const removeTrailingSlash = (s: string): string => s.replace(/\/$/, '');

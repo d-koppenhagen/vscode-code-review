@@ -2,13 +2,14 @@ import * as fs from 'fs';
 import * as Handlebars from 'handlebars';
 import { workspace, Uri, window, ViewColumn } from 'vscode';
 import { parseFile } from '@fast-csv/parse';
-import { toAbsolutePath } from './utils/workspace-util';
-import { CsvEntry, ReviewFileExportSection } from './interfaces';
+import { toAbsolutePath, getFileContentForRange, removeLeadingSlash } from './utils/workspace-util';
+import { CsvEntry, ReviewFileExportSection, GroupBy } from './interfaces';
 import { EOL } from 'os';
 
 export class ExportFactory {
   private defaultFileName = 'code-review';
-  private groupBy: null | keyof Pick<CsvEntry, 'category' | 'priority'> = null;
+  private groupBy: null | GroupBy = null;
+  private includeCodeSelection = false;
   /**
    * for trying out: https://stackblitz.com/edit/code-review-template
    */
@@ -32,16 +33,23 @@ export class ExportFactory {
     }
     h3 {
       font-size: 16px;
-    }
-    p {
-      white-space: pre-wrap;
-    }
-
-    /* links in headlines */
-    h3.lines-headline {
       padding-left: 5px;
       margin-bottom: 5px;
     }
+    p {
+      white-space: pre-wrap;
+      margin: 0;
+    }
+    pre {
+      margin: 0
+    }
+    code {
+      margin-left: 10px;
+      border: 1px solid #999;
+      display: block;
+    }
+
+    /* links in headlines */
     h3.lines-headline > a {
       color: #005bbb;
       text-decoration: none;
@@ -136,6 +144,12 @@ export class ExportFactory {
       </tr>
       {{/if}}
     </table>
+    {{#if line.code}}
+    <h3 class="code-headline">Code</h3>
+    <pre>
+      <code>{{line.code}}</code>
+    </pre>
+    {{/if}}
     {{/each}}
   </section>
   {{/each}}
@@ -156,8 +170,9 @@ export class ExportFactory {
     }
     let groupByConfig = workspace.getConfiguration().get('code-review.groupBy') as string;
     if (groupByConfig !== '-') {
-      this.groupBy = groupByConfig as keyof Pick<CsvEntry, 'category' | 'priority'>;
+      this.groupBy = groupByConfig as GroupBy;
     }
+    this.includeCodeSelection = workspace.getConfiguration().get('code-review.reportWithCodeSelection') as boolean;
   }
   exportAsHtml() {
     const rows: CsvEntry[] = [];
@@ -166,6 +181,7 @@ export class ExportFactory {
     parseFile(inputFile, { delimiter: ',', ignoreEmpty: true, headers: true })
       .on('error', (error) => console.error(error))
       .on('data', (row: CsvEntry) => {
+        row.code = this.includeCodeSelection ? this.getCodeForFile(row.filename, row.lines) : '';
         rows.push(row);
       })
       .on('end', (_rowCount: number) => {
@@ -199,6 +215,7 @@ export class ExportFactory {
     parseFile(inputFile, { delimiter: ',', ignoreEmpty: true, headers: true })
       .on('error', (error) => console.error(error))
       .on('data', (row: CsvEntry) => {
+        this.includeCodeSelection ? (row.code = this.getCodeForFile(row.filename, row.lines)) : delete row.code;
         // cut the description (100 chars max) along with '...' at the end
         const descShort = row.comment.length > 100 ? `${row.comment.substring(0, 100)}...` : row.comment;
         // use the title when provided but max 255 characters (as GitLab supports this length for titles), otherwise use the shortened description
@@ -211,8 +228,9 @@ export class ExportFactory {
         const additional = row.additional ? `## Additional information${EOL}${row.additional}${EOL}` : '';
         const priority = row.priority ? `## Priority${EOL}${this.priorityName(row.priority)}${EOL}${EOL}` : '';
         const category = row.category ? `## Category${EOL}${row.category}${EOL}${EOL}` : '';
+        const code = row.code ? `${EOL}## Source Code${EOL}${EOL}\`\`\`${EOL}${row.code}\`\`\`${EOL}` : '';
 
-        const description = `${priority}${category}## Affected${EOL}${fileRow}${linesRow}${shaRow}${commentSection}${EOL}${additional}`;
+        const description = `${priority}${category}## Affected${EOL}${fileRow}${linesRow}${shaRow}${commentSection}${EOL}${additional}${code}`;
 
         fs.appendFileSync(outputFile, `"[code review] ${title}","${description}"${EOL}`);
       })
@@ -230,6 +248,7 @@ export class ExportFactory {
     parseFile(inputFile, { delimiter: ',', ignoreEmpty: true, headers: true })
       .on('error', (error) => console.error(error))
       .on('data', (row: CsvEntry) => {
+        this.includeCodeSelection ? (row.code = this.getCodeForFile(row.filename, row.lines)) : delete row.code;
         // cut the description (100 chars max) along with '...' at the end
         const descShort = row.comment.length > 100 ? `${row.comment.substring(0, 100)}...` : row.comment;
         // use the title when provided but max 255 characters (as GitLab supports this length for titles), otherwise use the shortened description
@@ -242,8 +261,9 @@ export class ExportFactory {
         const additional = row.additional ? `## Additional information${EOL}${row.additional}${EOL}` : '';
         const priority = row.priority ? `## Priority${EOL}${this.priorityName(row.priority)}${EOL}${EOL}` : '';
         const category = row.category ? `## Category${EOL}${row.category}${EOL}${EOL}` : '';
+        const code = row.code ? `${EOL}## Source Code${EOL}${EOL}\`\`\`${EOL}${row.code}\`\`\`${EOL}` : '';
 
-        const description = `${priority}${category}## Affected${EOL}${fileRow}${linesRow}${shaRow}${commentSection}${EOL}${additional}`;
+        const description = `${priority}${category}## Affected${EOL}${fileRow}${linesRow}${shaRow}${commentSection}${EOL}${additional}${code}`;
 
         fs.appendFileSync(outputFile, `"[code review] ${title}","${description}","code-review","open",""${EOL}`);
       })
@@ -264,6 +284,7 @@ export class ExportFactory {
     parseFile(inputFile, { delimiter: ',', ignoreEmpty: true, headers: true })
       .on('error', (error) => console.error(error))
       .on('data', (row: CsvEntry) => {
+        this.includeCodeSelection ? (row.code = this.getCodeForFile(row.filename, row.lines)) : delete row.code;
         // cut the description (100 chars max) along with '...' at the end
         const descShort = row.comment.length > 100 ? `${row.comment.substring(0, 100)}...` : row.comment;
         // use the title when provided but max 255 characters (as GitLab supports this length for titles), otherwise use the shortened description
@@ -275,8 +296,9 @@ export class ExportFactory {
         const categorySection = `h2. Category${EOL}${row.category}${EOL}${EOL}`;
         const commentSection = `h2. Comment${EOL}${row.comment}${EOL}`;
         const additional = row.additional ? `h2. Additional information${EOL}${row.additional}${EOL}` : '';
+        const code = row.code ? `${EOL}h2. Source Code${EOL}${EOL}{code}${EOL}${row.code}{code}${EOL}` : '';
 
-        const description = `h2. Affected${EOL}${fileRow}${linesRow}${shaRow}${categorySection}${commentSection}${EOL}${additional}`;
+        const description = `h2. Affected${EOL}${fileRow}${linesRow}${shaRow}${categorySection}${commentSection}${EOL}${additional}${code}`;
 
         // JIRA prioritys are the other way around
         let priority = 3;
@@ -313,14 +335,17 @@ export class ExportFactory {
 
     parseFile(inputFile, { delimiter: ',', ignoreEmpty: true, headers: true })
       .on('error', (error) => console.error(error))
-      .on('data', (row: CsvEntry) => data.push(row))
+      .on('data', (row: CsvEntry) => {
+        this.includeCodeSelection ? (row.code = this.getCodeForFile(row.filename, row.lines)) : delete row.code;
+        data.push(row);
+      })
       .on('end', (_rowCount: number) => {
         fs.writeFileSync(outputFile, JSON.stringify(data, null, 2));
         window.showInformationMessage(`GitLab CSV file: '${outputFile}' successfully created.`);
       });
   }
 
-  private groupResults(rows: CsvEntry[], groupAttribute: keyof CsvEntry): ReviewFileExportSection[] {
+  private groupResults(rows: CsvEntry[], groupAttribute: GroupBy): ReviewFileExportSection[] {
     const reviewExportData: ReviewFileExportSection[] = [];
 
     rows.forEach((row) => {
@@ -337,6 +362,24 @@ export class ExportFactory {
       }
     });
     return reviewExportData;
+  }
+
+  private getCodeForFile(filename: string, lines: string): string {
+    let result = '';
+    const lineRanges = lines.split('|'); // split: 2:2-12:2|8:0-18:5
+    const filePath = toAbsolutePath(this.workspaceRoot, removeLeadingSlash(filename));
+    lineRanges.forEach((range: string) => {
+      const [start, end] = range.split('-'); // split: 2:2-12:2
+      const [startLine] = start.split(':'); // split: 2:2
+      const [endLine] = end.split(':'); // split: 2:2
+      const fileContent = getFileContentForRange(filePath, Number(startLine), Number(endLine));
+      if (result) {
+        result = `${result}${EOL}...${EOL}${EOL}${fileContent}`;
+      } else {
+        result = fileContent;
+      }
+    });
+    return result;
   }
 
   private priorityName(priority: string) {
