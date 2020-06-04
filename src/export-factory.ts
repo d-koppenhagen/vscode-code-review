@@ -215,6 +215,7 @@ export class ExportFactory {
     parseFile(inputFile, { delimiter: ',', ignoreEmpty: true, headers: true })
       .on('error', (error) => console.error(error))
       .on('data', (row: CsvEntry) => {
+        this.includeCodeSelection ? (row.code = this.getCodeForFile(row.filename, row.lines)) : delete row.code;
         // cut the description (100 chars max) along with '...' at the end
         const descShort = row.comment.length > 100 ? `${row.comment.substring(0, 100)}...` : row.comment;
         // use the title when provided but max 255 characters (as GitLab supports this length for titles), otherwise use the shortened description
@@ -227,8 +228,9 @@ export class ExportFactory {
         const additional = row.additional ? `## Additional information${EOL}${row.additional}${EOL}` : '';
         const priority = row.priority ? `## Priority${EOL}${this.priorityName(row.priority)}${EOL}${EOL}` : '';
         const category = row.category ? `## Category${EOL}${row.category}${EOL}${EOL}` : '';
+        const code = row.code ? `${EOL}## Source Code${EOL}${EOL}\`\`\`${EOL}${row.code}\`\`\`${EOL}` : '';
 
-        const description = `${priority}${category}## Affected${EOL}${fileRow}${linesRow}${shaRow}${commentSection}${EOL}${additional}`;
+        const description = `${priority}${category}## Affected${EOL}${fileRow}${linesRow}${shaRow}${commentSection}${EOL}${additional}${code}`;
 
         fs.appendFileSync(outputFile, `"[code review] ${title}","${description}"${EOL}`);
       })
@@ -246,6 +248,7 @@ export class ExportFactory {
     parseFile(inputFile, { delimiter: ',', ignoreEmpty: true, headers: true })
       .on('error', (error) => console.error(error))
       .on('data', (row: CsvEntry) => {
+        this.includeCodeSelection ? (row.code = this.getCodeForFile(row.filename, row.lines)) : delete row.code;
         // cut the description (100 chars max) along with '...' at the end
         const descShort = row.comment.length > 100 ? `${row.comment.substring(0, 100)}...` : row.comment;
         // use the title when provided but max 255 characters (as GitLab supports this length for titles), otherwise use the shortened description
@@ -258,8 +261,9 @@ export class ExportFactory {
         const additional = row.additional ? `## Additional information${EOL}${row.additional}${EOL}` : '';
         const priority = row.priority ? `## Priority${EOL}${this.priorityName(row.priority)}${EOL}${EOL}` : '';
         const category = row.category ? `## Category${EOL}${row.category}${EOL}${EOL}` : '';
+        const code = row.code ? `${EOL}## Source Code${EOL}${EOL}\`\`\`${EOL}${row.code}\`\`\`${EOL}` : '';
 
-        const description = `${priority}${category}## Affected${EOL}${fileRow}${linesRow}${shaRow}${commentSection}${EOL}${additional}`;
+        const description = `${priority}${category}## Affected${EOL}${fileRow}${linesRow}${shaRow}${commentSection}${EOL}${additional}${code}`;
 
         fs.appendFileSync(outputFile, `"[code review] ${title}","${description}","code-review","open",""${EOL}`);
       })
@@ -280,6 +284,7 @@ export class ExportFactory {
     parseFile(inputFile, { delimiter: ',', ignoreEmpty: true, headers: true })
       .on('error', (error) => console.error(error))
       .on('data', (row: CsvEntry) => {
+        this.includeCodeSelection ? (row.code = this.getCodeForFile(row.filename, row.lines)) : delete row.code;
         // cut the description (100 chars max) along with '...' at the end
         const descShort = row.comment.length > 100 ? `${row.comment.substring(0, 100)}...` : row.comment;
         // use the title when provided but max 255 characters (as GitLab supports this length for titles), otherwise use the shortened description
@@ -291,8 +296,9 @@ export class ExportFactory {
         const categorySection = `h2. Category${EOL}${row.category}${EOL}${EOL}`;
         const commentSection = `h2. Comment${EOL}${row.comment}${EOL}`;
         const additional = row.additional ? `h2. Additional information${EOL}${row.additional}${EOL}` : '';
+        const code = row.code ? `${EOL}h2. Source Code${EOL}${EOL}{code}${EOL}${row.code}{code}${EOL}` : '';
 
-        const description = `h2. Affected${EOL}${fileRow}${linesRow}${shaRow}${categorySection}${commentSection}${EOL}${additional}`;
+        const description = `h2. Affected${EOL}${fileRow}${linesRow}${shaRow}${categorySection}${commentSection}${EOL}${additional}${code}`;
 
         // JIRA prioritys are the other way around
         let priority = 3;
@@ -329,7 +335,10 @@ export class ExportFactory {
 
     parseFile(inputFile, { delimiter: ',', ignoreEmpty: true, headers: true })
       .on('error', (error) => console.error(error))
-      .on('data', (row: CsvEntry) => data.push(row))
+      .on('data', (row: CsvEntry) => {
+        this.includeCodeSelection ? (row.code = this.getCodeForFile(row.filename, row.lines)) : delete row.code;
+        data.push(row);
+      })
       .on('end', (_rowCount: number) => {
         fs.writeFileSync(outputFile, JSON.stringify(data, null, 2));
         window.showInformationMessage(`GitLab CSV file: '${outputFile}' successfully created.`);
