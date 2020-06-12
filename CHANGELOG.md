@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.7.1](https://github.com/d-koppenhagen/vscode-code-review/compare/v1.7.0...v1.7.1) (2020-06-12)
+
+
+### Bug Fixes
+
+* group configs default value ([0929ea2](https://github.com/d-koppenhagen/vscode-code-review/commit/0929ea2ccea3685625f7d02758d3c0de08620cdf)), closes [#28](https://github.com/d-koppenhagen/vscode-code-review/issues/28)
+* use BASE64 encoded code snippets when including them ([43a69d2](https://github.com/d-koppenhagen/vscode-code-review/commit/43a69d2c8fef1242b70cb9e63cb3e75c9eaed039)), closes [#29](https://github.com/d-koppenhagen/vscode-code-review/issues/29)
+
 ## [1.7.0](https://github.com/d-koppenhagen/vscode-code-review/compare/v1.6.0...v1.7.0) (2020-06-04)
 
 
