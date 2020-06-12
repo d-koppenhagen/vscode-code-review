@@ -120,11 +120,11 @@
         "code-review.groupBy": {
           "type": "string",
           "enum": [
-            "-",
+            "filename",
             "priority",
             "category"
           ],
-          "default": "-",
+          "default": "filename",
           "title": "Group report results",
           "description": "You can choose one of the available options to group the report results by this property."
         },

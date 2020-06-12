@@ -147,7 +147,7 @@ This setting would lead into something like this: `https://gitlab.com/foo/bar/ba
 
 This setting is used when [generating a report](#export-created-notes-as-html).
 The comments will be grouped by either:
-- `-`: default, group by filename
+- `filename`: default, group by filename
 - `priority`: grouping by priorities
 - `category`: grouping by the used categories
 

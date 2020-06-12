@@ -8,7 +8,7 @@ import { EOL } from 'os';
 
 export class ExportFactory {
   private defaultFileName = 'code-review';
-  private groupBy: null | GroupBy = null;
+  private groupBy: GroupBy;
   private includeCodeSelection = false;
   /**
    * for trying out: https://stackblitz.com/edit/code-review-template
@@ -169,9 +169,10 @@ export class ExportFactory {
       this.defaultFileName = configFileName;
     }
     let groupByConfig = workspace.getConfiguration().get('code-review.groupBy') as string;
-    if (groupByConfig !== '-') {
-      this.groupBy = groupByConfig as GroupBy;
+    if (!groupByConfig || groupByConfig === '-') {
+      groupByConfig = 'filename';
     }
+    this.groupBy = groupByConfig as GroupBy;
     this.includeCodeSelection = workspace.getConfiguration().get('code-review.reportWithCodeSelection') as boolean;
   }
   exportAsHtml() {
@@ -188,11 +189,7 @@ export class ExportFactory {
         // check if grouping should be applied
         let reviewExportData: ReviewFileExportSection[] = [];
 
-        if (this.groupBy) {
-          reviewExportData = this.groupResults(rows, this.groupBy);
-        } else {
-          reviewExportData = this.groupResults(rows, 'filename');
-        }
+        reviewExportData = this.groupResults(rows, this.groupBy);
 
         console.log(reviewExportData);
         const template = Handlebars.compile(this.hbsDefaultTemplate);
