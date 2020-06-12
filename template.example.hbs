@@ -52,9 +52,24 @@
         <td>SHA</td>
         <td>{{line.sha}}</td>
       </tr>
+      {{#if line.code}}
+      <tr class="row-code">
+        <td class="caption">Code</td>
+        <td class="text">
+          <pre><code id="code-block-{{@../index}}-{{@index}}">{{line.code}}</code></pre>
+        </td>
+      </tr>
+      {{/if}}
     </table>
     {{/each}}
   </section>
   {{/each}}
+  <script>
+    const codeBlocks = document.querySelectorAll('[id^=code-block-]');
+    for(var i in codeBlocks){
+      const base64DecodedContent = window.atob(codeBlocks[i].innerText);
+      codeBlocks[i].innerHTML = base64DecodedContent.replace(/</g,"&lt;")
+    }
+  </script>
 </body>
 </html>

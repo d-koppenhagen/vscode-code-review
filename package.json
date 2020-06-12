@@ -159,6 +159,7 @@
     "@commitlint/config-conventional": "^8.3.4",
     "@types/glob": "^7.1.1",
     "@types/handlebars": "^4.1.0",
+    "@types/js-base64": "^2.3.1",
     "@types/mocha": "^7.0.2",
     "@types/node": "^13.11.0",
     "@types/vscode": "^1.45.0",
@@ -192,6 +193,8 @@
   "dependencies": {
     "@fast-csv/parse": "^4.2.0",
     "git-commit-id": "^2.0.1",
-    "handlebars": "^4.7.6"
+    "handlebars": "^4.7.6",
+    "js-base64": "^2.5.2",
+    "strip-indent": "^3.0.0"
   }
 }

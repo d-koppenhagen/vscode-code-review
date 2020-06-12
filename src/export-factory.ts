@@ -5,6 +5,8 @@ import { parseFile } from '@fast-csv/parse';
 import { toAbsolutePath, getFileContentForRange, removeLeadingSlash } from './utils/workspace-util';
 import { CsvEntry, ReviewFileExportSection, GroupBy } from './interfaces';
 import { EOL } from 'os';
+import { Base64 } from 'js-base64';
+const stripIndent = require('strip-indent');
 
 export class ExportFactory {
   private defaultFileName = 'code-review';
@@ -44,7 +46,6 @@ export class ExportFactory {
       margin: 0
     }
     code {
-      margin-left: 10px;
       border: 1px solid #999;
       display: block;
     }
@@ -143,16 +144,25 @@ export class ExportFactory {
         <td class="text">{{line.sha}}</td>
       </tr>
       {{/if}}
-    </table>
-    {{#if line.code}}
-    <h3 class="code-headline">Code</h3>
-    <pre>
-      <code>{{line.code}}</code>
-    </pre>
-    {{/if}}
+      {{#if line.code}}
+      <tr class="row-code">
+        <td class="caption">Code</td>
+        <td class="text">
+          <pre><code id="code-block-{{@../index}}-{{@index}}">{{line.code}}</code></pre>
+        </td>
+      </tr>
+      {{/if}}
+    </table> 
     {{/each}}
   </section>
   {{/each}}
+  <script>
+    const codeBlocks = document.querySelectorAll('[id^=code-block-]');
+    for(var i in codeBlocks){
+      const base64DecodedContent = window.atob(codeBlocks[i].innerText);
+      codeBlocks[i].innerHTML = base64DecodedContent.replace(/</g,"&lt;")
+    }
+  </script>
 </body>
 </html>`;
 
@@ -369,14 +379,14 @@ export class ExportFactory {
       const [start, end] = range.split('-'); // split: 2:2-12:2
       const [startLine] = start.split(':'); // split: 2:2
       const [endLine] = end.split(':'); // split: 2:2
-      const fileContent = getFileContentForRange(filePath, Number(startLine), Number(endLine));
+      const fileContent = stripIndent(getFileContentForRange(filePath, Number(startLine), Number(endLine)));
       if (result) {
         result = `${result}${EOL}...${EOL}${EOL}${fileContent}`;
       } else {
         result = fileContent;
       }
     });
-    return result;
+    return Base64.encode(result);
   }
 
   private priorityName(priority: string) {
