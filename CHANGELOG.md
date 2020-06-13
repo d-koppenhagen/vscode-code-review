@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.8.0](https://github.com/d-koppenhagen/vscode-code-review/compare/v1.7.1...v1.8.0) (2020-06-13)
+
+
+### Features
+
+* minimize loading time by bundling ([c4b8853](https://github.com/d-koppenhagen/vscode-code-review/commit/c4b8853c97c867c5ec2dc273ffd879011cd3abe6)), closes [#15](https://github.com/d-koppenhagen/vscode-code-review/issues/15)
+
+
+### Bug Fixes
+
+* allow script execution in webViewPanel ([fdf322f](https://github.com/d-koppenhagen/vscode-code-review/commit/fdf322f979da77050e6bdd1d8750905dd13aae69))
+
 ### [1.7.1](https://github.com/d-koppenhagen/vscode-code-review/compare/v1.7.0...v1.7.1) (2020-06-12)
 
 
