@@ -6,7 +6,7 @@ import { toAbsolutePath, getFileContentForRange, removeLeadingSlash } from './ut
 import { CsvEntry, ReviewFileExportSection, GroupBy } from './interfaces';
 import { EOL } from 'os';
 import { Base64 } from 'js-base64';
-const stripIndent = require('strip-indent');
+import stripIndent from 'strip-indent';
 
 export class ExportFactory {
   private defaultFileName = 'code-review';
