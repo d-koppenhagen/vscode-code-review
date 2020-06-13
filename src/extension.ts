@@ -2,6 +2,7 @@
 // Import the module and reference it with the alias vscode in your code below
 
 import { commands, workspace, window, ExtensionContext, WorkspaceFolder } from 'vscode';
+
 import { FileGenerator } from './file-generator';
 import { ReviewCommentService } from './review-comment';
 import { getWorkspaceFolder } from './utils/workspace-util';

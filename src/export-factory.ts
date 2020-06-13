@@ -1,12 +1,13 @@
 import * as fs from 'fs';
 import * as Handlebars from 'handlebars';
+import stripIndent from 'strip-indent';
 import { workspace, Uri, window, ViewColumn } from 'vscode';
 import { parseFile } from '@fast-csv/parse';
-import { toAbsolutePath, getFileContentForRange, removeLeadingSlash } from './utils/workspace-util';
-import { CsvEntry, ReviewFileExportSection, GroupBy } from './interfaces';
 import { EOL } from 'os';
 import { Base64 } from 'js-base64';
-import stripIndent from 'strip-indent';
+
+import { toAbsolutePath, getFileContentForRange, removeLeadingSlash } from './utils/workspace-util';
+import { CsvEntry, ReviewFileExportSection, GroupBy } from './interfaces';
 
 export class ExportFactory {
   private defaultFileName = 'code-review';
