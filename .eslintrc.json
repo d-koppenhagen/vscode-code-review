@@ -13,6 +13,8 @@
     "curly": "warn",
     "eqeqeq": "warn",
     "no-throw-literal": "warn",
-    "semi": "off"
+    "semi": "off",
+    "sort-imports": "warn",
+    "no-duplicate-imports": "warn"
   }
 }
