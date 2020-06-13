@@ -12,3 +12,7 @@ template.example.hbs
 commitlint.config.js
 .prettierignore
 .github/
+node_modules
+out/
+tsconfig.json
+webpack.config.js

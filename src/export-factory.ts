@@ -1,8 +1,8 @@
 import * as fs from 'fs';
-import * as Handlebars from 'handlebars';
-import stripIndent from 'strip-indent';
+const Handlebars = require('handlebars');
+const stripIndent = require('strip-indent');
 import { workspace, Uri, window, ViewColumn } from 'vscode';
-import { parseFile } from '@fast-csv/parse';
+const parseFile = require('@fast-csv/parse').parseFile;
 import { EOL } from 'os';
 import { Base64 } from 'js-base64';
 
@@ -192,7 +192,7 @@ export class ExportFactory {
     const inputFile = `${toAbsolutePath(this.workspaceRoot, this.defaultFileName)}.csv`;
     const outputFile = `${toAbsolutePath(this.workspaceRoot, this.defaultFileName)}.html`;
     parseFile(inputFile, { delimiter: ',', ignoreEmpty: true, headers: true })
-      .on('error', (error) => console.error(error))
+      .on('error', (error: any) => console.error(error))
       .on('data', (row: CsvEntry) => {
         row.code = this.includeCodeSelection ? this.getCodeForFile(row.filename, row.lines) : '';
         rows.push(row);
@@ -222,7 +222,7 @@ export class ExportFactory {
     fs.writeFileSync(outputFile, `title,description${EOL}`);
 
     parseFile(inputFile, { delimiter: ',', ignoreEmpty: true, headers: true })
-      .on('error', (error) => console.error(error))
+      .on('error', (error: any) => console.error(error))
       .on('data', (row: CsvEntry) => {
         this.includeCodeSelection ? (row.code = this.getCodeForFile(row.filename, row.lines)) : delete row.code;
         // cut the description (100 chars max) along with '...' at the end
@@ -255,7 +255,7 @@ export class ExportFactory {
     fs.writeFileSync(outputFile, `title,description,labels,state,assignee${EOL}`);
 
     parseFile(inputFile, { delimiter: ',', ignoreEmpty: true, headers: true })
-      .on('error', (error) => console.error(error))
+      .on('error', (error: any) => console.error(error))
       .on('data', (row: CsvEntry) => {
         this.includeCodeSelection ? (row.code = this.getCodeForFile(row.filename, row.lines)) : delete row.code;
         // cut the description (100 chars max) along with '...' at the end
@@ -291,7 +291,7 @@ export class ExportFactory {
     );
 
     parseFile(inputFile, { delimiter: ',', ignoreEmpty: true, headers: true })
-      .on('error', (error) => console.error(error))
+      .on('error', (error: any) => console.error(error))
       .on('data', (row: CsvEntry) => {
         this.includeCodeSelection ? (row.code = this.getCodeForFile(row.filename, row.lines)) : delete row.code;
         // cut the description (100 chars max) along with '...' at the end
@@ -343,7 +343,7 @@ export class ExportFactory {
     const data: CsvEntry[] = [];
 
     parseFile(inputFile, { delimiter: ',', ignoreEmpty: true, headers: true })
-      .on('error', (error) => console.error(error))
+      .on('error', (error: any) => console.error(error))
       .on('data', (row: CsvEntry) => {
         this.includeCodeSelection ? (row.code = this.getCodeForFile(row.filename, row.lines)) : delete row.code;
         data.push(row);
@@ -374,20 +374,30 @@ export class ExportFactory {
   }
 
   private getCodeForFile(filename: string, lines: string): string {
+    if (!filename) {
+      filename = '';
+    }
+    if (!lines) {
+      lines = '';
+    }
     let result = '';
     const lineRanges = lines.split('|'); // split: 2:2-12:2|8:0-18:5
     const filePath = toAbsolutePath(this.workspaceRoot, removeLeadingSlash(filename));
-    lineRanges.forEach((range: string) => {
-      const [start, end] = range.split('-'); // split: 2:2-12:2
-      const [startLine] = start.split(':'); // split: 2:2
-      const [endLine] = end.split(':'); // split: 2:2
-      const fileContent = stripIndent(getFileContentForRange(filePath, Number(startLine), Number(endLine)));
-      if (result) {
-        result = `${result}${EOL}...${EOL}${EOL}${fileContent}`;
-      } else {
-        result = fileContent;
-      }
-    });
+    if (lineRanges) {
+      lineRanges.forEach((range: string) => {
+        if (range) {
+          const [start, end] = range.split('-'); // split: 2:2-12:2
+          const [startLine] = start.split(':'); // split: 2:2
+          const [endLine] = end.split(':'); // split: 2:2
+          const fileContent = stripIndent(getFileContentForRange(filePath, Number(startLine), Number(endLine)));
+          if (result) {
+            result = `${result}${EOL}...${EOL}${EOL}${fileContent}`;
+          } else {
+            result = fileContent;
+          }
+        }
+      });
+    }
     return Base64.encode(result);
   }
 
