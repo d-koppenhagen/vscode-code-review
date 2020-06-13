@@ -49,6 +49,7 @@ export class ExportFactory {
     code {
       border: 1px solid #999;
       display: block;
+      white-space: pre-wrap;
     }
 
     /* links in headlines */
@@ -404,7 +405,9 @@ export class ExportFactory {
   }
 
   private showPreview(outputFile: string) {
-    const panel = window.createWebviewPanel('text', 'Code Review HTML Report', { viewColumn: ViewColumn.Beside });
+    const panel = window.createWebviewPanel('text', 'Code Review HTML Report', ViewColumn.Beside, {
+      enableScripts: true,
+    });
     panel.webview.html = fs.readFileSync(outputFile, 'utf8');
   }
 }

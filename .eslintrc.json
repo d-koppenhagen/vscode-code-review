@@ -14,7 +14,6 @@
     "eqeqeq": "warn",
     "no-throw-literal": "warn",
     "semi": "off",
-    "sort-imports": "warn",
     "no-duplicate-imports": "warn"
   }
 }
