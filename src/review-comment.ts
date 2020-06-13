@@ -39,6 +39,12 @@ export class ReviewCommentService {
       activeFileName = window.activeTextEditor.document.fileName.replace(this.workspaceRoot, '');
     }
 
+    if (!activeFileName) {
+      window.showErrorMessage(`Error referencing file/lines, Please select again.`);
+      console.log(console.error('Error referencing file/lines. Window:', window.activeTextEditor));
+      return;
+    }
+
     // escape double quotes
     const commentExcaped = comment.description.replace(/"/g, '\\"');
     const titleExcaped = comment.title ? comment.title.replace(/"/g, '\\"') : '';
