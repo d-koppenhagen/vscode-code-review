@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.9.0](https://github.com/d-koppenhagen/vscode-code-review/compare/v1.8.0...v1.9.0) (2020-07-03)
+
+
+### Features
+
+* allow to define a default handlebars template path ([2a3eef3](https://github.com/d-koppenhagen/vscode-code-review/commit/2a3eef3c7ed860491004d09582a46be700e2ad64)), closes [#30](https://github.com/d-koppenhagen/vscode-code-review/issues/30)
+
 ## [1.8.0](https://github.com/d-koppenhagen/vscode-code-review/compare/v1.7.1...v1.8.0) (2020-06-13)
 
 
