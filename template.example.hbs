@@ -15,10 +15,11 @@
   <h1>Code Review Results</h1>
   {{#each this as |item|}}
   <section>
-    <h2>
-      <a href="{{item.url}}">{{item.group}}</a>
-    </h2>
+    <h2>{{item.group}}</h2>
     {{#each item.lines as |line|}}
+    <h3>
+      <a href="{{line.url}}">Position: {{line.lines}}</a>
+    </h3>
     <table>
       <tr>
         <td>Position</td>
@@ -32,10 +33,12 @@
         <td>Title</td>
         <td>{{line.title}}</td>
       </tr>
+      {{#if line.category}}
       <tr>
         <td>Category</td>
         <td>{{line.category}}</td>
       </tr>
+      {{/if}}
       <tr>
         <td>Description</td>
         <td>
@@ -54,8 +57,8 @@
       </tr>
       {{#if line.code}}
       <tr class="row-code">
-        <td class="caption">Code</td>
-        <td class="text">
+        <td>Code</td>
+        <td>
           <pre><code id="code-block-{{@../index}}-{{@index}}">{{line.code}}</code></pre>
         </td>
       </tr>
