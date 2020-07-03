@@ -1,7 +1,7 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 
-import { commands, workspace, window, ExtensionContext, WorkspaceFolder } from 'vscode';
+import { commands, workspace, window, ExtensionContext, WorkspaceFolder, Uri } from 'vscode';
 
 import { FileGenerator } from './file-generator';
 import { ReviewCommentService } from './review-comment';
@@ -33,7 +33,13 @@ export function activate(context: ExtensionContext) {
   const exportAsHtmlWithDefaultTemplateRegistration = commands.registerCommand(
     'codeReview.exportAsHtmlWithDefaultTemplate',
     () => {
-      const exportFactory = new ExportFactory(workspaceRoot);
+      let exportFactory;
+      const defaultTemplatePath = workspace.getConfiguration().get('code-review.defaultTemplatePath') as string;
+      if (!defaultTemplatePath) {
+        exportFactory = new ExportFactory(workspaceRoot);
+      } else {
+        exportFactory = new ExportFactory(workspaceRoot, Uri.file(defaultTemplatePath));
+      }
       exportFactory.exportAsHtml();
     },
   );

@@ -82,7 +82,7 @@
       "properties": {
         "code-review.filename": {
           "type": "string",
-          "title": "The filename for teh csv file",
+          "title": "The filename for the csv file",
           "description": "The name will be used for the file with the *.csv extension that contains the stored code review notes",
           "default": "code-review"
         },
@@ -133,6 +133,12 @@
           "title": "Inlcude Code Selection in Report",
           "description": "Define weather to include the code selection(s) in generated reports or not.",
           "default": false
+        },
+        "code-review.defaultTemplatePath": {
+          "type": "string",
+          "title": "The path to a default Handlebars template to be used for HTML default export",
+          "description": "The template is used when choosing 'Export as HTML with default template' extension command. Otherwise the out-of-the-box template provided by this extension is used.",
+          "default": ""
         }
       }
     },

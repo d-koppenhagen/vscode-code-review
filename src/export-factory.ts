@@ -168,7 +168,7 @@ export class ExportFactory {
 </body>
 </html>`;
 
-  constructor(private workspaceRoot: string, private template?: Uri) {
+  constructor(private workspaceRoot: string, template?: Uri) {
     if (template) {
       const data = fs.readFileSync(template.fsPath, 'utf8');
       if (!data) {

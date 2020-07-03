@@ -53,6 +53,9 @@ When you choose to generate the report using the default template, it will look 
 
 ![Code Review HTML Export: Default Template](./images/default-template.png)
 
+> You can define a path to a custom template that's used by default when running this command.
+> Check out the [Extension Setting 'defaultTemplatePath'](#extension-settings) for further information.
+
 #### Custom handlebars template
 
 You can also choose to export the HTML report by using a custom [Handlebars](https://handlebarsjs.com/) template.
@@ -182,7 +185,20 @@ Define weather to include the code selection(s) in generated reports or not.
 ```
 
 > Attention! The code included in the report will be BASE64 encoded in order to prevent breaking report generation by unescaped characters that will be accidentally interpreted.
-You can decode this e.g. by using a JS script at the end of the handlebars report template as [shown here](./template.example.hbs#L65-L73).
+You can decode this e.g. by using a JS script at the end of the handlebars report template as [shown here](./template.example.hbs#L70-L76).
+
+### `code-review.defaultTemplatePath`
+
+The path to a default Handlebars template to be used for HTML default export.
+The template is used by default when choosing [_'Export as HTML with default template'_](#export-created notes-as-html) extension command.
+If not set, the out-of-the-box template provided by this extension is used.
+The configured value must be the full path to the Handlebars template file.
+
+```json
+{
+  "code-review.defaultTemplatePath": "/Users/my-user/my-code-review-template.hbs"
+}
+```
 
 ## Keybindings
 
