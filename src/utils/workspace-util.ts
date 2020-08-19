@@ -21,8 +21,10 @@ export const getWorkspaceFolder = (folders: WorkspaceFolder[] | undefined): stri
  * takes a filename or relative path and returns an absolute path
  * @param filename the name of the file
  */
-export const toAbsolutePath = (workspaceRoot: string, filename: string): string =>
-  path.resolve(workspaceRoot, filename);
+export const toAbsolutePath = (workspaceRoot: string, filename: string): string => {
+  const harmonizedFileName = filename.replace(/\\/g, '/');
+  return path.resolve(workspaceRoot, removeLeadingSlash(harmonizedFileName));
+};
 
 /**
  * get the content of the first line in file
@@ -42,7 +44,13 @@ export const getFirstLine = async (pathToFile: string) => {
 };
 
 export const getFileContentForRange = (pathToFile: string, start: number, end: number): string => {
-  const fileContent = fs.readFileSync(pathToFile, 'utf8');
+  console.log('DBG', pathToFile, start, end);
+  let fileContent = '';
+  try {
+    fileContent = fs.readFileSync(pathToFile, 'utf8');
+  } catch (error) {
+    console.log('Error reading file', pathToFile, error);
+  }
   const fileContentLines = fileContent.split(EOL);
   return fileContentLines.slice(start - 1, end + 1).join(EOL);
 };

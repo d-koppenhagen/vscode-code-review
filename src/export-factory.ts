@@ -154,7 +154,7 @@ export class ExportFactory {
         </td>
       </tr>
       {{/if}}
-    </table> 
+    </table>
     {{/each}}
   </section>
   {{/each}}
@@ -382,7 +382,7 @@ export class ExportFactory {
     }
     let result = '';
     const lineRanges = lines.split('|'); // split: 2:2-12:2|8:0-18:5
-    const filePath = toAbsolutePath(this.workspaceRoot, removeLeadingSlash(filename));
+    const filePath = toAbsolutePath(this.workspaceRoot, filename);
     if (lineRanges) {
       lineRanges.forEach((range: string) => {
         if (range) {
