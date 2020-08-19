@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.9.1](https://github.com/d-koppenhagen/vscode-code-review/compare/v1.9.0...v1.9.1) (2020-08-19)
+
+
+### Bug Fixes
+
+* use harmonized filename for getting file content ([c50dfc0](https://github.com/d-koppenhagen/vscode-code-review/commit/c50dfc0a5563ad15c27ce23ff58524a75b85b5aa)), closes [#32](https://github.com/d-koppenhagen/vscode-code-review/issues/32)
+
 ## [1.9.0](https://github.com/d-koppenhagen/vscode-code-review/compare/v1.8.0...v1.9.0) (2020-07-03)
 
 
