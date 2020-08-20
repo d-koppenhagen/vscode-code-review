@@ -8,7 +8,6 @@
   "plugins": ["@typescript-eslint"],
   "extends": ["prettier"],
   "rules": {
-    "@typescript-eslint/class-name-casing": "warn",
     "@typescript-eslint/semi": "warn",
     "curly": "warn",
     "eqeqeq": "warn",
