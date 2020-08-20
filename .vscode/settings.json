@@ -29,5 +29,6 @@
   "peacock.color": "#4d4fa6",
   "[markdown]": {
     "editor.defaultFormatter": null
-  }
+  },
+  "cSpell.words": ["vsce"]
 }
