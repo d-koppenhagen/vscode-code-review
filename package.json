@@ -16,7 +16,7 @@
   },
   "license": "SEE LICENSE IN LICENSE",
   "engines": {
-    "vscode": "^1.45.0"
+    "vscode": "^1.48.0"
   },
   "icon": "images/icon.png",
   "galleryBanner": {
