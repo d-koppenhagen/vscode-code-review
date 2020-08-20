@@ -2,7 +2,7 @@ import * as fs from 'fs';
 import { EOL } from 'os';
 import { workspace, window } from 'vscode';
 
-import { toAbsolutePath, getFirstLine } from './utils/workspace-util';
+import { toAbsolutePath, getFileContentForRange } from './utils/workspace-util';
 
 export class FileGenerator {
   private readonly defaultFileExtension = '.csv';
@@ -33,17 +33,14 @@ export class FileGenerator {
    */
   create(absoluteFilePath: string) {
     if (fs.existsSync(absoluteFilePath)) {
-      console.log(`File: '${absoluteFilePath}' already exists`);
-
-      getFirstLine(absoluteFilePath).then((lineContent) => {
-        if (lineContent !== this.csvFileHeader) {
-          window.showErrorMessage(
-            `CSV header "${lineContent}" is not matching "${this.csvFileHeader}" format. Please adjust it manually`,
-          );
-        } else {
-          console.log(`CSV header "${lineContent}" is OK`);
-        }
-      });
+      const lineContent = getFileContentForRange(absoluteFilePath, 1, 0);
+      if (lineContent !== this.csvFileHeader) {
+        window.showErrorMessage(
+          `CSV header "${lineContent}" is not matching "${this.csvFileHeader}" format. Please adjust it manually`,
+        );
+      } else {
+        console.log(`CSV header "${lineContent}" is OK`);
+      }
       return;
     }
 

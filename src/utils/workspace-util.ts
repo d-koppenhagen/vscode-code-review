@@ -1,20 +1,15 @@
 // takes an array of workspace folder objects and return
 import * as path from 'path';
 import * as fs from 'fs';
-import * as readline from 'readline';
 import { WorkspaceFolder } from 'vscode';
 import { EOL } from 'os';
 
 // workspace root, assumed to be the first item in the array
 export const getWorkspaceFolder = (folders: WorkspaceFolder[] | undefined): string => {
-  if (!folders) {
+  if (!folders || !folders[0] || !folders[0].uri || !folders[0].uri.fsPath) {
     return '';
   }
-
-  const folder = folders[0] || {};
-  const uri = folder.uri;
-
-  return uri.fsPath;
+  return folders[0].uri.fsPath;
 };
 
 /**
@@ -27,24 +22,12 @@ export const toAbsolutePath = (workspaceRoot: string, filename: string): string 
 };
 
 /**
- * get the content of the first line in file
- * @param pathToFile the path to the file
+ * Get the content of a file for a defined line range
+ * @param pathToFile the actual file path and name
+ * @param start the first line that's content should be included
+ * @param end the last line that's content should be included
  */
-export const getFirstLine = async (pathToFile: string) => {
-  const readable = fs.createReadStream(pathToFile);
-  const reader = readline.createInterface({ input: readable });
-  const line = await new Promise((resolve) => {
-    reader.on('line', (line) => {
-      reader.close();
-      resolve(line);
-    });
-  });
-  readable.close();
-  return line;
-};
-
 export const getFileContentForRange = (pathToFile: string, start: number, end: number): string => {
-  console.log('DBG', pathToFile, start, end);
   let fileContent = '';
   try {
     fileContent = fs.readFileSync(pathToFile, 'utf8');
@@ -55,6 +38,6 @@ export const getFileContentForRange = (pathToFile: string, start: number, end: n
   return fileContentLines.slice(start - 1, end + 1).join(EOL);
 };
 
-export const removeTrailingSlash = (s: string): string => s.replace(/\/$/, '');
-export const removeLeadingSlash = (s: string): string => s.replace(/^\//, '');
-export const removeLeadingAndTrailingSlash = (s: string): string => s.replace(/^\/|\/$/g, '');
+export const removeTrailingSlash = (s: string): string => s.replace(/\/$|\\$/, '');
+export const removeLeadingSlash = (s: string): string => s.replace(/^\/|^\\/, '');
+export const removeLeadingAndTrailingSlash = (s: string): string => removeLeadingSlash(removeTrailingSlash(s));
