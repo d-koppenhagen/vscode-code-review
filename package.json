@@ -130,7 +130,7 @@
         },
         "code-review.reportWithCodeSelection": {
           "type": "boolean",
-          "title": "Inlcude Code Selection in Report",
+          "title": "Include Code Selection in Report",
           "description": "Define weather to include the code selection(s) in generated reports or not.",
           "default": false
         },
