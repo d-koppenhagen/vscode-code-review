@@ -38,8 +38,6 @@ export class FileGenerator {
         window.showErrorMessage(
           `CSV header "${lineContent}" is not matching "${this.csvFileHeader}" format. Please adjust it manually`,
         );
-      } else {
-        console.log(`CSV header "${lineContent}" is OK`);
       }
       return;
     }

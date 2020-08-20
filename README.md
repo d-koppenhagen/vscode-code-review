@@ -8,11 +8,11 @@ This extension allows you to create a code review file you can hand over to a cu
 
 <hr>
 
-- [vscode-code-review](#vscode-code-review) 
+- [vscode-code-review](#vscode-code-review)
 - [Features](#features)
   - [create review notes](#create-review-notes)
-  - [export created notes as HTML](#export-created-notes-as-html)    
-  - [Export for Issue Tracking System](#export-for-issue-tracking-system)    
+  - [export created notes as HTML](#export-created-notes-as-html)
+  - [Export for Issue Tracking System](#export-for-issue-tracking-system)
 - [Extension Settings](#extension-settings)
 - [Keybindings](#keybindings)
 - [The review approach](#the-review-approach)
@@ -65,8 +65,8 @@ One you choose this option you cot prompted to choose the template file (file ex
 
 The used structure to fill the template placholders is an array of [`ReviewFileExportSection`](https://github.com/d-koppenhagen/vscode-code-review/blob/master/src/interfaces.ts#L31-L44).
 
-Check out the example template file 
-[`template.example.hbs`](https://github.com/d-koppenhagen/vscode-code-review/blob/master/template.example.hbs), to see how your template should basically look like.
+Check out the example default template file
+[`template.default.hbs`](https://github.com/d-koppenhagen/vscode-code-review/blob/master/src/template.default.hbs), to see how your template should basically look like.
 
 ### Export for Issue Tracking System
 
@@ -185,7 +185,7 @@ Define weather to include the code selection(s) in generated reports or not.
 ```
 
 > Attention! The code included in the report will be BASE64 encoded in order to prevent breaking report generation by unescaped characters that will be accidentally interpreted.
-You can decode this e.g. by using a JS script at the end of the handlebars report template as [shown here](./template.example.hbs#L70-L76).
+You can decode this e.g. by using a JS script at the end of the handlebars report template as [shown here](./src/template.default.hbs#L143-L149).
 
 ### `code-review.defaultTemplatePath`
 

@@ -3,6 +3,7 @@
 'use strict';
 
 const path = require('path');
+const CopyPlugin = require('copy-webpack-plugin');
 
 /**@type {import('webpack').Configuration}*/
 const config = {
@@ -28,6 +29,11 @@ const config = {
       handlebars: 'handlebars/dist/handlebars.min.js',
     },
   },
+  plugins: [
+    new CopyPlugin({
+      patterns: ['src/template.default.hbs'],
+    }),
+  ],
   module: {
     rules: [
       {

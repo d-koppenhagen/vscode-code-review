@@ -36,9 +36,9 @@ export function activate(context: ExtensionContext) {
       let exportFactory;
       const defaultTemplatePath = workspace.getConfiguration().get('code-review.defaultTemplatePath') as string;
       if (!defaultTemplatePath) {
-        exportFactory = new ExportFactory(workspaceRoot);
+        exportFactory = new ExportFactory(context, workspaceRoot);
       } else {
-        exportFactory = new ExportFactory(workspaceRoot, Uri.file(defaultTemplatePath));
+        exportFactory = new ExportFactory(context, workspaceRoot, Uri.file(defaultTemplatePath));
       }
       exportFactory.exportAsHtml();
     },
@@ -62,7 +62,7 @@ export function activate(context: ExtensionContext) {
         })
         .then((files) => {
           const template = files && files.length ? files[0] : undefined;
-          const exportFactory = new ExportFactory(workspaceRoot, template);
+          const exportFactory = new ExportFactory(context, workspaceRoot, template);
           exportFactory.exportAsHtml();
         });
     },
@@ -74,7 +74,7 @@ export function activate(context: ExtensionContext) {
   const exportAsGitLabImportableCsvRegistration = commands.registerCommand(
     'codeReview.exportAsGitLabImportableCsv',
     () => {
-      const exportFactory = new ExportFactory(workspaceRoot);
+      const exportFactory = new ExportFactory(context, workspaceRoot);
       exportFactory.exportAsGitLabCsv();
     },
   );
@@ -86,7 +86,7 @@ export function activate(context: ExtensionContext) {
   const exportAsGitHubImportableCsvRegistration = commands.registerCommand(
     'codeReview.exportAsGitHubImportableCsv',
     () => {
-      const exportFactory = new ExportFactory(workspaceRoot);
+      const exportFactory = new ExportFactory(context, workspaceRoot);
       exportFactory.exportAsGitHubCsv();
     },
   );
@@ -95,7 +95,7 @@ export function activate(context: ExtensionContext) {
    * allow users to export the report as JIRA importable CSV file
    */
   const exportAsJiraImportableCsvRegistration = commands.registerCommand('codeReview.exportAsJiraImportableCsv', () => {
-    const exportFactory = new ExportFactory(workspaceRoot);
+    const exportFactory = new ExportFactory(context, workspaceRoot);
     exportFactory.exportAsJiraCsv();
   });
 
@@ -103,7 +103,7 @@ export function activate(context: ExtensionContext) {
    * allow users to export the report as JSON file
    */
   const exportAsJsonRegistration = commands.registerCommand('codeReview.exportAsJson', () => {
-    const exportFactory = new ExportFactory(workspaceRoot);
+    const exportFactory = new ExportFactory(context, workspaceRoot);
     exportFactory.exportAsJson();
   });
 

@@ -41,7 +41,7 @@ export class ReviewCommentService {
 
     if (!activeFileName) {
       window.showErrorMessage(`Error referencing file/lines, Please select again.`);
-      console.log(console.error('Error referencing file/lines. Window:', window.activeTextEditor));
+      console.error('Error referencing file/lines. Window:', window.activeTextEditor);
       return;
     }
 

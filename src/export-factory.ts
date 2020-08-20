@@ -1,181 +1,34 @@
 import * as fs from 'fs';
+import * as path from 'path';
 const Handlebars = require('handlebars');
 const stripIndent = require('strip-indent');
-import { workspace, Uri, window, ViewColumn } from 'vscode';
+import { workspace, Uri, window, ViewColumn, ExtensionContext } from 'vscode';
 const parseFile = require('@fast-csv/parse').parseFile;
 import { EOL } from 'os';
 import { Base64 } from 'js-base64';
 
-import { toAbsolutePath, getFileContentForRange, removeLeadingSlash } from './utils/workspace-util';
+import { toAbsolutePath, getFileContentForRange } from './utils/workspace-util';
 import { CsvEntry, ReviewFileExportSection, GroupBy } from './interfaces';
 
 export class ExportFactory {
   private defaultFileName = 'code-review';
   private groupBy: GroupBy;
   private includeCodeSelection = false;
+  private hbsDefaultTemplate = '';
   /**
    * for trying out: https://stackblitz.com/edit/code-review-template
    */
-  private hbsDefaultTemplate = `<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <title>Code Review</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <style>
-    /* basic style */
-    body {
-      font-family: Helvetica;
+  constructor(private context: ExtensionContext, private workspaceRoot: string, template?: Uri) {
+    if (!template || !template.fsPath) {
+      const foo = context.asAbsolutePath(path.join('dist', 'template.default.hbs'));
+      template = Uri.parse(foo);
     }
-    h1 {
-      font-size: 24px;
+    const data = fs.readFileSync(template.fsPath, 'utf8');
+    if (!data) {
+      window.showErrorMessage(`Error when reading the template file: '${template.fsPath}'`);
     }
-    h2 {
-      font-size: 20px;
-      color: green;
-    }
-    h3 {
-      font-size: 16px;
-      padding-left: 5px;
-      margin-bottom: 5px;
-    }
-    p {
-      white-space: pre-wrap;
-      margin: 0;
-    }
-    pre {
-      margin: 0
-    }
-    code {
-      border: 1px solid #999;
-      display: block;
-      white-space: pre-wrap;
-    }
+    this.hbsDefaultTemplate = data;
 
-    /* links in headlines */
-    h3.lines-headline > a {
-      color: #005bbb;
-      text-decoration: none;
-    }
-    h3.lines-headline > a:hover {
-      text-decoration: underline;
-    }
-
-    /* table style */
-    table.review-table {
-      font-size: 14px;
-      padding-left: 10px;
-    }
-    table.review-table .caption {
-      font-weight: bold;
-      vertical-align: top;
-    }
-    table.review-table tr > td:first-child {
-      width: 120px
-    }
-
-    /* priority indicator */
-    .text > span:before {
-      content: "";
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      display: inline-block;
-      margin-right: 5px;
-      margin-left: -15px;
-    }
-    .text > span.prio-high:before {
-      background: #FF4500;
-    }
-    .text > span.prio-medium:before {
-      background: #FFD700;
-    }
-    .text > span.prio-low:before {
-      background: #9ACD32;
-    }
-    .text > span.prio-none:before {
-      background: #D3D3D3;
-    }
-  </style>
-</head>
-<body>
-  <h1 class="main-headline">Code Review Results</h1>
-  {{#each this as |item|}}
-  <section class="file-section">
-    <h2 class="file-section-headline">{{item.group}}</h2>
-    {{#each item.lines as |line|}}
-    <h3 class="lines-headline">
-      <a href="{{line.url}}">Position: {{line.lines}}</a>
-    </h3>
-    <table class="review-table">
-      <tr class="row-priority">
-        <td class="caption">Priority</td>
-        <td class="text">
-          <span class="prio-{{line.priority}}">{{line.priority}}</span>
-        </td>
-      </tr>
-      {{#if line.title}}
-      <tr class="row-title">
-        <td class="caption">Title</td>
-        <td class="text">{{line.title}}</td>
-      </tr>
-      {{/if}}
-      {{#if line.category}}
-      <tr class="row-category">
-        <td class="caption">Category</td>
-        <td class="text">{{line.category}}</td>
-      </tr>
-      {{/if}}
-      {{#if line.comment}}
-      <tr class="row-description">
-        <td class="caption">Description</td>
-        <td class="text">
-          <p>{{line.comment}}</p>
-        </td>
-      </tr>
-      {{/if}}
-      {{#if line.additional}}
-      <tr class="row-additional">
-        <td class="caption">Additional Info</td>
-        <td class="text">{{line.additional}}</td>
-      </tr>
-      {{/if}}
-      {{#if line.sha}}
-      <tr class="row-sha">
-        <td class="caption">SHA</td>
-        <td class="text">{{line.sha}}</td>
-      </tr>
-      {{/if}}
-      {{#if line.code}}
-      <tr class="row-code">
-        <td class="caption">Code</td>
-        <td class="text">
-          <pre><code id="code-block-{{@../index}}-{{@index}}">{{line.code}}</code></pre>
-        </td>
-      </tr>
-      {{/if}}
-    </table>
-    {{/each}}
-  </section>
-  {{/each}}
-  <script>
-    const codeBlocks = document.querySelectorAll('[id^=code-block-]');
-    for(var i in codeBlocks){
-      const base64DecodedContent = window.atob(codeBlocks[i].innerText);
-      codeBlocks[i].innerHTML = base64DecodedContent.replace(/</g,"&lt;")
-    }
-  </script>
-</body>
-</html>`;
-
-  constructor(private workspaceRoot: string, template?: Uri) {
-    if (template) {
-      const data = fs.readFileSync(template.fsPath, 'utf8');
-      if (!data) {
-        window.showErrorMessage(`Error when reading the template file: '${template.fsPath}'`);
-      }
-      this.hbsDefaultTemplate = data;
-    }
     const configFileName = workspace.getConfiguration().get('code-review.filename') as string;
     if (configFileName) {
       this.defaultFileName = configFileName;
@@ -203,7 +56,6 @@ export class ExportFactory {
 
         reviewExportData = this.groupResults(rows, this.groupBy);
 
-        console.log(reviewExportData);
         const template = Handlebars.compile(this.hbsDefaultTemplate);
 
         const htmlOut = template(reviewExportData);
@@ -309,7 +161,7 @@ export class ExportFactory {
 
         const description = `h2. Affected${EOL}${fileRow}${linesRow}${shaRow}${categorySection}${commentSection}${EOL}${additional}${code}`;
 
-        // JIRA prioritys are the other way around
+        // JIRA priorities are the other way around
         let priority = 3;
         switch (row.priority) {
           case '1':

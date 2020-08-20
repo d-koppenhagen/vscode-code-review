@@ -8,7 +8,6 @@ vsc-extension-quickstart.md
 **/.eslintrc.json
 **/*.map
 **/*.ts
-template.example.hbs
 commitlint.config.js
 .prettierignore
 .github/

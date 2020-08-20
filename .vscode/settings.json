@@ -30,5 +30,5 @@
   "[markdown]": {
     "editor.defaultFormatter": null
   },
-  "cSpell.words": ["vsce"]
+  "cSpell.words": ["gitlab", "jira", "prio", "vsce"]
 }
