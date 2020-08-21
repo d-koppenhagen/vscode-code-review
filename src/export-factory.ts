@@ -40,10 +40,15 @@ export class ExportFactory {
     this.groupBy = groupByConfig as GroupBy;
     this.includeCodeSelection = workspace.getConfiguration().get('code-review.reportWithCodeSelection') as boolean;
   }
+
+  get basePath(): string {
+    return toAbsolutePath(this.workspaceRoot, this.defaultFileName);
+  }
+
   exportAsHtml() {
     const rows: CsvEntry[] = [];
-    const inputFile = `${toAbsolutePath(this.workspaceRoot, this.defaultFileName)}.csv`;
-    const outputFile = `${toAbsolutePath(this.workspaceRoot, this.defaultFileName)}.html`;
+    const inputFile = `${this.basePath}.csv`;
+    const outputFile = `${this.basePath}.html`;
     parseFile(inputFile, { delimiter: ',', ignoreEmpty: true, headers: true })
       .on('error', (error: any) => console.error(error))
       .on('data', (row: CsvEntry) => {
@@ -68,8 +73,8 @@ export class ExportFactory {
   }
 
   exportAsGitLabCsv() {
-    const inputFile = `${toAbsolutePath(this.workspaceRoot, this.defaultFileName)}.csv`;
-    const outputFile = `${toAbsolutePath(this.workspaceRoot, this.defaultFileName)}.gitlab.csv`;
+    const inputFile = `${this.basePath}.csv`;
+    const outputFile = `${this.basePath}.gitlab.csv`;
 
     fs.writeFileSync(outputFile, `title,description${EOL}`);
 
@@ -101,8 +106,8 @@ export class ExportFactory {
   }
 
   exportAsGitHubCsv() {
-    const inputFile = `${toAbsolutePath(this.workspaceRoot, this.defaultFileName)}.csv`;
-    const outputFile = `${toAbsolutePath(this.workspaceRoot, this.defaultFileName)}.github.csv`;
+    const inputFile = `${this.basePath}.csv`;
+    const outputFile = `${this.basePath}.github.csv`;
 
     fs.writeFileSync(outputFile, `title,description,labels,state,assignee${EOL}`);
 
@@ -134,8 +139,8 @@ export class ExportFactory {
   }
 
   exportAsJiraCsv() {
-    const inputFile = `${toAbsolutePath(this.workspaceRoot, this.defaultFileName)}.csv`;
-    const outputFile = `${toAbsolutePath(this.workspaceRoot, this.defaultFileName)}.jira.csv`;
+    const inputFile = `${this.basePath}.csv`;
+    const outputFile = `${this.basePath}.jira.csv`;
 
     fs.writeFileSync(
       outputFile,
@@ -189,8 +194,8 @@ export class ExportFactory {
   }
 
   exportAsJson() {
-    const inputFile = `${toAbsolutePath(this.workspaceRoot, this.defaultFileName)}.csv`;
-    const outputFile = `${toAbsolutePath(this.workspaceRoot, this.defaultFileName)}.json`;
+    const inputFile = `${this.basePath}.csv`;
+    const outputFile = `${this.basePath}.json`;
 
     const data: CsvEntry[] = [];
 
