@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.9.4](https://github.com/d-koppenhagen/vscode-code-review/compare/v1.9.3...v1.9.4) (2020-08-21)
+
+
+### Bug Fixes
+
+* escape double quotes in CSV correctly ([c57fe2c](https://github.com/d-koppenhagen/vscode-code-review/commit/c57fe2c03178af76e6f2306f6d2b74fdc23a43ce)), closes [#32](https://github.com/d-koppenhagen/vscode-code-review/issues/32)
+
 ### [1.9.3](https://github.com/d-koppenhagen/vscode-code-review/compare/v1.9.2...v1.9.3) (2020-08-20)
 
 ### [1.9.2](https://github.com/d-koppenhagen/vscode-code-review/compare/v1.9.1...v1.9.2) (2020-08-20)
