@@ -50,7 +50,7 @@ export class ExportFactory {
     const inputFile = `${this.basePath}.csv`;
     const outputFile = `${this.basePath}.html`;
     parseFile(inputFile, { delimiter: ',', ignoreEmpty: true, headers: true })
-      .on('error', (error: any) => console.error(error))
+      .on('error', (error: unknown) => console.error(error))
       .on('data', (row: CsvEntry) => {
         row.code = this.includeCodeSelection ? this.getCodeForFile(row.filename, row.lines) : '';
         rows.push(row);
@@ -79,7 +79,7 @@ export class ExportFactory {
     fs.writeFileSync(outputFile, `title,description${EOL}`);
 
     parseFile(inputFile, { delimiter: ',', ignoreEmpty: true, headers: true })
-      .on('error', (error: any) => console.error(error))
+      .on('error', (error: unknown) => console.error(error))
       .on('data', (row: CsvEntry) => {
         this.includeCodeSelection ? (row.code = this.getCodeForFile(row.filename, row.lines)) : delete row.code;
         // cut the description (100 chars max) along with '...' at the end
@@ -112,7 +112,7 @@ export class ExportFactory {
     fs.writeFileSync(outputFile, `title,description,labels,state,assignee${EOL}`);
 
     parseFile(inputFile, { delimiter: ',', ignoreEmpty: true, headers: true })
-      .on('error', (error: any) => console.error(error))
+      .on('error', (error: unknown) => console.error(error))
       .on('data', (row: CsvEntry) => {
         this.includeCodeSelection ? (row.code = this.getCodeForFile(row.filename, row.lines)) : delete row.code;
         // cut the description (100 chars max) along with '...' at the end
@@ -148,7 +148,7 @@ export class ExportFactory {
     );
 
     parseFile(inputFile, { delimiter: ',', ignoreEmpty: true, headers: true })
-      .on('error', (error: any) => console.error(error))
+      .on('error', (error: unknown) => console.error(error))
       .on('data', (row: CsvEntry) => {
         this.includeCodeSelection ? (row.code = this.getCodeForFile(row.filename, row.lines)) : delete row.code;
         // cut the description (100 chars max) along with '...' at the end
@@ -200,7 +200,7 @@ export class ExportFactory {
     const data: CsvEntry[] = [];
 
     parseFile(inputFile, { delimiter: ',', ignoreEmpty: true, headers: true })
-      .on('error', (error: any) => console.error(error))
+      .on('error', (error: unknown) => console.error(error))
       .on('data', (row: CsvEntry) => {
         this.includeCodeSelection ? (row.code = this.getCodeForFile(row.filename, row.lines)) : delete row.code;
         data.push(row);
