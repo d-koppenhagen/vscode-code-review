@@ -46,10 +46,10 @@ export class ReviewCommentService {
     }
 
     // escape double quotes
-    const commentExcaped = comment.description.replace(/"/g, '\\"');
-    const titleExcaped = comment.title ? comment.title.replace(/"/g, '\\"') : '';
+    const commentExcaped = comment.description.replace(/"/g, '""');
+    const titleExcaped = comment.title ? comment.title.replace(/"/g, '""') : '';
     const priority = comment.priority || '';
-    const additional = comment.additional ? comment.additional.replace(/"/g, '\\"') : '';
+    const additional = comment.additional ? comment.additional.replace(/"/g, '""') : '';
     const category = comment.category || '';
     let sha = '';
     try {
