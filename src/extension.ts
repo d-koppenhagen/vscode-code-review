@@ -40,7 +40,7 @@ export function activate(context: ExtensionContext) {
       } else {
         exportFactory = new ExportFactory(context, workspaceRoot, Uri.file(defaultTemplatePath));
       }
-      exportFactory.exportAsHtml();
+      exportFactory.exportForFormat('html');
     },
   );
 
@@ -63,7 +63,7 @@ export function activate(context: ExtensionContext) {
         .then((files) => {
           const template = files && files.length ? files[0] : undefined;
           const exportFactory = new ExportFactory(context, workspaceRoot, template);
-          exportFactory.exportAsHtml();
+          exportFactory.exportForFormat('html');
         });
     },
   );
@@ -75,7 +75,7 @@ export function activate(context: ExtensionContext) {
     'codeReview.exportAsGitLabImportableCsv',
     () => {
       const exportFactory = new ExportFactory(context, workspaceRoot);
-      exportFactory.exportAsGitLabCsv();
+      exportFactory.exportForFormat('gitlab');
     },
   );
 
@@ -87,7 +87,7 @@ export function activate(context: ExtensionContext) {
     'codeReview.exportAsGitHubImportableCsv',
     () => {
       const exportFactory = new ExportFactory(context, workspaceRoot);
-      exportFactory.exportAsGitHubCsv();
+      exportFactory.exportForFormat('github');
     },
   );
 
@@ -96,7 +96,7 @@ export function activate(context: ExtensionContext) {
    */
   const exportAsJiraImportableCsvRegistration = commands.registerCommand('codeReview.exportAsJiraImportableCsv', () => {
     const exportFactory = new ExportFactory(context, workspaceRoot);
-    exportFactory.exportAsJiraCsv();
+    exportFactory.exportForFormat('jira');
   });
 
   /**
@@ -104,7 +104,7 @@ export function activate(context: ExtensionContext) {
    */
   const exportAsJsonRegistration = commands.registerCommand('codeReview.exportAsJson', () => {
     const exportFactory = new ExportFactory(context, workspaceRoot);
-    exportFactory.exportAsJson();
+    exportFactory.exportForFormat('json');
   });
 
   /**
