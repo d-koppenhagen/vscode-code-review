@@ -45,11 +45,15 @@ export class ExportFactory {
     return toAbsolutePath(this.workspaceRoot, this.defaultFileName);
   }
 
+  get inputFile(): string {
+    return `${this.basePath}.csv`;
+  }
+
   exportAsHtml() {
     const rows: CsvEntry[] = [];
-    const inputFile = `${this.basePath}.csv`;
+
     const outputFile = `${this.basePath}.html`;
-    parseFile(inputFile, { delimiter: ',', ignoreEmpty: true, headers: true })
+    parseFile(this.inputFile, { delimiter: ',', ignoreEmpty: true, headers: true })
       .on('error', (error: unknown) => console.error(error))
       .on('data', (row: CsvEntry) => {
         row.code = this.includeCodeSelection ? this.getCodeForFile(row.filename, row.lines) : '';
@@ -73,12 +77,11 @@ export class ExportFactory {
   }
 
   exportAsGitLabCsv() {
-    const inputFile = `${this.basePath}.csv`;
     const outputFile = `${this.basePath}.gitlab.csv`;
 
     fs.writeFileSync(outputFile, `title,description${EOL}`);
 
-    parseFile(inputFile, { delimiter: ',', ignoreEmpty: true, headers: true })
+    parseFile(this.inputFile, { delimiter: ',', ignoreEmpty: true, headers: true })
       .on('error', (error: unknown) => console.error(error))
       .on('data', (row: CsvEntry) => {
         this.includeCodeSelection ? (row.code = this.getCodeForFile(row.filename, row.lines)) : delete row.code;
@@ -106,12 +109,11 @@ export class ExportFactory {
   }
 
   exportAsGitHubCsv() {
-    const inputFile = `${this.basePath}.csv`;
     const outputFile = `${this.basePath}.github.csv`;
 
     fs.writeFileSync(outputFile, `title,description,labels,state,assignee${EOL}`);
 
-    parseFile(inputFile, { delimiter: ',', ignoreEmpty: true, headers: true })
+    parseFile(this.inputFile, { delimiter: ',', ignoreEmpty: true, headers: true })
       .on('error', (error: unknown) => console.error(error))
       .on('data', (row: CsvEntry) => {
         this.includeCodeSelection ? (row.code = this.getCodeForFile(row.filename, row.lines)) : delete row.code;
@@ -139,7 +141,6 @@ export class ExportFactory {
   }
 
   exportAsJiraCsv() {
-    const inputFile = `${this.basePath}.csv`;
     const outputFile = `${this.basePath}.jira.csv`;
 
     fs.writeFileSync(
@@ -147,7 +148,7 @@ export class ExportFactory {
       `Summary,Description,Priority,sha,filename,url,lines,title,category,comment,additional${EOL}`,
     );
 
-    parseFile(inputFile, { delimiter: ',', ignoreEmpty: true, headers: true })
+    parseFile(this.inputFile, { delimiter: ',', ignoreEmpty: true, headers: true })
       .on('error', (error: unknown) => console.error(error))
       .on('data', (row: CsvEntry) => {
         this.includeCodeSelection ? (row.code = this.getCodeForFile(row.filename, row.lines)) : delete row.code;
@@ -194,12 +195,11 @@ export class ExportFactory {
   }
 
   exportAsJson() {
-    const inputFile = `${this.basePath}.csv`;
     const outputFile = `${this.basePath}.json`;
 
     const data: CsvEntry[] = [];
 
-    parseFile(inputFile, { delimiter: ',', ignoreEmpty: true, headers: true })
+    parseFile(this.inputFile, { delimiter: ',', ignoreEmpty: true, headers: true })
       .on('error', (error: unknown) => console.error(error))
       .on('data', (row: CsvEntry) => {
         this.includeCodeSelection ? (row.code = this.getCodeForFile(row.filename, row.lines)) : delete row.code;
