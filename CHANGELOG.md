@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.10.0](https://github.com/d-koppenhagen/vscode-code-review/compare/v1.9.4...v1.10.0) (2020-08-22)
+
+
+### Features
+
+* allow to configure priority labels ([ecbb368](https://github.com/d-koppenhagen/vscode-code-review/commit/ecbb368a2458ce0c88c3c4be841c623cd18d8829)), closes [#33](https://github.com/d-koppenhagen/vscode-code-review/issues/33)
+
 ### [1.9.4](https://github.com/d-koppenhagen/vscode-code-review/compare/v1.9.3...v1.9.4) (2020-08-21)
 
 
