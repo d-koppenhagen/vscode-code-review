@@ -200,6 +200,23 @@ The configured value must be the full path to the Handlebars template file.
 }
 ```
 
+### `code-review.priorities`
+
+Configure the labels that should be used for the priorities.
+The first label is used when no priority is defined. The subsequent labels are given in ascending priority (max. 3 priority levels).
+The defaults are listed below:
+
+```json
+{
+  "code-review.priorities": [
+    "none",   // prio not defined
+    "low",    // prio value 1 = green traffic light selected
+    "medium", // prio value 2 = yellow traffic light selected
+    "high"    // prio value 3 = red traffic light selected
+  ] // list must contain exact 4 items
+}
+```
+
 ## Keybindings
 
 To easily add a *new* comment, you can use the keybinding combination `ctrl` + ⇧ + `n`.

@@ -284,15 +284,16 @@ export class ExportFactory {
   }
 
   private priorityName(priority: string) {
+    const priorityMap = workspace.getConfiguration().get('code-review.priorities') as string[];
     switch (priority) {
       case '1':
-        return 'low';
+        return priorityMap[1] || 'low';
       case '2':
-        return 'medium';
+        return priorityMap[2] || 'medium';
       case '3':
-        return 'high';
+        return priorityMap[3] || 'high';
       default:
-        return 'none';
+        return priorityMap[0] || 'none';
     }
   }
 

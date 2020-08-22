@@ -139,6 +139,23 @@
           "title": "The path to a default Handlebars template to be used for HTML default export",
           "description": "The template is used when choosing 'Export as HTML with default template' extension command. Otherwise the out-of-the-box template provided by this extension is used.",
           "default": ""
+        },
+        "code-review.priorities": {
+          "type": "array",
+          "title": "Priority labels",
+          "description": "Configure the labels that should be used for the priorities.\nThe first label is used when no priority is defined.\nThe subsequent labels are given in ascending priority (max. 3 priority levels)",
+          "uniqueItems": true,
+          "maxItems": 4,
+          "minItems": 4,
+          "items": {
+            "type": "string"
+          },
+          "default": [
+            "none",
+            "low",
+            "medium",
+            "high"
+          ]
         }
       }
     },
