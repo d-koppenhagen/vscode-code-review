@@ -1,3 +1,5 @@
+import { Uri } from 'vscode';
+
 export interface CodeReviewConfig {
   filename: string;
 }
@@ -57,7 +59,7 @@ export interface ExportMap {
    * @param outputFile the filename/path to the target file
    * @param rows all rows of the file
    */
-  handleEnd(outputFile: string, rows: CsvEntry[]): void;
+  handleEnd(outputFile: string, rows: CsvEntry[], template?: Uri): void;
 }
 
 export type ExportFormat = 'html' | 'gitlab' | 'github' | 'jira' | 'json';

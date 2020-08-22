@@ -2,6 +2,7 @@
 // Import the module and reference it with the alias vscode in your code below
 
 import { commands, workspace, window, ExtensionContext, WorkspaceFolder, Uri } from 'vscode';
+import * as path from 'path';
 
 import { FileGenerator } from './file-generator';
 import { ReviewCommentService } from './review-comment';
@@ -15,6 +16,14 @@ export function activate(context: ExtensionContext) {
   const workspaceRoot: string = getWorkspaceFolder(workspace.workspaceFolders as WorkspaceFolder[]);
   const generator = new FileGenerator(workspaceRoot);
   const webview = new WebViewComponent(context);
+
+  const defaultConfigurationTemplatePath = workspace
+    .getConfiguration()
+    .get('code-review.defaultTemplatePath') as string;
+  const defaultTemplate = defaultConfigurationTemplatePath
+    ? Uri.file(defaultConfigurationTemplatePath)
+    : Uri.parse(context.asAbsolutePath(path.join('dist', 'template.default.hbs')));
+
   // The command has been defined in the package.json file
   // Now provide the implementation of the command with registerCommand
   // The commandId parameter must match the command field in package.json
@@ -33,14 +42,8 @@ export function activate(context: ExtensionContext) {
   const exportAsHtmlWithDefaultTemplateRegistration = commands.registerCommand(
     'codeReview.exportAsHtmlWithDefaultTemplate',
     () => {
-      let exportFactory;
-      const defaultTemplatePath = workspace.getConfiguration().get('code-review.defaultTemplatePath') as string;
-      if (!defaultTemplatePath) {
-        exportFactory = new ExportFactory(context, workspaceRoot);
-      } else {
-        exportFactory = new ExportFactory(context, workspaceRoot, Uri.file(defaultTemplatePath));
-      }
-      exportFactory.exportForFormat('html');
+      const exportFactory = new ExportFactory(workspaceRoot);
+      exportFactory.exportForFormat('html', defaultTemplate);
     },
   );
 
@@ -61,9 +64,9 @@ export function activate(context: ExtensionContext) {
           },
         })
         .then((files) => {
-          const template = files && files.length ? files[0] : undefined;
-          const exportFactory = new ExportFactory(context, workspaceRoot, template);
-          exportFactory.exportForFormat('html');
+          const template = files?.length ? files[0] : undefined;
+          const exportFactory = new ExportFactory(workspaceRoot);
+          exportFactory.exportForFormat('html', template ?? defaultTemplate);
         });
     },
   );
@@ -74,7 +77,7 @@ export function activate(context: ExtensionContext) {
   const exportAsGitLabImportableCsvRegistration = commands.registerCommand(
     'codeReview.exportAsGitLabImportableCsv',
     () => {
-      const exportFactory = new ExportFactory(context, workspaceRoot);
+      const exportFactory = new ExportFactory(workspaceRoot);
       exportFactory.exportForFormat('gitlab');
     },
   );
@@ -86,7 +89,7 @@ export function activate(context: ExtensionContext) {
   const exportAsGitHubImportableCsvRegistration = commands.registerCommand(
     'codeReview.exportAsGitHubImportableCsv',
     () => {
-      const exportFactory = new ExportFactory(context, workspaceRoot);
+      const exportFactory = new ExportFactory(workspaceRoot);
       exportFactory.exportForFormat('github');
     },
   );
@@ -95,7 +98,7 @@ export function activate(context: ExtensionContext) {
    * allow users to export the report as JIRA importable CSV file
    */
   const exportAsJiraImportableCsvRegistration = commands.registerCommand('codeReview.exportAsJiraImportableCsv', () => {
-    const exportFactory = new ExportFactory(context, workspaceRoot);
+    const exportFactory = new ExportFactory(workspaceRoot);
     exportFactory.exportForFormat('jira');
   });
 
@@ -103,7 +106,7 @@ export function activate(context: ExtensionContext) {
    * allow users to export the report as JSON file
    */
   const exportAsJsonRegistration = commands.registerCommand('codeReview.exportAsJson', () => {
-    const exportFactory = new ExportFactory(context, workspaceRoot);
+    const exportFactory = new ExportFactory(workspaceRoot);
     exportFactory.exportForFormat('json');
   });
 

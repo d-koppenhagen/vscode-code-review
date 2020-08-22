@@ -1,5 +1,4 @@
 import * as fs from 'fs';
-import * as path from 'path';
 const Handlebars = require('handlebars');
 const stripIndent = require('strip-indent');
 import { workspace, Uri, window, ViewColumn, ExtensionContext } from 'vscode';
@@ -14,7 +13,6 @@ export class ExportFactory {
   private defaultFileName = 'code-review';
   private groupBy: GroupBy;
   private includeCodeSelection = false;
-  private hbsDefaultTemplate = '';
 
   private exportHandlerMap = new Map<ExportFormat, ExportMap>([
     [
@@ -29,12 +27,17 @@ export class ExportFactory {
           row.code = this.includeCodeSelection ? this.getCodeForFile(row.filename, row.lines) : '';
           return row;
         },
-        handleEnd: (outputFile: string, rows: CsvEntry[]) => {
+        handleEnd: (outputFile: string, rows: CsvEntry[], template: Uri) => {
+          // check template
+          const templateData = fs.readFileSync(template.fsPath, 'utf8');
+          if (!templateData) {
+            window.showErrorMessage(`Error when reading the template file: '${template.fsPath}'`);
+          }
           // check if grouping should be applied
           let reviewExportData: ReviewFileExportSection[] = [];
           reviewExportData = this.groupResults(rows, this.groupBy);
-          const template = Handlebars.compile(this.hbsDefaultTemplate);
-          const htmlOut = template(reviewExportData);
+          const templateCompiled = Handlebars.compile(templateData);
+          const htmlOut = templateCompiled(reviewExportData);
           fs.writeFileSync(outputFile, htmlOut);
           window.showInformationMessage(`Code review file: '${outputFile}' successfully created.`);
           this.showPreview(outputFile);
@@ -185,17 +188,7 @@ export class ExportFactory {
   /**
    * for trying out: https://stackblitz.com/edit/code-review-template
    */
-  constructor(private _context: ExtensionContext, private workspaceRoot: string, template?: Uri) {
-    if (!template || !template.fsPath) {
-      const foo = this._context.asAbsolutePath(path.join('dist', 'template.default.hbs'));
-      template = Uri.parse(foo);
-    }
-    const data = fs.readFileSync(template.fsPath, 'utf8');
-    if (!data) {
-      window.showErrorMessage(`Error when reading the template file: '${template.fsPath}'`);
-    }
-    this.hbsDefaultTemplate = data;
-
+  constructor(private workspaceRoot: string) {
     const configFileName = workspace.getConfiguration().get('code-review.filename') as string;
     if (configFileName) {
       this.defaultFileName = configFileName;
@@ -220,7 +213,7 @@ export class ExportFactory {
    * generic export method
    * @param format the format that's exported
    */
-  exportForFormat(format: ExportFormat) {
+  exportForFormat(format: ExportFormat, template?: Uri) {
     const exporter = this.exportHandlerMap.get(format);
     const outputFile = `${this.basePath}.${exporter?.fileExtension}`;
     const data: CsvEntry[] = [];
@@ -235,7 +228,7 @@ export class ExportFactory {
         return exporter?.handleData(outputFile, row);
       })
       .on('end', (rows: CsvEntry[]) => {
-        return exporter?.handleEnd(outputFile, exporter?.storeOutside ? data : rows);
+        return exporter?.handleEnd(outputFile, exporter?.storeOutside ? data : rows, template);
       });
   }
 
