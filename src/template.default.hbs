@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
   <meta charset="utf-8">
   <title>Code Review</title>
@@ -9,25 +10,31 @@
     body {
       font-family: Helvetica;
     }
+
     h1 {
       font-size: 24px;
     }
+
     h2 {
       font-size: 20px;
       color: green;
     }
+
     h3 {
       font-size: 16px;
       padding-left: 5px;
       margin-bottom: 5px;
     }
+
     p {
       white-space: pre-wrap;
       margin: 0;
     }
+
     pre {
       margin: 0
     }
+
     code {
       border: 1px solid #999;
       display: block;
@@ -35,11 +42,12 @@
     }
 
     /* links in headlines */
-    h3.lines-headline > a {
+    h3.lines-headline>a {
       color: #005bbb;
       text-decoration: none;
     }
-    h3.lines-headline > a:hover {
+
+    h3.lines-headline>a:hover {
       text-decoration: underline;
     }
 
@@ -48,16 +56,18 @@
       font-size: 14px;
       padding-left: 10px;
     }
+
     table.review-table .caption {
       font-weight: bold;
       vertical-align: top;
     }
-    table.review-table tr > td:first-child {
+
+    table.review-table tr>td:first-child {
       width: 120px
     }
 
     /* priority indicator */
-    .text > span:before {
+    .text>span:before {
       content: "";
       width: 10px;
       height: 10px;
@@ -66,20 +76,25 @@
       margin-right: 5px;
       margin-left: -15px;
     }
-    .text > span.prio-high:before {
+
+    .text>span.prio-high:before {
       background: #FF4500;
     }
-    .text > span.prio-medium:before {
+
+    .text>span.prio-medium:before {
       background: #FFD700;
     }
-    .text > span.prio-low:before {
+
+    .text>span.prio-low:before {
       background: #9ACD32;
     }
-    .text > span.prio-none:before {
+
+    .text>span.prio-none:before {
       background: #D3D3D3;
     }
   </style>
 </head>
+
 <body>
   <h1 class="main-headline">Code Review Results</h1>
   {{#each this as |item|}}
@@ -132,7 +147,7 @@
       <tr class="row-code">
         <td class="caption">Code</td>
         <td class="text">
-          <pre><code id="code-block-{{@../index}}-{{@index}}">{{line.code}}</code></pre>
+          <pre><code id="code-block-{{@../index}}-{{@index}}">{{codeBlock line.code}}</code></pre>
         </td>
       </tr>
       {{/if}}
@@ -140,12 +155,6 @@
     {{/each}}
   </section>
   {{/each}}
-  <script>
-    const codeBlocks = document.querySelectorAll('[id^=code-block-]');
-    for(var i in codeBlocks){
-      const base64DecodedContent = window.atob(codeBlocks[i].innerText);
-      codeBlocks[i].innerHTML = base64DecodedContent.replace(/</g,"&lt;")
-    }
-  </script>
 </body>
+
 </html>

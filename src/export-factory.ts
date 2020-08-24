@@ -36,6 +36,12 @@ export class ExportFactory {
           // check if grouping should be applied
           let reviewExportData: ReviewFileExportSection[] = [];
           reviewExportData = this.groupResults(rows, this.groupBy);
+
+          //Helper that decodes the Base64 content to be displayed in the handlebar
+          Handlebars.registerHelper('codeBlock', function (code: string) {
+            const base64DecodedContent = Base64.decode(code);
+            return base64DecodedContent;
+          });
           const templateCompiled = Handlebars.compile(templateData);
           const htmlOut = templateCompiled(reviewExportData);
           fs.writeFileSync(outputFile, htmlOut);
