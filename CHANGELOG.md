@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.11.0](https://github.com/d-koppenhagen/vscode-code-review/compare/v1.10.0...v1.11.0) (2020-08-25)
+
+
+### Features
+
+* **report:** moved base64 logic into export-factory ([85e6b8f](https://github.com/d-koppenhagen/vscode-code-review/commit/85e6b8f82435bd55afc2cdf77dafd61b029bf7b0))
+
 ## [1.10.0](https://github.com/d-koppenhagen/vscode-code-review/compare/v1.9.4...v1.10.0) (2020-08-22)
 
 
