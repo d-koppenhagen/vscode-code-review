@@ -37,12 +37,11 @@ export class ExportFactory {
           let reviewExportData: ReviewFileExportSection[] = [];
           reviewExportData = this.groupResults(rows, this.groupBy);
 
-          //Helper that decodes the Base64 content to be displayed in the handlebar
-          Handlebars.registerHelper('codeBlock', function (code: string) {
-            const base64DecodedContent = Base64.decode(code);
-            return base64DecodedContent;
-          });
+          // Helper that decodes the Base64 content to be displayed in the handlebar
+          Handlebars.registerHelper('codeBlock', (code: string) => Base64.decode(code));
+          // compile template after helper is registered
           const templateCompiled = Handlebars.compile(templateData);
+          // inject date into the template
           const htmlOut = templateCompiled(reviewExportData);
           fs.writeFileSync(outputFile, htmlOut);
           window.showInformationMessage(`Code review file: '${outputFile}' successfully created.`);
