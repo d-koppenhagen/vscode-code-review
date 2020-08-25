@@ -185,7 +185,23 @@ Define weather to include the code selection(s) in generated reports or not.
 ```
 
 > Attention! The code included in the report will be BASE64 encoded in order to prevent breaking report generation by unescaped characters that will be accidentally interpreted.
-You can decode this e.g. by using a JS script at the end of the handlebars report template as [shown here](./src/template.default.hbs#L143-L149).
+You can decode this by using the provided Handlebars helper function **`codeBlock`** as shown below:
+
+```hbs
+{{#each this as |item|}}
+<section>
+  {{#each item.lines as |line|}}
+  <div>
+    <!-- ... -->
+    {{#if line.code}}
+    <pre><code>{{codeBlock line.code}}</code></pre>
+    {{/if}}
+    <!-- ... -->
+  </div>
+  {{/each}}
+</section>
+{{/each}}
+```
 
 ### `code-review.defaultTemplatePath`
 
