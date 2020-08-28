@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.12.0](https://github.com/d-koppenhagen/vscode-code-review/compare/v1.10.0...v1.12.0) (2020-08-28)
+
+
+### Features
+
+* highlight current line/range selection when form is opened ([10437b9](https://github.com/d-koppenhagen/vscode-code-review/commit/10437b9e29101b1e0b84159a200a7c9cec81b5ee)), closes [#39](https://github.com/d-koppenhagen/vscode-code-review/issues/39)
+* **report:** moved base64 logic into export-factory ([1617f21](https://github.com/d-koppenhagen/vscode-code-review/commit/1617f217fdbf9ddc3a9f0a97f1b39010ba8e4beb)), closes [#35](https://github.com/d-koppenhagen/vscode-code-review/issues/35)
+
 ## [1.11.0](https://github.com/d-koppenhagen/vscode-code-review/compare/v1.10.0...v1.11.0) (2020-08-25)
 
 
