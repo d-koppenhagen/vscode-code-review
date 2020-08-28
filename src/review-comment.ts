@@ -1,13 +1,29 @@
 import * as fs from 'fs';
 import { EOL } from 'os';
-import { window, workspace } from 'vscode';
+import { window, workspace, Range, TextEditor } from 'vscode';
 const gitCommitId = require('git-commit-id');
 
 import { ReviewComment } from './interfaces';
 import { removeLeadingAndTrailingSlash, removeTrailingSlash } from './utils/workspace-util';
 
 export class ReviewCommentService {
-  constructor(private reviewFile: string, private workspaceRoot: string) {}
+  private activeEditor: TextEditor | undefined;
+  constructor(private reviewFile: string, private workspaceRoot: string) {
+    this.activeEditor = window.activeTextEditor;
+  }
+
+  colorizeSelection() {
+    const decoration = window.createTextEditorDecorationType({
+      backgroundColor: 'rgba(255, 244, 31, 0.26)',
+    });
+    if (this.activeEditor) {
+      const ranges: Range[] = this.activeEditor.selections.map((el) => {
+        return new Range(el.start.line, el.start.character, el.end.line, el.end.character);
+      });
+      this.activeEditor.setDecorations(decoration, ranges);
+    }
+    return decoration;
+  }
 
   /**
    * Append a new comment
@@ -20,28 +36,29 @@ export class ReviewCommentService {
     let selections = '';
     let startAnker: number | undefined = undefined;
     let endAnker: number | undefined = undefined;
-    if (window.activeTextEditor) {
+
+    if (this.activeEditor) {
       // 2:2-12:2|19:0-19:0
-      selections = window.activeTextEditor.selections.reduce((acc, cur) => {
+      selections = this.activeEditor.selections.reduce((acc, cur) => {
         const tmp = acc ? `${acc}|` : '';
         return `${tmp}${cur.start.line + 1}:${cur.start.character}-${cur.end.line + 1}:${cur.end.character}`;
       }, '');
 
       // use the first line selection for building an anker for the target URL
-      if (window.activeTextEditor.selections.length) {
-        startAnker = window.activeTextEditor.selections[0].start.line + 1;
-        endAnker = window.activeTextEditor.selections[0].end.line + 1;
+      if (this.activeEditor.selections.length) {
+        startAnker = this.activeEditor.selections[0].start.line + 1;
+        endAnker = this.activeEditor.selections[0].end.line + 1;
       }
     }
 
     let activeFileName = '';
-    if (window.activeTextEditor) {
-      activeFileName = window.activeTextEditor.document.fileName.replace(this.workspaceRoot, '');
+    if (this.activeEditor) {
+      activeFileName = this.activeEditor.document.fileName.replace(this.workspaceRoot, '');
     }
 
     if (!activeFileName) {
       window.showErrorMessage(`Error referencing file/lines, Please select again.`);
-      console.error('Error referencing file/lines. Window:', window.activeTextEditor);
+      console.error('Error referencing file/lines. Window:', this.activeEditor);
       return;
     }
 

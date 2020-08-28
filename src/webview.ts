@@ -10,6 +10,9 @@ export class WebViewComponent {
     this.categories = workspace.getConfiguration().get('code-review.categories') as string[];
   }
   addComment(commentService: ReviewCommentService) {
+    // highlight selected lines
+    const decoration = commentService.colorizeSelection();
+
     // initialize new web tab
     const panel = window.createWebviewPanel(
       'text',
@@ -42,6 +45,11 @@ export class WebViewComponent {
       undefined,
       this.context.subscriptions,
     );
+
+    panel.onDidDispose(() => {
+      // reset highlight selected lines
+      decoration.dispose();
+    });
   }
 
   getWebviewContent() {
@@ -69,19 +77,19 @@ export class WebViewComponent {
             border-radius: 0px;
             box-sizing: border-box;
           }
-    
+
           body.vscode-light {
             color: black;
           }
-    
+
           body.vscode-dark {
             color: white;
           }
-    
+
           form.note-form {
             padding-top: 20px;
           }
-    
+
           .action-btn {
             border: none;
             width: auto;
@@ -101,7 +109,7 @@ export class WebViewComponent {
             cursor: not-allowed;
             color: black;
           }
-    
+
           .primary {
             color: var(--vscode-button-foreground);
             background-color: var(--vscode-button-background);
@@ -109,7 +117,7 @@ export class WebViewComponent {
           .primary:hover {
             background-color: var(--vscode-button-hoverBackground);
           }
-    
+
           .secondary {
             color: var(--vscode-button-prominentForeground);
             background-color: var(--vscode-button-prominentBackground);
@@ -117,7 +125,7 @@ export class WebViewComponent {
           .secondary:hover {
             background-color: var(--vscode-button-prominentHoverBackground);
           }
-    
+
           /* traffic light */
           #traffic-light {
             display: block;
@@ -162,26 +170,26 @@ export class WebViewComponent {
             background-color: #00ff00;
             box-shadow: 0 0 3em #33ff33;
           }
-    
+
           /* form arrangement */
           .form-container {
             display: flex;
           }
-    
+
           .col-right {
             padding-left: 20px;
             justify-self: center;
           }
         </style>
       </head>
-    
+
       <body>
         <form class="note-form">
           <div class="form-container">
             <div class="col-left">
               <label for="title">Title</label>
               <input id="title" name="title" type="text" placeholder="A short description (e.g. 'Method too complex')" />
-    
+
               <label for="category">Category</label>
               <select id="category" name="category">
                 <option value="">Keine</option>
@@ -195,7 +203,7 @@ export class WebViewComponent {
                 placeholder="A detailled description (e.g. 'Split method into smaller functions and utils')"
                 rows="5"
               ></textarea>
-    
+
               <label for="additional">Additional Info</label>
               <input
                 id="additional"
@@ -206,7 +214,7 @@ export class WebViewComponent {
             </div>
             <div class="col-right">
               <label for="priority">Priority</label>
-    
+
               <div id="traffic-light">
                 <input type="radio" class="traffic-light-color" name="traffic-light-color" id="high" value="3" />
                 <input type="radio" class="traffic-light-color" name="traffic-light-color" id="medium" value="2" />
@@ -217,13 +225,13 @@ export class WebViewComponent {
           <button class="action-btn primary" tabindex="0" id="add" role="button" onclick="addNote()">
             Add Note
           </button>
-    
+
           <button class="action-btn secondary" tabindex="0" role="button" onclick="cancel()">
             Cancel
           </button>
         </form>
       </body>
-    
+
       <script>
         document.getElementById("add").disabled = true;
 
@@ -238,14 +246,14 @@ export class WebViewComponent {
 
         function addNote() {
           const vscode = acquireVsCodeApi();
-    
+
           const title = document.getElementById('title').value;
           const description = document.getElementById('description').value;
           const trafficLightEl = document.querySelector('input[name=traffic-light-color]:checked');
           const priority = trafficLightEl ? document.querySelector('input[name=traffic-light-color]:checked').value : 0;
           const category = document.getElementById('category').value;
           const additional = document.getElementById('additional').value;
-    
+
           const formData = {
             title,
             description,
@@ -253,16 +261,16 @@ export class WebViewComponent {
             priority,
             additional,
           };
-    
+
           vscode.postMessage({
             command: 'submit',
             text: JSON.stringify(formData),
           });
         }
-    
+
         function cancel() {
           const vscode = acquireVsCodeApi();
-    
+
           vscode.postMessage({
             command: 'cancel',
             text: 'cancel',
