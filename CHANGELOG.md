@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.14.0](https://github.com/d-koppenhagen/vscode-code-review/compare/v1.13.0...v1.14.0) (2020-08-29)
+
+
+### Features
+
+* **report:** ordering code comments by line number, after grouping ([90c65c6](https://github.com/d-koppenhagen/vscode-code-review/commit/90c65c61c3caaee58ed1e493c4c7102a2c4affa5)), closes [#38](https://github.com/d-koppenhagen/vscode-code-review/issues/38)
+
 ## [1.13.0](https://github.com/d-koppenhagen/vscode-code-review/compare/v1.10.0...v1.13.0) (2020-08-28)
 
 
