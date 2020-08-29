@@ -1,13 +1,18 @@
 import * as fs from 'fs';
 const Handlebars = require('handlebars');
 const stripIndent = require('strip-indent');
-import { workspace, Uri, window, ViewColumn, ExtensionContext } from 'vscode';
+import { workspace, Uri, window, ViewColumn } from 'vscode';
 const parseFile = require('@fast-csv/parse').parseFile;
 import { EOL } from 'os';
 import { Base64 } from 'js-base64';
 
-import { toAbsolutePath, getFileContentForRange } from './utils/workspace-util';
-import { CsvEntry, ReviewFileExportSection, GroupBy, ExportFormat, ExportMap } from './interfaces';
+import {
+  toAbsolutePath,
+  getFileContentForRange,
+  sortCsvEntryForLines,
+  sortLineSelections,
+} from './utils/workspace-util';
+import { CsvEntry, ReviewFileExportSection, GroupBy, ExportFormat, ExportMap, Group } from './interfaces';
 
 export class ExportFactory {
   private defaultFileName = 'code-review';
@@ -36,6 +41,11 @@ export class ExportFactory {
           // check if grouping should be applied
           let reviewExportData: ReviewFileExportSection[] = [];
           reviewExportData = this.groupResults(rows, this.groupBy);
+          if (this.groupBy === Group.filename) {
+            reviewExportData.forEach((group) => {
+              group.lines.sort(sortCsvEntryForLines);
+            });
+          }
 
           // Helper that decodes the Base64 content to be displayed in the handlebar
           Handlebars.registerHelper('codeBlock', (code: string) => Base64.decode(code));
@@ -200,7 +210,7 @@ export class ExportFactory {
     }
     let groupByConfig = workspace.getConfiguration().get('code-review.groupBy') as string;
     if (!groupByConfig || groupByConfig === '-') {
-      groupByConfig = 'filename';
+      groupByConfig = Group.filename;
     }
     this.groupBy = groupByConfig as GroupBy;
     this.includeCodeSelection = workspace.getConfiguration().get('code-review.reportWithCodeSelection') as boolean;
@@ -247,6 +257,9 @@ export class ExportFactory {
     rows.forEach((row) => {
       row.priority = this.priorityName(row.priority);
       row.category = row.category || 'Other';
+      // sort when multiple line selection are related to one comment
+      // e.g. '23:4-45:2|12:3-15:6|18:1-19:40' becomes: '12:3-15:6|18:1-19:40|23:4-45:2'
+      row.lines = row.lines.split('|').sort(sortLineSelections).join('|');
       const match = reviewExportData.find((fileRef) => fileRef.group === row[groupAttribute]);
       if (match) {
         match.lines.push(row);

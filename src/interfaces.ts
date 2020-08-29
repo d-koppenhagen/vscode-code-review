@@ -30,7 +30,12 @@ export interface ReviewFileExportSection {
   lines: CsvEntry[];
 }
 
-export type GroupBy = keyof Pick<CsvEntry, 'category' | 'priority' | 'filename'>;
+export enum Group {
+  category = 'category',
+  priority = 'priority',
+  filename = 'filename',
+}
+export type GroupBy = keyof Pick<CsvEntry, Group.category | Group.priority | Group.filename>;
 
 export interface ExportMap {
   /**
