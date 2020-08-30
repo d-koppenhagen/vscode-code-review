@@ -37,6 +37,14 @@ export function activate(context: ExtensionContext) {
    */
   const commentProvider = new CommentsProvider(context, exportFactory);
   window.registerTreeDataProvider('codeReview.commentTree', commentProvider);
+
+  // refresh comment view on manual changes in the review file
+  const fileWatcher = workspace.createFileSystemWatcher(`**/${generator.reviewFile}`);
+  fileWatcher.onDidChange(() => {
+    commentProvider.refresh();
+  });
+
+  // instantiate comment view
   new CommentView(commentProvider);
 
   /**
