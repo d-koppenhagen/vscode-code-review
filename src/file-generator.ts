@@ -16,13 +16,16 @@ export class FileGenerator {
     }
   }
 
+  get reviewFile(): string {
+    return `${this.defaultFileName}${this.defaultFileExtension}`;
+  }
+
   /**
    * leveraging all of the other functions to execute
    * the flow of adding a duck to a project
    */
   execute(): string {
-    const fileName = `${this.defaultFileName}${this.defaultFileExtension}`;
-    const absoluteFilePath: string = toAbsolutePath(this.workspaceRoot, fileName);
+    const absoluteFilePath: string = toAbsolutePath(this.workspaceRoot, this.reviewFile);
     this.create(absoluteFilePath);
     return absoluteFilePath;
   }
