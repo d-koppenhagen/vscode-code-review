@@ -165,7 +165,24 @@
         "key": "ctrl+shift+n",
         "mac": "ctrl+shift+n"
       }
-    ]
+    ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "code-review",
+          "title": "Code Review",
+          "icon": "images/icon-sidebar.svg"
+        }
+      ]
+    },
+    "views": {
+      "code-review": [
+        {
+          "id": "code-review.list",
+          "name": "Comment Explorer"
+        }
+      ]
+    }
   },
   "scripts": {
     "vscode:prepublish": "webpack --mode production",

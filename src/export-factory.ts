@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 const Handlebars = require('handlebars');
 const stripIndent = require('strip-indent');
-import { workspace, Uri, window, ViewColumn } from 'vscode';
+import { workspace, Uri, window, ViewColumn, TreeItemCollapsibleState } from 'vscode';
 const parseFile = require('@fast-csv/parse').parseFile;
 import { EOL } from 'os';
 import { Base64 } from 'js-base64';
@@ -13,6 +13,7 @@ import {
   sortLineSelections,
 } from './utils/workspace-util';
 import { CsvEntry, ReviewFileExportSection, GroupBy, ExportFormat, ExportMap, Group } from './interfaces';
+import { CommentListEntry } from './comment-list-entry';
 
 export class ExportFactory {
   private defaultFileName = 'code-review';
@@ -245,6 +246,57 @@ export class ExportFactory {
       .on('end', (rows: CsvEntry[]) => {
         return exporter?.handleEnd(outputFile, exporter?.storeOutside ? data : rows, template);
       });
+  }
+
+  /**
+   * get the comments as CommentListEntry for VSCode view
+   */
+  getComments(commentGroupedInFile: CommentListEntry): Thenable<CommentListEntry[]> {
+    const result = commentGroupedInFile.data.lines.map((entry: CsvEntry) => {
+      const item = new CommentListEntry(
+        entry.title,
+        entry.comment,
+        entry.comment,
+        TreeItemCollapsibleState.None,
+        commentGroupedInFile.data,
+        entry.priority,
+      );
+      item.command = {
+        command: 'codeReview.openSelection',
+        title: 'Open comment',
+        arguments: [commentGroupedInFile.data, entry],
+      };
+      return item;
+    });
+    return Promise.resolve(result);
+  }
+
+  getFilesContainingComments(): Thenable<CommentListEntry[]> {
+    const entries: CsvEntry[] = [];
+    return new Promise((resolve) => {
+      parseFile(this.inputFile, { delimiter: ',', ignoreEmpty: true, headers: true })
+        .on('error', () => this.handleError)
+        .on('data', (row: CsvEntry) => entries.push(row))
+        .on('end', () => {
+          const sortedByFile = this.groupResults(entries, Group.filename);
+          const listEntries = sortedByFile.map((el: ReviewFileExportSection) => {
+            const item = new CommentListEntry(
+              el.group,
+              `(${el.lines.length})`,
+              `${el.lines.length} comments`,
+              TreeItemCollapsibleState.Collapsed,
+              el,
+            );
+            item.command = {
+              command: 'codeReview.openSelection',
+              title: 'reveal comment',
+              arguments: [el],
+            };
+            return item;
+          });
+          resolve(listEntries);
+        });
+    });
   }
 
   private handleError(error: unknown) {
