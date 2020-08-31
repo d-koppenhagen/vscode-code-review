@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.15.0](https://github.com/d-koppenhagen/vscode-code-review/compare/v1.14.0...v1.15.0) (2020-08-31)
+
+
+### Features
+
+* add view to reveal comments in explorer ([b37cb2e](https://github.com/d-koppenhagen/vscode-code-review/commit/b37cb2ec397a34705e1902e6d601df90b2ff56be)), closes [#40](https://github.com/d-koppenhagen/vscode-code-review/issues/40)
+* update code review view when review file has been edited manually ([f3ae42c](https://github.com/d-koppenhagen/vscode-code-review/commit/f3ae42cb46194351467163fb70d034df61e913e1)), closes [#41](https://github.com/d-koppenhagen/vscode-code-review/issues/41)
+
+
+### Bug Fixes
+
+* remove unneeded registration ([c113c79](https://github.com/d-koppenhagen/vscode-code-review/commit/c113c79a35f1378b3f4b39752a3e1fa52e4e2339)), closes [#46](https://github.com/d-koppenhagen/vscode-code-review/issues/46)
+
 ## [1.14.0](https://github.com/d-koppenhagen/vscode-code-review/compare/v1.13.0...v1.14.0) (2020-08-29)
 
 
