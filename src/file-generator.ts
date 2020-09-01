@@ -16,28 +16,20 @@ export class FileGenerator {
     }
   }
 
-  get reviewFile(): string {
+  get reviewFileName(): string {
     return `${this.defaultFileName}${this.defaultFileExtension}`;
   }
 
-  /**
-   * leveraging all of the other functions to execute
-   * the flow of adding a duck to a project
-   */
-  execute(): string {
-    const absoluteFilePath = toAbsolutePath(this.workspaceRoot, this.reviewFile);
-    this.create(absoluteFilePath);
-    return absoluteFilePath;
+  get reviewFilePath(): string {
+    return toAbsolutePath(this.workspaceRoot, this.reviewFileName);
   }
 
   /**
    * Try to create the code review file if not already exist
-   * @param absoluteFilePath the absolute file path
    */
-  create(absoluteFilePath: string) {
-    console.log('DBG CREATE', absoluteFilePath);
-    if (fs.existsSync(absoluteFilePath)) {
-      const lineContent = getCsvFileHeader(absoluteFilePath);
+  create() {
+    if (fs.existsSync(this.reviewFilePath)) {
+      const lineContent = getCsvFileHeader(this.reviewFilePath);
       if (lineContent !== this.csvFileHeader) {
         window.showErrorMessage(
           `CSV header "${lineContent}" is not matching "${this.csvFileHeader}" format. Please adjust it manually`,
@@ -47,12 +39,12 @@ export class FileGenerator {
     }
 
     try {
-      fs.writeFileSync(absoluteFilePath, `${this.csvFileHeader}${EOL}`);
+      fs.writeFileSync(this.reviewFilePath, `${this.csvFileHeader}${EOL}`);
       window.showInformationMessage(
         `Code review file: '${this.defaultFileName}${this.defaultFileExtension}' successfully created.`,
       );
     } catch (err) {
-      window.showErrorMessage(`Error when trying to create code review file: '${absoluteFilePath}': ${err}`);
+      window.showErrorMessage(`Error when trying to create code review file: '${this.reviewFilePath}': ${err}`);
     }
   }
 

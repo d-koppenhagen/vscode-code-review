@@ -34,7 +34,7 @@ export function activate(context: ExtensionContext) {
   const commentProvider = new CommentsProvider(context, exportFactory);
 
   // refresh comment view on manual changes in the review file
-  const fileWatcher = workspace.createFileSystemWatcher(`**/${generator.reviewFile}`);
+  const fileWatcher = workspace.createFileSystemWatcher(`**/${generator.reviewFileName}`);
   fileWatcher.onDidChange(() => {
     commentProvider.refresh();
   });
@@ -43,13 +43,13 @@ export function activate(context: ExtensionContext) {
   new CommentView(commentProvider);
 
   // create a new file if not already exist
-  const commentService = new ReviewCommentService(generator.execute(), workspaceRoot);
+  const commentService = new ReviewCommentService(generator.reviewFilePath, workspaceRoot);
 
   /**
    * register comment panel web view
    */
   const addNoteRegistration = commands.registerCommand('codeReview.addNote', () => {
-    generator.execute(); // execute every time a comment will be added to check file format
+    generator.create(); // execute every time a comment will be added to check file format
     webview.addComment(commentService);
     commentProvider.refresh();
   });
