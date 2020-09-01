@@ -11,6 +11,7 @@ import {
   getFileContentForRange,
   sortCsvEntryForLines,
   sortLineSelections,
+  rangeFromStringDefinition,
 } from './utils/workspace-util';
 import { CsvEntry, ReviewFileExportSection, GroupBy, ExportFormat, ExportMap, Group } from './interfaces';
 import { CommentListEntry } from './comment-list-entry';
@@ -153,26 +154,11 @@ export class ExportFactory {
 
           const description = `h2. Affected${EOL}${fileRow}${linesRow}${shaRow}${categorySection}${commentSection}${EOL}${additional}${code}`;
 
-          // JIRA priorities are the other way around
-          let priority = 3;
-          switch (row.priority) {
-            case '1':
-              priority = 3;
-              break;
-            case '2':
-              priority = 2;
-              break;
-            case '3':
-              priority = 1;
-              break;
-            default:
-              priority = 3;
-              break;
-          }
-
           fs.appendFileSync(
             outputFile,
-            `"[code review] ${title}","${description}","${priority}","${row.sha}","${row.filename}","${row.url}","${row.lines}","${row.title}","${row.category}","${row.comment}","${row.additional}"${EOL}`,
+            `"[code review] ${title}","${description}","${this.priorityName(row.priority)}","${row.sha}","${
+              row.filename
+            }","${row.url}","${row.lines}","${row.title}","${row.category}","${row.comment}","${row.additional}"${EOL}`,
           );
           return row;
         },
@@ -307,7 +293,6 @@ export class ExportFactory {
     const reviewExportData: ReviewFileExportSection[] = [];
 
     rows.forEach((row) => {
-      row.priority = this.priorityName(row.priority);
       row.category = row.category || 'Other';
       // sort when multiple line selection are related to one comment
       // e.g. '23:4-45:2|12:3-15:6|18:1-19:40' becomes: '12:3-15:6|18:1-19:40|23:4-45:2'
@@ -317,7 +302,7 @@ export class ExportFactory {
         match.lines.push(row);
       } else {
         reviewExportData.push({
-          group: row[groupAttribute],
+          group: row[groupAttribute].toString(),
           lines: [row],
         });
       }
@@ -336,12 +321,10 @@ export class ExportFactory {
     const lineRanges = lines.split('|'); // split: 2:2-12:2|8:0-18:5
     const filePath = toAbsolutePath(this.workspaceRoot, filename);
     if (lineRanges) {
-      lineRanges.forEach((range: string) => {
-        if (range) {
-          const [start, end] = range.split('-'); // split: 2:2-12:2
-          const [startLine] = start.split(':'); // split: 2:2
-          const [endLine] = end.split(':'); // split: 2:2
-          const fileContent = stripIndent(getFileContentForRange(filePath, Number(startLine), Number(endLine)));
+      lineRanges.forEach((rangeString: string) => {
+        if (rangeString) {
+          const range = rangeFromStringDefinition(rangeString);
+          const fileContent = stripIndent(getFileContentForRange(filePath, range));
           if (result) {
             result = `${result}${EOL}...${EOL}${EOL}${fileContent}`;
           } else {
@@ -353,18 +336,9 @@ export class ExportFactory {
     return Base64.encode(result);
   }
 
-  private priorityName(priority: string) {
+  private priorityName(priority: number) {
     const priorityMap = workspace.getConfiguration().get('code-review.priorities') as string[];
-    switch (priority) {
-      case '1':
-        return priorityMap[1] || 'low';
-      case '2':
-        return priorityMap[2] || 'medium';
-      case '3':
-        return priorityMap[3] || 'high';
-      default:
-        return priorityMap[0] || 'none';
-    }
+    return priorityMap[priority];
   }
 
   private showPreview(outputFile: string) {

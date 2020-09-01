@@ -41,12 +41,8 @@ export class CommentsProvider implements TreeDataProvider<CommentListEntry> {
   }
 
   private getIcon(element: CommentListEntry): any {
-    const priorityMap = workspace.getConfiguration().get('code-review.priorities') as string[];
     let icon = '';
-    const index = priorityMap.findIndex((el) => {
-      return el === element.prio;
-    });
-    switch (index) {
+    switch (element.prio) {
       case 0:
         icon = 'red.svg';
         break;

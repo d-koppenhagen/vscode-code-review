@@ -1,16 +1,12 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 
-import { commands, workspace, window, ExtensionContext, WorkspaceFolder, Uri, Range, Position } from 'vscode';
+import { commands, workspace, window, ExtensionContext, WorkspaceFolder, Uri, Range, ViewColumn } from 'vscode';
 import * as path from 'path';
 
 import { FileGenerator } from './file-generator';
 import { ReviewCommentService } from './review-comment';
-import {
-  getWorkspaceFolder,
-  startLineNumberFromStringDefinition,
-  endLineNumberFromStringDefinition,
-} from './utils/workspace-util';
+import { getWorkspaceFolder, rangeFromStringDefinition } from './utils/workspace-util';
 import { WebViewComponent } from './webview';
 import { ExportFactory } from './export-factory';
 import { CommentView, CommentsProvider } from './comment-view';
@@ -46,15 +42,14 @@ export function activate(context: ExtensionContext) {
   // instantiate comment view
   new CommentView(commentProvider);
 
+  // create a new file if not already exist
+  const commentService = new ReviewCommentService(generator.execute(), workspaceRoot);
+
   /**
    * register comment panel web view
    */
   const addNoteRegistration = commands.registerCommand('codeReview.addNote', () => {
-    // The code you place here will be executed every time your command is executed
-
-    // create a new file if not already exist
-    const reviewFile = generator.execute();
-    const commentService = new ReviewCommentService(reviewFile, workspaceRoot);
+    generator.execute(); // execute every time a comment will be added to check file format
     webview.addComment(commentService);
     commentProvider.refresh();
   });
@@ -127,22 +122,21 @@ export function activate(context: ExtensionContext) {
     exportFactory.exportForFormat('json');
   });
 
-  /**
-   *
-   */
   const openSelectionRegistration = commands.registerCommand(
     'codeReview.openSelection',
     (fileSection: ReviewFileExportSection, csvRef?: CsvEntry) => {
       const filePath = path.join(workspaceRoot, fileSection.group);
       workspace.openTextDocument(Uri.parse(filePath)).then(
         (doc) => {
-          window.showTextDocument(doc);
-          if (csvRef) {
-            const start = startLineNumberFromStringDefinition(csvRef.lines);
-            const end = endLineNumberFromStringDefinition(csvRef.lines);
-            const range: Range = new Range(new Position(start, 0), new Position(end, 0));
-            window.activeTextEditor?.revealRange(range);
-          }
+          window.showTextDocument(doc, ViewColumn.One).then((textEditor) => {
+            webview.panel?.dispose(); // dispose previous ones
+            if (csvRef) {
+              const rangesStringArray = csvRef.lines.split('|');
+              const ranges: Range[] = rangesStringArray.map(() => rangeFromStringDefinition(csvRef.lines));
+              textEditor.revealRange(ranges[0]);
+              webview.editComment(commentService, ranges, csvRef);
+            }
+          });
         },
         (err) => {
           const msg = `Cannot not open file: '${filePath}': File does not exist.`;

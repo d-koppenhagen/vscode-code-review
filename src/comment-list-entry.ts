@@ -9,7 +9,7 @@ export class CommentListEntry extends TreeItem {
     public readonly hoverLabel: string,
     public readonly collapsibleState: TreeItemCollapsibleState,
     public readonly data: ReviewFileExportSection,
-    public readonly prio?: string,
+    public readonly prio?: number,
   ) {
     super(label, collapsibleState);
   }

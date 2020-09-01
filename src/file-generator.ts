@@ -2,7 +2,7 @@ import * as fs from 'fs';
 import { EOL } from 'os';
 import { workspace, window } from 'vscode';
 
-import { toAbsolutePath, getFileContentForRange } from './utils/workspace-util';
+import { toAbsolutePath, getCsvFileHeader } from './utils/workspace-util';
 
 export class FileGenerator {
   private readonly defaultFileExtension = '.csv';
@@ -25,18 +25,19 @@ export class FileGenerator {
    * the flow of adding a duck to a project
    */
   execute(): string {
-    const absoluteFilePath: string = toAbsolutePath(this.workspaceRoot, this.reviewFile);
+    const absoluteFilePath = toAbsolutePath(this.workspaceRoot, this.reviewFile);
     this.create(absoluteFilePath);
     return absoluteFilePath;
   }
 
   /**
-   * Try to create the code review fiel if not already exist
+   * Try to create the code review file if not already exist
    * @param absoluteFilePath the absolute file path
    */
   create(absoluteFilePath: string) {
+    console.log('DBG CREATE', absoluteFilePath);
     if (fs.existsSync(absoluteFilePath)) {
-      const lineContent = getFileContentForRange(absoluteFilePath, 1, 0);
+      const lineContent = getCsvFileHeader(absoluteFilePath);
       if (lineContent !== this.csvFileHeader) {
         window.showErrorMessage(
           `CSV header "${lineContent}" is not matching "${this.csvFileHeader}" format. Please adjust it manually`,

@@ -4,14 +4,6 @@ export interface CodeReviewConfig {
   filename: string;
 }
 
-export interface ReviewComment {
-  title?: string;
-  description: string;
-  priority?: number;
-  additional?: string;
-  category?: string;
-}
-
 export interface CsvEntry {
   sha: string;
   filename: string;
@@ -19,7 +11,7 @@ export interface CsvEntry {
   lines: string;
   title: string;
   comment: string;
-  priority: string;
+  priority: number;
   category: string;
   additional: string;
   code?: string;

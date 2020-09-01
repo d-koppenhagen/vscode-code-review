@@ -2,7 +2,7 @@ import * as assert from 'assert';
 import * as fs from 'fs';
 import { EOL } from 'os';
 
-import { WorkspaceFolder, Uri } from 'vscode';
+import { WorkspaceFolder, Uri, Range, Position } from 'vscode';
 
 import {
   toAbsolutePath,
@@ -11,10 +11,15 @@ import {
   removeLeadingAndTrailingSlash,
   getWorkspaceFolder,
   getFileContentForRange,
+  getCsvFileHeader,
   startLineNumberFromStringDefinition,
+  startPositionNumberFromStringDefinition,
   endLineNumberFromStringDefinition,
+  endPositionNumberFromStringDefinition,
   sortLineSelections,
   sortCsvEntryForLines,
+  escapeDoubleQuotesForCsv,
+  rangeFromStringDefinition,
 } from '../../utils/workspace-util';
 import { CsvEntry } from '../../interfaces';
 
@@ -93,17 +98,40 @@ suite('Workspace Utils', () => {
   });
 
   suite('getFileContentForRange', () => {
-    test('should return the content from the first line in a file', () => {
+    const range = new Range(new Position(1, 0), new Position(2, 0));
+
+    test('should return the content from some line in a file', () => {
       const filename = 'a.js';
       fs.writeFileSync(filename, `foo${EOL}bar${EOL}baz${EOL}`);
-      const result = getFileContentForRange(filename, 1, 0);
-      assert.equal(result, 'foo');
+      const result = getFileContentForRange(filename, range);
+      assert.equal(result, 'bar');
       fs.unlinkSync(filename); // cleanup created file
     });
 
     test('should return an empty string when workspace folder cannot be determined', () => {
-      const result = getFileContentForRange('some-non-existing-file', 1, 0);
+      const result = getFileContentForRange('some-non-existing-file', range);
       assert.equal(result, '');
+    });
+  });
+
+  suite('getCsvFileHeader', () => {
+    test('should return the content from the first line in a file', () => {
+      const filename = 'a.js';
+      fs.writeFileSync(filename, `col1,col2,col3${EOL}val1,val2,val3`);
+      const result = getCsvFileHeader(filename);
+      assert.equal(result, 'col1,col2,col3');
+      fs.unlinkSync(filename); // cleanup created file
+    });
+
+    test('should return an empty string when workspace folder cannot be determined', () => {
+      const result = getCsvFileHeader('some-non-existing-file');
+      assert.equal(result, '');
+    });
+  });
+
+  suite('escapeDoubleQuotesForCsv', () => {
+    test('should escape a double quote sign as expected for CSV files (with another ")', () => {
+      assert.equal(escapeDoubleQuotesForCsv('aa"bb'), 'aa""bb');
     });
   });
 
@@ -116,12 +144,50 @@ suite('Workspace Utils', () => {
     });
   });
 
+  suite('startPositionNumberFromStringDefinition', () => {
+    test('should return the matching position after the colon', () => {
+      assert.equal(startPositionNumberFromStringDefinition('2:4'), 4);
+      assert.equal(startPositionNumberFromStringDefinition('103:18-12:4'), 18);
+      assert.equal(startPositionNumberFromStringDefinition(''), 0);
+      assert.equal(startPositionNumberFromStringDefinition(':3-12-4'), 3);
+    });
+  });
+
   suite('endLineNumberFromStringDefinition', () => {
     test('should return the matching line before the colon', () => {
       assert.equal(endLineNumberFromStringDefinition('103:18-12:4'), 12);
       assert.equal(endLineNumberFromStringDefinition('2:4'), 0);
       assert.equal(endLineNumberFromStringDefinition(''), 0);
       assert.equal(endLineNumberFromStringDefinition(':3-:4'), 0);
+    });
+  });
+
+  suite('endPositionNumberFromStringDefinition', () => {
+    test('should return the matching position after the colon', () => {
+      assert.equal(endPositionNumberFromStringDefinition('103:18-12:4'), 4);
+      assert.equal(endPositionNumberFromStringDefinition('2:4'), 0);
+      assert.equal(endPositionNumberFromStringDefinition(''), 0);
+      assert.equal(endPositionNumberFromStringDefinition(':3-:4'), 4);
+    });
+  });
+
+  suite('rangeFromStringDefinition', () => {
+    test('should return a range class based on the given string definition', () => {
+      const result = rangeFromStringDefinition('103:18-12:4');
+      assert.equal(result instanceof Range, true);
+      assert.equal(result.start.line, 12);
+      assert.equal(result.start.character, 4);
+      assert.equal(result.end.line, 103);
+      assert.equal(result.end.character, 18);
+    });
+
+    test('should fallback to 0', () => {
+      const result = rangeFromStringDefinition('0');
+      assert.equal(result instanceof Range, true);
+      assert.equal(result.start.line, 0);
+      assert.equal(result.start.character, 0);
+      assert.equal(result.end.line, 0);
+      assert.equal(result.end.character, 0);
     });
   });
 
@@ -139,7 +205,7 @@ suite('Workspace Utils', () => {
       url: 'string',
       title: 'string',
       comment: 'string',
-      priority: 'string',
+      priority: 0,
       category: 'string',
       additional: 'string',
     };

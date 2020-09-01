@@ -1,73 +1,83 @@
 import * as fs from 'fs';
 import { EOL } from 'os';
-import { window, workspace, Range, TextEditor } from 'vscode';
+import { window, workspace, Range, TextEditor, Position } from 'vscode';
 const gitCommitId = require('git-commit-id');
 
-import { ReviewComment } from './interfaces';
-import { removeLeadingAndTrailingSlash, removeTrailingSlash } from './utils/workspace-util';
+import { CsvEntry } from './interfaces';
+import {
+  removeLeadingAndTrailingSlash,
+  removeTrailingSlash,
+  escapeDoubleQuotesForCsv,
+  startLineNumberFromStringDefinition,
+  endLineNumberFromStringDefinition,
+} from './utils/workspace-util';
 
 export class ReviewCommentService {
-  private activeEditor: TextEditor | undefined;
-  constructor(private reviewFile: string, private workspaceRoot: string) {
-    this.activeEditor = window.activeTextEditor;
-  }
+  constructor(private reviewFile: string, private workspaceRoot: string) {}
 
-  colorizeSelection() {
+  colorizeSelection(selection?: Range) {
     const decoration = window.createTextEditorDecorationType({
-      backgroundColor: 'rgba(255, 244, 31, 0.26)',
+      backgroundColor: 'rgba(200, 200, 50, 0.15)',
     });
-    if (this.activeEditor) {
-      const ranges: Range[] = this.activeEditor.selections.map((el) => {
-        return new Range(el.start.line, el.start.character, el.end.line, el.end.character);
+    if (window.activeTextEditor) {
+      const ranges: Range[] = window.activeTextEditor.selections.map((el) => {
+        return (
+          selection ??
+          new Range(new Position(el.start.line, el.start.character), new Position(el.end.line, el.end.character))
+        );
       });
-      this.activeEditor.setDecorations(decoration, ranges);
+      window.activeTextEditor.setDecorations(decoration, ranges);
     }
     return decoration;
   }
 
   /**
    * Append a new comment
-   * @param filePath the relative file path starting from the workspace root
-   * @param lineOrLines the line or lines the comment is related to
    * @param comment the comment message
    */
-  async addComment(comment: ReviewComment) {
+  async addComment(comment: CsvEntry) {
+    const newEntry: CsvEntry = { ...comment };
     this.checkFileExists();
-    let selections = '';
-    let startAnker: number | undefined = undefined;
-    let endAnker: number | undefined = undefined;
 
-    if (this.activeEditor) {
+    if (window.activeTextEditor) {
       // 2:2-12:2|19:0-19:0
-      selections = this.activeEditor.selections.reduce((acc, cur) => {
+      newEntry.lines = window.activeTextEditor.selections.reduce((acc, cur) => {
         const tmp = acc ? `${acc}|` : '';
         return `${tmp}${cur.start.line + 1}:${cur.start.character}-${cur.end.line + 1}:${cur.end.character}`;
       }, '');
-
-      // use the first line selection for building an anker for the target URL
-      if (this.activeEditor.selections.length) {
-        startAnker = this.activeEditor.selections[0].start.line + 1;
-        endAnker = this.activeEditor.selections[0].end.line + 1;
-      }
+      newEntry.filename = window.activeTextEditor.document.fileName.replace(this.workspaceRoot, '');
     }
 
-    let activeFileName = '';
-    if (this.activeEditor) {
-      activeFileName = this.activeEditor.document.fileName.replace(this.workspaceRoot, '');
-    }
-
-    if (!activeFileName) {
+    if (!newEntry.filename) {
       window.showErrorMessage(`Error referencing file/lines, Please select again.`);
-      console.error('Error referencing file/lines. Window:', this.activeEditor);
+      console.error('Error referencing file/lines. Window:', window.activeTextEditor);
       return;
     }
 
     // escape double quotes
-    const commentExcaped = comment.description.replace(/"/g, '""');
-    const titleExcaped = comment.title ? comment.title.replace(/"/g, '""') : '';
+    fs.appendFileSync(this.reviewFile, this.buildCsvString(newEntry));
+  }
+
+  /**
+   * Modify an existing comment
+   * @param comment the comment message
+   */
+  async updateComment(comment: CsvEntry) {
+    console.log(comment);
+    this.checkFileExists();
+
+    // TODO: not append, override existing instead
+    fs.appendFileSync(this.reviewFile, this.buildCsvString(comment));
+  }
+
+  private buildCsvString(comment: CsvEntry): string {
+    // escape double quotes
+    const commentExcaped = escapeDoubleQuotesForCsv(comment.comment);
+    const titleExcaped = comment.title ? escapeDoubleQuotesForCsv(comment.title) : '';
     const priority = comment.priority || '';
-    const additional = comment.additional ? comment.additional.replace(/"/g, '""') : '';
+    const additional = comment.additional ? escapeDoubleQuotesForCsv(comment.additional) : '';
     const category = comment.category || '';
+
     let sha = '';
     try {
       sha = gitCommitId({ cwd: this.workspaceRoot });
@@ -76,12 +86,13 @@ export class ReviewCommentService {
       console.log('Not in a git repository. Leaving SHA empty', error);
     }
 
-    const remoteUrl = this.remoteUrl(sha, activeFileName, startAnker, endAnker);
+    console.log(comment);
 
-    fs.appendFileSync(
-      this.reviewFile,
-      `"${sha}","${activeFileName}","${remoteUrl}","${selections}","${titleExcaped}","${commentExcaped}","${priority}","${category}","${additional}"${EOL}`,
-    );
+    const startAnker = startLineNumberFromStringDefinition(comment.lines);
+    const endAnker = endLineNumberFromStringDefinition(comment.lines);
+    const remoteUrl = this.remoteUrl(sha, comment.filename, startAnker, endAnker);
+
+    return `"${sha}","${comment.filename}","${remoteUrl}","${comment.lines}","${titleExcaped}","${commentExcaped}","${priority}","${category}","${additional}"${EOL}`;
   }
 
   /**
@@ -115,7 +126,7 @@ export class ReviewCommentService {
 
   private checkFileExists() {
     if (!fs.existsSync(this.reviewFile)) {
-      window.showErrorMessage(`Could not add modify to file: '${this.reviewFile}': File does not exist`);
+      window.showErrorMessage(`Could not add to file: '${this.reviewFile}': File does not exist`);
       return;
     }
   }
