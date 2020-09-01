@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.16.1](https://github.com/d-koppenhagen/vscode-code-review/compare/v1.16.0...v1.16.1) (2020-09-01)
+
+
+### Bug Fixes
+
+* only create review file when first comment is created ([3008203](https://github.com/d-koppenhagen/vscode-code-review/commit/3008203e84bf09c56be50fc72aab0fbe03a2a2f4))
+
 ## [1.16.0](https://github.com/d-koppenhagen/vscode-code-review/compare/v1.15.0...v1.16.0) (2020-09-01)
 
 
