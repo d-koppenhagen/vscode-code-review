@@ -66,8 +66,17 @@ export class ReviewCommentService {
     console.log(comment);
     this.checkFileExists();
 
-    // TODO: not append, override existing instead
-    fs.appendFileSync(this.reviewFile, this.buildCsvString(comment));
+    const oldFileContent = fs.readFileSync(this.reviewFile, 'utf8'); // get old content
+    const rows = oldFileContent.split(EOL);
+    const updateRowIndex = rows.findIndex((row) => row.includes(comment.filename) && row.includes(comment.lines));
+    if (updateRowIndex) {
+      rows[updateRowIndex] = this.buildCsvString(comment);
+    } else {
+      window.showErrorMessage(
+        `Update failed. Cannot find line definition '${comment.lines}' for '${comment.filename}' in '${this.reviewFile}'.`,
+      );
+    }
+    fs.writeFileSync(this.reviewFile, rows.join(EOL));
   }
 
   private buildCsvString(comment: CsvEntry): string {
