@@ -57,7 +57,7 @@ export const getFileContentForRange = (pathToFile: string, range: Range): string
     console.log('Error reading file', pathToFile, error);
   }
   const fileContentLines = fileContent.split(EOL);
-  return fileContentLines.slice(range.start.line, range.end.line).join(EOL);
+  return fileContentLines.slice(range.start.line - 1, range.end.line).join(EOL);
 };
 
 /**
