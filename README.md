@@ -14,13 +14,27 @@ This extension allows you to create a code review file you can hand over to a cu
 <hr>
 
 - [vscode-code-review](#vscode-code-review)
-- [Features](#features)
-  - [create review notes](#create-review-notes)
-  - [export created notes as HTML](#export-created-notes-as-html)
-  - [Export for Issue Tracking System](#export-for-issue-tracking-system)
-- [Extension Settings](#extension-settings)
-- [Keybindings](#keybindings)
-- [The review approach](#the-review-approach)
+  - [Features](#features)
+    - [create review notes](#create-review-notes)
+    - [export created notes as HTML](#export-created-notes-as-html)
+      - [Default template](#default-template)
+      - [Custom handlebars template](#custom-handlebars-template)
+    - [Export for Issue Tracking System](#export-for-issue-tracking-system)
+      - [export created notes as GitLab importable CSV file](#export-created-notes-as-gitlab-importable-csv-file)
+      - [export created notes as GitHub importable CSV file](#export-created-notes-as-github-importable-csv-file)
+      - [export created notes as JIRA importable CSV file](#export-created-notes-as-jira-importable-csv-file)
+  - [Extension Settings](#extension-settings)
+    - [`code-review.filename`](#code-reviewfilename)
+    - [`code-review.baseUrl`](#code-reviewbaseurl)
+    - [`code-review.customUrl`](#code-reviewcustomurl)
+    - [`code-review.groupBy`](#code-reviewgroupby)
+    - [`code-review.categories`](#code-reviewcategories)
+    - [`code-review.reportWithCodeSelection`](#code-reviewreportwithcodeselection)
+    - [`code-review.defaultTemplatePath`](#code-reviewdefaulttemplatepath)
+    - [`code-review.priorities`](#code-reviewpriorities)
+  - [Keybindings](#keybindings)
+  - [The review approach](#the-review-approach)
+  - [Contributors ✨](#contributors-)
 
 <hr>
 
@@ -175,7 +189,7 @@ Here you can define the categories that will be available for selection when you
       "Architecture",
       "Best Practices",
       ...
-   ],
+  ],
 }
 ```
 
