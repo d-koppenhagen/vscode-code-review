@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.17.0](https://github.com/d-koppenhagen/vscode-code-review/compare/v1.16.2...v1.17.0) (2020-09-02)
+
+
+### Features
+
+* add welcome view when no code review file is present ([b38757b](https://github.com/d-koppenhagen/vscode-code-review/commit/b38757bb14fe9bd7c425fcf20c6a758c9f77a378)), closes [#47](https://github.com/d-koppenhagen/vscode-code-review/issues/47)
+* delete a comment from code review view ([5d24d89](https://github.com/d-koppenhagen/vscode-code-review/commit/5d24d89c4effec9d55b679d88cf260475280adf1)), closes [#42](https://github.com/d-koppenhagen/vscode-code-review/issues/42)
+
 ### [1.16.2](https://github.com/d-koppenhagen/vscode-code-review/compare/v1.16.1...v1.16.2) (2020-09-02)
 
 
