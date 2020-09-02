@@ -39,20 +39,19 @@ export function activate(context: ExtensionContext) {
    */
   const commentProvider = new CommentsProvider(context, exportFactory);
 
-  checkForCodeReviewFile(generator.reviewFileName);
-
   // refresh comment view on manual changes in the review file
   const fileWatcher = workspace.createFileSystemWatcher(`**/${generator.reviewFileName}`);
+  checkForCodeReviewFile(generator.reviewFilePath);
   fileWatcher.onDidChange(() => {
     commentProvider.refresh();
   });
   fileWatcher.onDidCreate(() => {
     commentProvider.refresh();
-    checkForCodeReviewFile(generator.reviewFileName);
+    checkForCodeReviewFile(generator.reviewFilePath);
   });
   fileWatcher.onDidDelete(() => {
     commentProvider.refresh();
-    checkForCodeReviewFile(generator.reviewFileName);
+    checkForCodeReviewFile(generator.reviewFilePath);
   });
 
   // instantiate comment view

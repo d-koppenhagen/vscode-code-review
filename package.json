@@ -181,8 +181,7 @@
         {
           "id": "code-review",
           "title": "Code Review",
-          "icon": "images/icon-sidebar.svg",
-          "when": "codeReview:displayCodeReviewExplorer"
+          "icon": "images/icon-sidebar.svg"
         }
       ]
     },
@@ -190,7 +189,8 @@
       "code-review": [
         {
           "id": "code-review.list",
-          "name": "Comment Explorer"
+          "name": "Comment Explorer",
+          "when": "codeReview:displayCodeReviewExplorer"
         }
       ]
     },
