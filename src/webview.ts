@@ -4,6 +4,7 @@ import * as fs from 'fs';
 
 import { ReviewCommentService } from './review-comment';
 import { CsvEntry } from './interfaces';
+import { CommentListEntry } from './comment-list-entry';
 
 export class WebViewComponent {
   private categories: string[] = [];
@@ -12,6 +13,11 @@ export class WebViewComponent {
   constructor(public context: ExtensionContext) {
     this.categories = workspace.getConfiguration().get('code-review.categories') as string[];
   }
+
+  deleteComment(commentService: ReviewCommentService, entry: CommentListEntry) {
+    commentService.deleteComment(entry);
+  }
+
   editComment(commentService: ReviewCommentService, selections: Range[], data: CsvEntry) {
     // highlight selection
     const decorations = selections.map((selection) => {

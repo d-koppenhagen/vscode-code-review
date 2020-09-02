@@ -64,6 +64,10 @@
       {
         "command": "codeReview.exportAsJson",
         "title": "Code Review: Export as JSON file"
+      },
+      {
+        "command": "codeReview.deleteNote",
+        "title": "Delete"
       }
     ],
     "menus": {
@@ -72,6 +76,12 @@
           "when": "",
           "command": "codeReview.addNote",
           "group": "cmdGroup@1"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "codeReview.deleteNote",
+          "when": "view == code-review.list"
         }
       ]
     },

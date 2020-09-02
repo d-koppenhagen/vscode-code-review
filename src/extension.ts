@@ -11,6 +11,7 @@ import { WebViewComponent } from './webview';
 import { ExportFactory } from './export-factory';
 import { CommentView, CommentsProvider } from './comment-view';
 import { ReviewFileExportSection, CsvEntry } from './interfaces';
+import { CommentListEntry } from './comment-list-entry';
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -57,6 +58,14 @@ export function activate(context: ExtensionContext) {
   const addNoteRegistration = commands.registerCommand('codeReview.addNote', () => {
     generator.create(); // execute every time a comment will be added to check file format
     webview.addComment(commentService);
+    commentProvider.refresh();
+  });
+
+  /**
+   * delete an existing comment
+   */
+  const deleteNoteRegistration = commands.registerCommand('codeReview.deleteNote', (entry: CommentListEntry) => {
+    webview.deleteComment(commentService, entry);
     commentProvider.refresh();
   });
 
@@ -158,6 +167,7 @@ export function activate(context: ExtensionContext) {
    */
   context.subscriptions.push(
     addNoteRegistration,
+    deleteNoteRegistration,
     exportAsHtmlWithDefaultTemplateRegistration,
     exportAsHtmlWithHandlebarsTemplateRegistration,
     exportAsGitLabImportableCsvRegistration,

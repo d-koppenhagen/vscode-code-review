@@ -11,6 +11,7 @@ import {
   startLineNumberFromStringDefinition,
   endLineNumberFromStringDefinition,
 } from './utils/workspace-util';
+import { CommentListEntry } from './comment-list-entry';
 
 export class ReviewCommentService {
   constructor(private reviewFile: string, private workspaceRoot: string) {}
@@ -63,18 +64,31 @@ export class ReviewCommentService {
    * @param comment the comment message
    */
   async updateComment(comment: CsvEntry) {
-    console.log(comment);
     this.checkFileExists();
 
     const oldFileContent = fs.readFileSync(this.reviewFile, 'utf8'); // get old content
     const rows = oldFileContent.split(EOL);
     const updateRowIndex = rows.findIndex((row) => row.includes(comment.filename) && row.includes(comment.lines));
-    if (updateRowIndex) {
+    if (updateRowIndex >= -1) {
       rows[updateRowIndex] = this.buildCsvString(comment);
     } else {
       window.showErrorMessage(
         `Update failed. Cannot find line definition '${comment.lines}' for '${comment.filename}' in '${this.reviewFile}'.`,
       );
+    }
+    fs.writeFileSync(this.reviewFile, rows.join(EOL));
+  }
+
+  async deleteComment(entry: CommentListEntry) {
+    this.checkFileExists();
+
+    const oldFileContent = fs.readFileSync(this.reviewFile, 'utf8'); // get old content
+    const rows = oldFileContent.split(EOL);
+    const updateRowIndex = rows.findIndex((row) => row.includes(entry.label) && row.includes(entry.text));
+    if (updateRowIndex >= -1) {
+      rows.splice(updateRowIndex, 1);
+    } else {
+      window.showErrorMessage(`Update failed. Cannot delete comment '${entry.label}' in '${this.reviewFile}'.`);
     }
     fs.writeFileSync(this.reviewFile, rows.join(EOL));
   }
@@ -94,8 +108,6 @@ export class ReviewCommentService {
       sha = '';
       console.log('Not in a git repository. Leaving SHA empty', error);
     }
-
-    console.log(comment);
 
     const startAnker = startLineNumberFromStringDefinition(comment.lines);
     const endAnker = endLineNumberFromStringDefinition(comment.lines);
