@@ -38,6 +38,12 @@ export function activate(context: ExtensionContext) {
   fileWatcher.onDidChange(() => {
     commentProvider.refresh();
   });
+  fileWatcher.onDidCreate(() => {
+    commentProvider.refresh();
+  });
+  fileWatcher.onDidDelete(() => {
+    commentProvider.refresh();
+  });
 
   // instantiate comment view
   new CommentView(commentProvider);

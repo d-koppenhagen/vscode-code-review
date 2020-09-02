@@ -282,6 +282,11 @@ export class ExportFactory {
 
   getFilesContainingComments(): Thenable<CommentListEntry[]> {
     const entries: CsvEntry[] = [];
+
+    if (!fs.existsSync(this.inputFile)) {
+      return Promise.resolve([]);
+    }
+
     return new Promise((resolve) => {
       parseFile(this.inputFile, { delimiter: ',', ignoreEmpty: true, headers: true })
         .on('error', () => this.handleError)

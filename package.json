@@ -185,8 +185,8 @@
     },
     "viewsWelcome": [
       {
-        "view": "code-review",
-        "contents": "No review comments found [learn more](https://marketplace.visualstudio.com/items?itemName=d-koppenhagen.vscode-code-review).\n[Add A Comment](codeReview.addNote)"
+        "view": "code-review.list",
+        "contents": "No review comments found.\nCreate a comment by selecting the lines the comment is related to, then right click and choose:\n\"Code Review: Add Note\"\n[learn more](https://marketplace.visualstudio.com/items?itemName=d-koppenhagen.vscode-code-review)"
       }
     ]
   },
