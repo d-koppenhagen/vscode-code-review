@@ -3,6 +3,7 @@
 
 import { commands, workspace, window, ExtensionContext, WorkspaceFolder, Uri, Range, ViewColumn } from 'vscode';
 import * as path from 'path';
+import * as fs from 'fs';
 
 import { FileGenerator } from './file-generator';
 import { ReviewCommentService } from './review-comment';
@@ -12,6 +13,10 @@ import { ExportFactory } from './export-factory';
 import { CommentView, CommentsProvider } from './comment-view';
 import { ReviewFileExportSection, CsvEntry } from './interfaces';
 import { CommentListEntry } from './comment-list-entry';
+
+const checkForCodeReviewFile = (fileName: string) => {
+  commands.executeCommand('setContext', 'codeReview:displayCodeReviewExplorer', fs.existsSync(fileName));
+};
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -34,6 +39,8 @@ export function activate(context: ExtensionContext) {
    */
   const commentProvider = new CommentsProvider(context, exportFactory);
 
+  checkForCodeReviewFile(generator.reviewFileName);
+
   // refresh comment view on manual changes in the review file
   const fileWatcher = workspace.createFileSystemWatcher(`**/${generator.reviewFileName}`);
   fileWatcher.onDidChange(() => {
@@ -41,9 +48,11 @@ export function activate(context: ExtensionContext) {
   });
   fileWatcher.onDidCreate(() => {
     commentProvider.refresh();
+    checkForCodeReviewFile(generator.reviewFileName);
   });
   fileWatcher.onDidDelete(() => {
     commentProvider.refresh();
+    checkForCodeReviewFile(generator.reviewFileName);
   });
 
   // instantiate comment view
