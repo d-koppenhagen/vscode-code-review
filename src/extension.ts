@@ -26,7 +26,7 @@ export function activate(context: ExtensionContext) {
     ? Uri.file(defaultConfigurationTemplatePath)
     : Uri.parse(context.asAbsolutePath(path.join('dist', 'template.default.hbs')));
 
-  const exportFactory = new ExportFactory(workspaceRoot);
+  const exportFactory = new ExportFactory(context, workspaceRoot);
 
   /**
    * register comment view

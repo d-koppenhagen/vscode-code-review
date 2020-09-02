@@ -95,6 +95,7 @@ export class WebViewComponent {
         switch (message.command) {
           case 'submit':
             const comment = JSON.parse(message.text) as CsvEntry;
+            comment.priority = Number(comment.priority);
             commentService.addComment(comment);
             this.panel?.dispose();
             return;

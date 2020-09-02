@@ -31,7 +31,7 @@ const config = {
   },
   plugins: [
     new CopyPlugin({
-      patterns: ['src/template.default.hbs', 'src/webview.html'],
+      patterns: ['src/template.default.hbs', 'src/webview.html', 'images/icons'],
     }),
   ],
   module: {

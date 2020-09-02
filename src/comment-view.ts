@@ -1,5 +1,4 @@
-import { ExtensionContext, TreeDataProvider, TreeItem, workspace, window, EventEmitter, Event, TreeView } from 'vscode';
-import * as path from 'path';
+import { ExtensionContext, TreeDataProvider, TreeItem, window, EventEmitter, Event } from 'vscode';
 
 import { CommentListEntry } from './comment-list-entry';
 import { ExportFactory } from './export-factory';
@@ -26,9 +25,7 @@ export class CommentsProvider implements TreeDataProvider<CommentListEntry> {
   }
 
   getTreeItem(element: CommentListEntry): TreeItem {
-    const treeItem = element;
-    treeItem.iconPath = this.getIcon(element);
-    return treeItem;
+    return element;
   }
 
   getChildren(element?: CommentListEntry): Thenable<CommentListEntry[]> {
@@ -38,25 +35,5 @@ export class CommentsProvider implements TreeDataProvider<CommentListEntry> {
     } else {
       return this.exportFactory.getComments(element);
     }
-  }
-
-  private getIcon(element: CommentListEntry): any {
-    let icon = '';
-    switch (element.prio) {
-      case 0:
-        icon = 'red.svg';
-        break;
-      case 1:
-        icon = 'yellow.svg';
-        break;
-      case 2:
-        icon = 'green.svg';
-        break;
-      default:
-        icon = 'unset.svg';
-        break;
-    }
-    const iPath = this.context.asAbsolutePath(path.join('images', icon));
-    return { light: iPath, dark: iPath };
   }
 }

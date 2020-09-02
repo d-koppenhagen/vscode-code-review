@@ -1,7 +1,8 @@
 import * as fs from 'fs';
+import * as path from 'path';
 const Handlebars = require('handlebars');
 const stripIndent = require('strip-indent');
-import { workspace, Uri, window, ViewColumn, TreeItemCollapsibleState } from 'vscode';
+import { workspace, Uri, window, ViewColumn, TreeItemCollapsibleState, ExtensionContext } from 'vscode';
 const parseFile = require('@fast-csv/parse').parseFile;
 import { EOL } from 'os';
 import { Base64 } from 'js-base64';
@@ -190,7 +191,7 @@ export class ExportFactory {
   /**
    * for trying out: https://stackblitz.com/edit/code-review-template
    */
-  constructor(private workspaceRoot: string) {
+  constructor(private context: ExtensionContext, private workspaceRoot: string) {
     const configFileName = workspace.getConfiguration().get('code-review.filename') as string;
     if (configFileName) {
       this.defaultFileName = configFileName;
@@ -239,22 +240,44 @@ export class ExportFactory {
    */
   getComments(commentGroupedInFile: CommentListEntry): Thenable<CommentListEntry[]> {
     const result = commentGroupedInFile.data.lines.map((entry: CsvEntry) => {
+      const prio = Number(entry.priority);
       const item = new CommentListEntry(
         entry.title,
         entry.comment,
         entry.comment,
         TreeItemCollapsibleState.None,
         commentGroupedInFile.data,
-        entry.priority,
+        prio,
       );
       item.command = {
         command: 'codeReview.openSelection',
         title: 'Open comment',
         arguments: [commentGroupedInFile.data, entry],
       };
+      item.iconPath = this.getIcon(prio);
       return item;
     });
     return Promise.resolve(result);
+  }
+
+  private getIcon(prio: number): { light: string; dark: string } {
+    let icon = '';
+    switch (prio) {
+      case 3:
+        icon = 'red.svg';
+        break;
+      case 2:
+        icon = 'yellow.svg';
+        break;
+      case 1:
+        icon = 'green.svg';
+        break;
+      default:
+        icon = 'unset.svg';
+        break;
+    }
+    const iPath = this.context.asAbsolutePath(path.join('dist', icon));
+    return { light: iPath, dark: iPath };
   }
 
   getFilesContainingComments(): Thenable<CommentListEntry[]> {

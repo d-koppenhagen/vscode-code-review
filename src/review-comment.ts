@@ -83,7 +83,7 @@ export class ReviewCommentService {
     // escape double quotes
     const commentExcaped = escapeDoubleQuotesForCsv(comment.comment);
     const titleExcaped = comment.title ? escapeDoubleQuotesForCsv(comment.title) : '';
-    const priority = comment.priority || '';
+    const priority = comment.priority || 0;
     const additional = comment.additional ? escapeDoubleQuotesForCsv(comment.additional) : '';
     const category = comment.category || '';
 
