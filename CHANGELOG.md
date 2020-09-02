@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.17.1](https://github.com/d-koppenhagen/vscode-code-review/compare/v1.17.0...v1.17.1) (2020-09-02)
+
+
+### Bug Fixes
+
+* conditional activation of code review activitybar action ([830a7b9](https://github.com/d-koppenhagen/vscode-code-review/commit/830a7b922ec0e89fdaa75b4966a5348ffe84388d)), closes [#48](https://github.com/d-koppenhagen/vscode-code-review/issues/48)
+* off by one line error in code output ([3260673](https://github.com/d-koppenhagen/vscode-code-review/commit/32606732f230189271ce4f571d540a6a6e3107f4)), closes [#49](https://github.com/d-koppenhagen/vscode-code-review/issues/49)
+
 ## [1.17.0](https://github.com/d-koppenhagen/vscode-code-review/compare/v1.16.2...v1.17.0) (2020-09-02)
 
 
