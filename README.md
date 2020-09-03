@@ -16,6 +16,7 @@ This extension allows you to create a code review file you can hand over to a cu
 - [vscode-code-review](#vscode-code-review)
   - [Features](#features)
     - [create review notes](#create-review-notes)
+    - [Code Review Comment Explorer - update, view and delete comments](#code-review-comment-explorer---update-view-and-delete-comments)
     - [export created notes as HTML](#export-created-notes-as-html)
       - [Default template](#default-template)
       - [Custom handlebars template](#custom-handlebars-template)
@@ -58,6 +59,16 @@ The line column indicates an array of selected ranges or cursor positions separa
 E.g. `"1:0-1:4|4:0-4:3"` means that the comment is related to the range marked from line 1 position 0 to line 1 position 4 and line 4 position 0 to line 4 position 3.
 
 ![Demo](./images/demo.gif)
+
+### Code Review Comment Explorer - update, view and delete comments
+
+Once you created your first code review comment and the plugin can find the associated review file (by default `code-review.csv`), a new button will appear in the sidebar.
+Clicking on this button will open the **Code Review Comment Explorer**.
+This explorer shows you all made comments to the related code base.
+Selecting an entry will open the comment in the webview form so you can edit and update it.
+Performing a right-click on an item, will let you delete a comment.
+
+![Demo: Code Review Comment Explorer](./images/code-review-explorer.gif)
 
 ### export created notes as HTML
 
