@@ -16,19 +16,12 @@ import { CommentListEntry } from './comment-list-entry';
 export class ReviewCommentService {
   constructor(private reviewFile: string, private workspaceRoot: string) {}
 
-  colorizeSelection(selection?: Range) {
+  colorizeSelection(selections: Range[]) {
     const decoration = window.createTextEditorDecorationType({
       backgroundColor: 'rgba(200, 200, 50, 0.15)',
     });
-    if (window.activeTextEditor) {
-      const ranges: Range[] = window.activeTextEditor.selections.map((el) => {
-        return (
-          selection ??
-          new Range(new Position(el.start.line, el.start.character), new Position(el.end.line, el.end.character))
-        );
-      });
-      window.activeTextEditor.setDecorations(decoration, ranges);
-    }
+    const editor = window.activeTextEditor ?? window.visibleTextEditors[0];
+    editor.setDecorations(decoration, selections);
     return decoration;
   }
 

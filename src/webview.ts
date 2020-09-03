@@ -1,4 +1,4 @@
-import { window, ViewColumn, ExtensionContext, workspace, Range, WebviewPanel, Uri } from 'vscode';
+import { window, ViewColumn, ExtensionContext, workspace, Range, WebviewPanel, Uri, Position } from 'vscode';
 import * as path from 'path';
 import * as fs from 'fs';
 
@@ -20,9 +20,7 @@ export class WebViewComponent {
 
   editComment(commentService: ReviewCommentService, selections: Range[], data: CsvEntry) {
     // highlight selection
-    const decorations = selections.map((selection) => {
-      return commentService.colorizeSelection(selection);
-    });
+    const decoration = commentService.colorizeSelection(selections);
 
     // initialize new web tab
     this.panel = window.createWebviewPanel(
@@ -33,8 +31,8 @@ export class WebViewComponent {
         enableScripts: true,
       },
     );
-
-    this.panel.webview.html = this.getWebviewContent();
+    const editor = window.activeTextEditor ?? window.visibleTextEditors[0];
+    this.panel.webview.html = this.getWebviewContent(editor.document.fileName);
     // const pathToHtml = Uri.file(path.join(this.context.extensionPath, 'src', 'webview.html'));
     // const pathUri = pathToHtml.with({ scheme: 'vscode-resource' });
     // panel.webview.html = fs.readFileSync(pathUri.fsPath, 'utf8');
@@ -71,15 +69,17 @@ export class WebViewComponent {
 
     this.panel.onDidDispose(() => {
       // reset highlight selected lines
-      decorations.forEach((decoration) => {
-        decoration.dispose();
-      });
+      decoration.dispose();
     });
   }
 
   addComment(commentService: ReviewCommentService) {
     // highlight selected lines
-    const decoration = commentService.colorizeSelection();
+    const editor = window.activeTextEditor ?? window.visibleTextEditors[0];
+    const ranges: Range[] = editor.selections.map((el) => {
+      return new Range(new Position(el.start.line, el.start.character), new Position(el.end.line, el.end.character));
+    });
+    const decoration = commentService.colorizeSelection(ranges);
 
     this.panel = window.createWebviewPanel(
       'text',
@@ -90,7 +90,7 @@ export class WebViewComponent {
       },
     );
 
-    this.panel.webview.html = this.getWebviewContent();
+    this.panel.webview.html = this.getWebviewContent(editor.document.fileName);
     // const pathToHtml = Uri.file(path.join(this.context.extensionPath, 'src', 'webview.html'));
     // const pathUri = pathToHtml.with({ scheme: 'vscode-resource' });
     // panel.webview.html = fs.readFileSync(pathUri.fsPath, 'utf8');
@@ -120,12 +120,19 @@ export class WebViewComponent {
     });
   }
 
-  getWebviewContent(): string {
+  getWebviewContent(fileName: string): string {
     let selectListString = this.categories.reduce((current, category) => {
       return (current += `<option value="${category}">${category}</option>`);
     }, '');
     const uri = Uri.parse(this.context.asAbsolutePath(path.join('dist', 'webview.html')));
     const pathUri = uri.with({ scheme: 'vscode-resource' });
-    return fs.readFileSync(pathUri.fsPath, 'utf8').replace('SELECT_LIST_STRING', selectListString);
+    // const linesString = selections.reduce((prev, curr) => {
+    //   const range = curr.isSingleLine ? curr.start.line : `${curr.start.line}-${curr.end.line}`;
+    //   return prev + `${prev ? ', ' : ''}${range}`;
+    // }, '');
+    return fs
+      .readFileSync(pathUri.fsPath, 'utf8')
+      .replace('SELECT_LIST_STRING', selectListString)
+      .replace('FILENAME', path.basename(fileName));
   }
 }
