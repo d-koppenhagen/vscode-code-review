@@ -308,6 +308,10 @@ export class ExportFactory {
               arguments: [el],
             };
             item.contextValue = 'file';
+            item.iconPath = {
+              light: this.context.asAbsolutePath(path.join('dist', 'document-light.svg')),
+              dark: this.context.asAbsolutePath(path.join('dist', 'document-dark.svg')),
+            };
             return item;
           });
           resolve(listEntries);

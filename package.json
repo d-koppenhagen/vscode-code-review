@@ -39,7 +39,11 @@
     "commands": [
       {
         "command": "codeReview.addNote",
-        "title": "Code Review: Add Note"
+        "title": "Code Review: Add Note",
+        "icon": {
+          "light": "images/icons/add-light.svg",
+          "dark": "images/icons/add-dark.svg"
+        }
       },
       {
         "command": "codeReview.exportAsHtmlWithDefaultTemplate",
@@ -73,7 +77,6 @@
     "menus": {
       "editor/context": [
         {
-          "when": "",
           "command": "codeReview.addNote",
           "group": "cmdGroup@1"
         }
@@ -82,6 +85,11 @@
         {
           "command": "codeReview.deleteNote",
           "when": "view == code-review.list && viewItem == comment"
+        },
+        {
+          "command": "codeReview.addNote",
+          "when": "view == code-review.list && viewItem == comment",
+          "group": "inline"
         }
       ]
     },
@@ -197,7 +205,7 @@
     "viewsWelcome": [
       {
         "view": "code-review.list",
-        "contents": "No review comments found.\nCreate a comment by selecting the lines the comment is related to, then right click and choose:\n\"Code Review: Add Note\"\n[learn more](https://marketplace.visualstudio.com/items?itemName=d-koppenhagen.vscode-code-review)"
+        "contents": "No review comments found.\nCreate a comment by selecting the lines the comment is related to, then right click and choose:\n\"Code Review: Add Note\"\n[learn more](https://marketplace.visualstudio.com/items?itemName=d-koppenhagen.vscode-code-review)\n[Add a note](command:codeReview.addNote)"
       }
     ]
   },

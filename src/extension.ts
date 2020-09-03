@@ -1,7 +1,17 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 
-import { commands, workspace, window, ExtensionContext, WorkspaceFolder, Uri, Range, ViewColumn } from 'vscode';
+import {
+  commands,
+  workspace,
+  window,
+  ExtensionContext,
+  WorkspaceFolder,
+  Uri,
+  Range,
+  ViewColumn,
+  Selection,
+} from 'vscode';
 import * as path from 'path';
 import * as fs from 'fs';
 
@@ -64,6 +74,10 @@ export function activate(context: ExtensionContext) {
    * register comment panel web view
    */
   const addNoteRegistration = commands.registerCommand('codeReview.addNote', () => {
+    if (!window.activeTextEditor?.selection) {
+      window.showErrorMessage(`No selection made. Please select something you want to add a comment to and try again.`);
+      return;
+    }
     generator.create(); // execute every time a comment will be added to check file format
     webview.addComment(commentService);
     commentProvider.refresh();
