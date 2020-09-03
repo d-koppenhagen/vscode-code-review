@@ -81,7 +81,7 @@
       "view/item/context": [
         {
           "command": "codeReview.deleteNote",
-          "when": "view == code-review.list"
+          "when": "view == code-review.list && viewItem == comment"
         }
       ]
     },

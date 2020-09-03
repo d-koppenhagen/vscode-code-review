@@ -249,6 +249,7 @@ export class ExportFactory {
         commentGroupedInFile.data,
         prio,
       );
+      item.contextValue = 'comment';
       item.command = {
         command: 'codeReview.openSelection',
         title: 'Open comment',
@@ -306,6 +307,7 @@ export class ExportFactory {
               title: 'reveal comment',
               arguments: [el],
             };
+            item.contextValue = 'file';
             return item;
           });
           resolve(listEntries);
