@@ -47,7 +47,7 @@ export class WebViewComponent {
     this.panel.webview.onDidReceiveMessage(
       (message) => {
         switch (message.command) {
-          case 'update':
+          case 'submit':
             const formData = JSON.parse(message.text) as CsvEntry;
             const newEntry: CsvEntry = {
               ...data,

@@ -174,7 +174,6 @@
 
   <script>
     const vscode = acquireVsCodeApi();
-    let updateMode = false;
 
     window.addEventListener('message', (event) => {
       document.getElementById('add').innerHTML = 'Update';
@@ -187,7 +186,6 @@
       if (event.data.comment.priority) {
         document.getElementById('prio-' + event.data.comment.priority).checked = true;
       }
-      updateMode = true;
     });
 
     document.getElementById('add').disabled = true;
@@ -223,7 +221,7 @@
       };
 
       vscode.postMessage({
-        command: updateMode ? 'update' : 'submit',
+        command: 'submit',
         text: JSON.stringify(formData),
       });
     }
