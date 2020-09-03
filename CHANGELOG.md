@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.18.0](https://github.com/d-koppenhagen/vscode-code-review/compare/v1.17.1...v1.18.0) (2020-09-03)
+
+
+### Features
+
+* **explorer:** add `add` button to directly add comments from the explorer ([af500fd](https://github.com/d-koppenhagen/vscode-code-review/commit/af500fd18275ca52f08b4858b9c46df12a1f3af1))
+
+
+### Bug Fixes
+
+* use `visibleTextEditors[0]` as fallback ([bb03952](https://github.com/d-koppenhagen/vscode-code-review/commit/bb03952229819e6ac32ea91157a4bf43e09ee3b7))
+* **explorer:** show 'delete' action only for childs ([495b62b](https://github.com/d-koppenhagen/vscode-code-review/commit/495b62b7d401ddcbf1c1a5034fa0ce49af852d3e))
+
 ### [1.17.1](https://github.com/d-koppenhagen/vscode-code-review/compare/v1.17.0...v1.17.1) (2020-09-02)
 
 
