@@ -83,6 +83,30 @@
       ],
       "view/title": [
         {
+          "command": "codeReview.exportAsHtmlWithDefaultTemplate",
+          "when": "view == code-review.list"
+        },
+        {
+          "command": "codeReview.exportAsHtmlWithHandlebarsTemplate",
+          "when": "view == code-review.list"
+        },
+        {
+          "command": "codeReview.exportAsGitLabImportableCsv",
+          "when": "view == code-review.list"
+        },
+        {
+          "command": "codeReview.exportAsGitHubImportableCsv",
+          "when": "view == code-review.list"
+        },
+        {
+          "command": "codeReview.exportAsJson",
+          "when": "view == code-review.list"
+        },
+        {
+          "command": "codeReview.exportAsJiraImportableCsv",
+          "when": "view == code-review.list"
+        },
+        {
           "command": "codeReview.addNote",
           "when": "view == code-review.list",
           "group": "navigation"
