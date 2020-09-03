@@ -1,6 +1,6 @@
 import * as fs from 'fs';
 import { EOL } from 'os';
-import { window, workspace, Range, TextEditor, Position } from 'vscode';
+import { window, workspace, Range, Position } from 'vscode';
 const gitCommitId = require('git-commit-id');
 
 import { CsvEntry } from './interfaces';
@@ -40,21 +40,19 @@ export class ReviewCommentService {
     const newEntry: CsvEntry = { ...comment };
     this.checkFileExists();
 
-    if (window.activeTextEditor) {
+    const editorRef = window.activeTextEditor ?? window.visibleTextEditors[0];
+
+    if (!editorRef?.selection) {
+      window.showErrorMessage(`Error referencing file/lines, Please select again.`);
+      return;
+    } else {
       // 2:2-12:2|19:0-19:0
-      newEntry.lines = window.activeTextEditor.selections.reduce((acc, cur) => {
+      newEntry.lines = editorRef.selections.reduce((acc, cur) => {
         const tmp = acc ? `${acc}|` : '';
         return `${tmp}${cur.start.line + 1}:${cur.start.character}-${cur.end.line + 1}:${cur.end.character}`;
       }, '');
-      newEntry.filename = window.activeTextEditor.document.fileName.replace(this.workspaceRoot, '');
+      newEntry.filename = editorRef.document.fileName.replace(this.workspaceRoot, '');
     }
-
-    if (!newEntry.filename) {
-      window.showErrorMessage(`Error referencing file/lines, Please select again.`);
-      console.error('Error referencing file/lines. Window:', window.activeTextEditor);
-      return;
-    }
-
     // escape double quotes
     fs.appendFileSync(this.reviewFile, this.buildCsvString(newEntry));
   }
