@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.18.1](https://github.com/d-koppenhagen/vscode-code-review/compare/v1.18.0...v1.18.1) (2020-09-03)
+
+
+### Bug Fixes
+
+* **explorer:** update sometimes didn't work ([391f97f](https://github.com/d-koppenhagen/vscode-code-review/commit/391f97f5e65a4104a5c0019d7089a4610ea73bc0))
+
 ## [1.18.0](https://github.com/d-koppenhagen/vscode-code-review/compare/v1.17.1...v1.18.0) (2020-09-03)
 
 
