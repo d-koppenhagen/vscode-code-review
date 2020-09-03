@@ -169,7 +169,7 @@ export function activate(context: ExtensionContext) {
             webview.panel?.dispose(); // dispose previous ones
             if (csvRef) {
               const rangesStringArray = csvRef.lines.split('|');
-              const ranges: Range[] = rangesStringArray.map(() => rangeFromStringDefinition(csvRef.lines));
+              const ranges: Range[] = rangesStringArray.map((range) => rangeFromStringDefinition(range));
               textEditor.revealRange(ranges[0]);
               webview.editComment(commentService, ranges, csvRef);
             }
