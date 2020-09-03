@@ -81,15 +81,17 @@
           "group": "cmdGroup@1"
         }
       ],
+      "view/title": [
+        {
+          "command": "codeReview.addNote",
+          "when": "view == code-review.list",
+          "group": "navigation"
+        }
+      ],
       "view/item/context": [
         {
           "command": "codeReview.deleteNote",
           "when": "view == code-review.list && viewItem == comment"
-        },
-        {
-          "command": "codeReview.addNote",
-          "when": "view == code-review.list && viewItem == comment",
-          "group": "inline"
         }
       ]
     },
