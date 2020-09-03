@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.19.0](https://github.com/d-koppenhagen/vscode-code-review/compare/v1.18.1...v1.19.0) (2020-09-03)
+
+
+### Features
+
+* add file name to webview ([611a217](https://github.com/d-koppenhagen/vscode-code-review/commit/611a217b36c736bbfd47146f163295b357f6e92d)), closes [#52](https://github.com/d-koppenhagen/vscode-code-review/issues/52)
+* **explorer:** link export commands to submenu ([f9f7b42](https://github.com/d-koppenhagen/vscode-code-review/commit/f9f7b42cd1d8a1233d5ddeeb470efac62d82273a)), closes [#51](https://github.com/d-koppenhagen/vscode-code-review/issues/51)
+* **explorer:** move add icon to top navigation ([0096362](https://github.com/d-koppenhagen/vscode-code-review/commit/0096362fc7642ac4406a6f93f89b7ab1cc7055b8))
+
+
+### Bug Fixes
+
+* **edit:** use correct ranges ([e161e8c](https://github.com/d-koppenhagen/vscode-code-review/commit/e161e8c3fd80f17f1ce378245f952bec395ee203))
+
 ### [1.18.1](https://github.com/d-koppenhagen/vscode-code-review/compare/v1.18.0...v1.18.1) (2020-09-03)
 
 
