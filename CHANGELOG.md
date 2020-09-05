@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.19.1](https://github.com/d-koppenhagen/vscode-code-review/compare/v1.19.0...v1.19.1) (2020-09-05)
+
+
+### Bug Fixes
+
+* retain context when webview panels are hidden ([617c521](https://github.com/d-koppenhagen/vscode-code-review/commit/617c5215ab42341421ea14f333a67e32f40d4e60)), closes [#53](https://github.com/d-koppenhagen/vscode-code-review/issues/53)
+
 ## [1.19.0](https://github.com/d-koppenhagen/vscode-code-review/compare/v1.18.1...v1.19.0) (2020-09-03)
 
 
