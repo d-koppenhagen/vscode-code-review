@@ -23,14 +23,8 @@ export class WebViewComponent {
     const decoration = commentService.colorizeSelection(selections);
 
     // initialize new web tab
-    this.panel = window.createWebviewPanel(
-      'text',
-      'Edit code review comment',
-      { viewColumn: ViewColumn.Beside },
-      {
-        enableScripts: true,
-      },
-    );
+    this.panel = this.createWebView('Edit code review comment');
+
     const editor = window.activeTextEditor ?? window.visibleTextEditors[0];
     this.panel.webview.html = this.getWebviewContent(editor.document.fileName);
     // const pathToHtml = Uri.file(path.join(this.context.extensionPath, 'src', 'webview.html'));
@@ -81,14 +75,7 @@ export class WebViewComponent {
     });
     const decoration = commentService.colorizeSelection(ranges);
 
-    this.panel = window.createWebviewPanel(
-      'text',
-      'Add code review comment',
-      { viewColumn: ViewColumn.Beside },
-      {
-        enableScripts: true,
-      },
-    );
+    this.panel = this.createWebView('Add code review comment');
 
     this.panel.webview.html = this.getWebviewContent(editor.document.fileName);
     // const pathToHtml = Uri.file(path.join(this.context.extensionPath, 'src', 'webview.html'));
@@ -118,6 +105,18 @@ export class WebViewComponent {
       // reset highlight selected lines
       decoration.dispose();
     });
+  }
+
+  private createWebView(title: string): WebviewPanel {
+    return window.createWebviewPanel(
+      'text',
+      title,
+      { viewColumn: ViewColumn.Beside },
+      {
+        enableScripts: true,
+        retainContextWhenHidden: true,
+      },
+    );
   }
 
   getWebviewContent(fileName: string): string {
