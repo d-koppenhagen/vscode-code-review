@@ -124,8 +124,9 @@ export const endPositionNumberFromStringDefinition = (input: string): number => 
  */
 export const rangeFromStringDefinition = (input: string): Range => {
   return new Range(
-    new Position(startLineNumberFromStringDefinition(input), startPositionNumberFromStringDefinition(input)),
-    new Position(endLineNumberFromStringDefinition(input), endPositionNumberFromStringDefinition(input)),
+    // Position expectes a zero-based index, but in the csv it saved as one-based index
+    new Position(startLineNumberFromStringDefinition(input) - 1, startPositionNumberFromStringDefinition(input) - 1),
+    new Position(endLineNumberFromStringDefinition(input) - 1, endPositionNumberFromStringDefinition(input) - 1),
   );
 };
 
