@@ -163,7 +163,7 @@ export function activate(context: ExtensionContext) {
     'codeReview.openSelection',
     (fileSection: ReviewFileExportSection, csvRef?: CsvEntry) => {
       const filePath = path.join(workspaceRoot, fileSection.group);
-      workspace.openTextDocument(Uri.parse(filePath)).then(
+      workspace.openTextDocument(filePath).then(
         (doc) => {
           window.showTextDocument(doc, ViewColumn.One).then((textEditor) => {
             webview.panel?.dispose(); // dispose previous ones
