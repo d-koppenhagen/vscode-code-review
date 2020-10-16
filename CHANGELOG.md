@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.19.2](https://github.com/d-koppenhagen/vscode-code-review/compare/v1.19.1...v1.19.2) (2020-10-16)
+
+
+### Bug Fixes
+
+* `Position` expects a zero-based index, but the CSV saved as one-based index ([0855213](https://github.com/d-koppenhagen/vscode-code-review/commit/0855213d1c4f82b057ef475703df6c7cd78f2bb4))
+* handle values under 0, provide tests ([22fccc0](https://github.com/d-koppenhagen/vscode-code-review/commit/22fccc07351e6d911958dceeefd431938664e727))
+
 ### [1.19.1](https://github.com/d-koppenhagen/vscode-code-review/compare/v1.19.0...v1.19.1) (2020-09-05)
 
 
