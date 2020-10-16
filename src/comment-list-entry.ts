@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { TreeItem, TreeItemCollapsibleState } from 'vscode';
 
 import { ReviewFileExportSection } from './interfaces';

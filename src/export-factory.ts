@@ -5,7 +5,7 @@ const stripIndent = require('strip-indent');
 import { workspace, Uri, window, ViewColumn, TreeItemCollapsibleState, ExtensionContext } from 'vscode';
 const parseFile = require('@fast-csv/parse').parseFile;
 import { EOL } from 'os';
-import { Base64 } from 'js-base64';
+import { encode, decode } from 'js-base64';
 
 import {
   toAbsolutePath,
@@ -51,7 +51,7 @@ export class ExportFactory {
           }
 
           // Helper that decodes the Base64 content to be displayed in the handlebar
-          Handlebars.registerHelper('codeBlock', (code: string) => Base64.decode(code));
+          Handlebars.registerHelper('codeBlock', (code: string) => decode(code));
           // compile template after helper is registered
           const templateCompiled = Handlebars.compile(templateData);
           // inject date into the template
@@ -367,7 +367,7 @@ export class ExportFactory {
         }
       });
     }
-    return Base64.encode(result);
+    return encode(result);
   }
 
   private priorityName(priority: number) {
