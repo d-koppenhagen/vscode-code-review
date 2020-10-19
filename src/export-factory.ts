@@ -357,7 +357,7 @@ export class ExportFactory {
     if (lineRanges) {
       lineRanges.forEach((rangeString: string) => {
         if (rangeString) {
-          const range = rangeFromStringDefinition(rangeString);
+          const range = rangeFromStringDefinition(rangeString, 1);
           const fileContent = stripIndent(getFileContentForRange(filePath, range));
           if (result) {
             result = `${result}${EOL}...${EOL}${EOL}${fileContent}`;

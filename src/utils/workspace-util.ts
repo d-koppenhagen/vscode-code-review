@@ -57,7 +57,7 @@ export const getFileContentForRange = (pathToFile: string, range: Range): string
     console.log('Error reading file', pathToFile, error);
   }
   const fileContentLines = fileContent.split(EOL);
-  return fileContentLines.slice(range.start.line - 1, range.end.line).join(EOL);
+  return fileContentLines.slice(range.start.line, range.end.line).join(EOL);
 };
 
 /**
@@ -122,11 +122,11 @@ export const endPositionNumberFromStringDefinition = (input: string): number => 
  * Get the range for the lines string representation for CSV files
  * @param input the input string
  */
-export const rangeFromStringDefinition = (input: string): Range => {
+export const rangeFromStringDefinition = (input: string, offset: number = 0): Range => {
   // Position expectes a zero-based index, but in the csv it saved as one-based index
   const startLine = startLineNumberFromStringDefinition(input) - 1;
   const startPosition = startPositionNumberFromStringDefinition(input) - 1;
-  const endLine = endLineNumberFromStringDefinition(input) - 1;
+  const endLine = endLineNumberFromStringDefinition(input) - 1 + offset;
   const endPosition = endPositionNumberFromStringDefinition(input) - 1;
 
   return new Range(

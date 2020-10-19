@@ -98,7 +98,7 @@ suite('Workspace Utils', () => {
   });
 
   suite('getFileContentForRange', () => {
-    const range = new Range(new Position(2, 1), new Position(2, 1));
+    const range = new Range(new Position(1, 1), new Position(2, 1));
 
     test('should return the content from some line in a file', () => {
       const filename = 'a.js';
