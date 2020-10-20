@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.19.4](https://github.com/d-koppenhagen/vscode-code-review/compare/v1.19.3...v1.19.4) (2020-10-20)
+
+
+### Bug Fixes
+
+* the position is zero-based on the csv ([4b7d4ad](https://github.com/d-koppenhagen/vscode-code-review/commit/4b7d4adfb8897b507d3c12b660f9d61af3b384fe)), closes [#56](https://github.com/d-koppenhagen/vscode-code-review/issues/56)
+
 ### [1.19.3](https://github.com/d-koppenhagen/vscode-code-review/compare/v1.19.2...v1.19.3) (2020-10-19)
 
 
