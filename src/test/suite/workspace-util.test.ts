@@ -176,9 +176,9 @@ suite('Workspace Utils', () => {
       const result = rangeFromStringDefinition('103:18-12:4');
       assert.strictEqual(result instanceof Range, true);
       assert.strictEqual(result.start.line, 11);
-      assert.strictEqual(result.start.character, 3);
+      assert.strictEqual(result.start.character, 4);
       assert.strictEqual(result.end.line, 102);
-      assert.strictEqual(result.end.character, 17);
+      assert.strictEqual(result.end.character, 18);
     });
 
     test('should fallback to 0', () => {
