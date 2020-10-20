@@ -60,7 +60,7 @@ export class ReviewCommentService {
     const oldFileContent = fs.readFileSync(this.reviewFile, 'utf8'); // get old content
     const rows = oldFileContent.split(EOL);
     const updateRowIndex = rows.findIndex((row) => row.includes(comment.filename) && row.includes(comment.lines));
-    if (updateRowIndex >= -1) {
+    if (updateRowIndex > -1) {
       rows[updateRowIndex] = this.buildCsvString(comment);
     } else {
       window.showErrorMessage(
@@ -76,7 +76,7 @@ export class ReviewCommentService {
     const oldFileContent = fs.readFileSync(this.reviewFile, 'utf8'); // get old content
     const rows = oldFileContent.split(EOL);
     const updateRowIndex = rows.findIndex((row) => row.includes(entry.label) && row.includes(entry.text));
-    if (updateRowIndex >= -1) {
+    if (updateRowIndex > -1) {
       rows.splice(updateRowIndex, 1);
     } else {
       window.showErrorMessage(`Update failed. Cannot delete comment '${entry.label}' in '${this.reviewFile}'.`);
