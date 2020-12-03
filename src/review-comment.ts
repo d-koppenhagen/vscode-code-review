@@ -8,6 +8,7 @@ import {
   removeLeadingAndTrailingSlash,
   removeTrailingSlash,
   escapeDoubleQuotesForCsv,
+  escapeEndOfLineForCsv,
   startLineNumberFromStringDefinition,
   endLineNumberFromStringDefinition,
 } from './utils/workspace-util';
@@ -86,7 +87,7 @@ export class ReviewCommentService {
 
   private buildCsvString(comment: CsvEntry): string {
     // escape double quotes
-    const commentExcaped = escapeDoubleQuotesForCsv(comment.comment);
+    const commentExcaped = escapeEndOfLineForCsv(escapeDoubleQuotesForCsv(comment.comment));
     const titleExcaped = comment.title ? escapeDoubleQuotesForCsv(comment.title) : '';
     const priority = comment.priority || 0;
     const additional = comment.additional ? escapeDoubleQuotesForCsv(comment.additional) : '';
