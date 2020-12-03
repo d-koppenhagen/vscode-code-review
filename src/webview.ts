@@ -5,6 +5,7 @@ import * as fs from 'fs';
 import { ReviewCommentService } from './review-comment';
 import { CsvEntry } from './interfaces';
 import { CommentListEntry } from './comment-list-entry';
+import { unescapeEndOfLineFromCsv } from './utils/workspace-util';
 
 export class WebViewComponent {
   private categories: string[] = [];
@@ -31,6 +32,8 @@ export class WebViewComponent {
     // const pathUri = pathToHtml.with({ scheme: 'vscode-resource' });
     // panel.webview.html = fs.readFileSync(pathUri.fsPath, 'utf8');
     const priorities = workspace.getConfiguration().get('code-review.priorities') as string[];
+
+    data.comment = unescapeEndOfLineFromCsv(data.comment);
 
     const formData = { ...data };
     this.panel.webview.postMessage({ comment: formData });
