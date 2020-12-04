@@ -19,6 +19,8 @@ import {
   sortLineSelections,
   sortCsvEntryForLines,
   escapeDoubleQuotesForCsv,
+  escapeEndOfLineForCsv,
+  unescapeEndOfLineFromCsv,
   rangeFromStringDefinition,
 } from '../../utils/workspace-util';
 import { CsvEntry } from '../../interfaces';
@@ -132,6 +134,18 @@ suite('Workspace Utils', () => {
   suite('escapeDoubleQuotesForCsv', () => {
     test('should escape a double quote sign as expected for CSV files (with another ")', () => {
       assert.strictEqual(escapeDoubleQuotesForCsv('aa"bb'), 'aa""bb');
+    });
+  });
+
+  suite('escapeEndOfLineForCsv', () => {
+    test('should escape an end-of-line character as expected for CSV files (with a double anti-slash)', () => {
+      assert.strictEqual(escapeEndOfLineForCsv('aa\nbb'), 'aa\\nbb');
+    });
+  });
+
+  suite('unescapeEndOfLineFromCsv', () => {
+    test('should unescape an end-of-line marker as expected for CSV files (with a true eol)', () => {
+      assert.strictEqual(unescapeEndOfLineFromCsv('aa\\nbb'), 'aa\nbb');
     });
   });
 

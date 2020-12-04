@@ -83,6 +83,22 @@ export const escapeDoubleQuotesForCsv = (input: string): string => {
 };
 
 /**
+ * End-of-line must be escaped in CSV files to prevent row discontinuity
+ * @param input the string that should be escaped
+ */
+export const escapeEndOfLineForCsv = (input: string): string => {
+  return input.replace(/\n/g, '\\n');
+};
+
+/**
+ * Restore escaped end-of-line for manipulation
+ * @param input the string that should be unescaped
+ */
+export const unescapeEndOfLineFromCsv = (input: string): string => {
+  return input.replace(/\\n/g, '\n');
+};
+
+/**
  * Retrieve the first start line definition from the lines string representation for CSV files
  * @param input the input string
  */
