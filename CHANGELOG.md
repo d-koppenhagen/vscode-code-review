@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.19.6](https://github.com/d-koppenhagen/vscode-code-review/compare/v1.19.5...v1.19.6) (2020-12-04)
+
+
+### Bug Fixes
+
+* **csv:** escape/unescape end-of-line characters to avoid CSV store corruption ([40788d8](https://github.com/d-koppenhagen/vscode-code-review/commit/40788d82fac8d7e75cda4a18911988388c9172e8))
+
 ### [1.19.5](https://github.com/d-koppenhagen/vscode-code-review/compare/v1.19.4...v1.19.5) (2020-10-20)
 
 
