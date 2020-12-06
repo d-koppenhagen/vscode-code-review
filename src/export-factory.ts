@@ -250,6 +250,8 @@ export class ExportFactory {
    */
   getComments(commentGroupedInFile: CommentListEntry): Thenable<CommentListEntry[]> {
     const result = commentGroupedInFile.data.lines.map((entry: CsvEntry) => {
+      entry.comment = unescapeEndOfLineFromCsv(entry.comment);
+
       const prio = Number(entry.priority);
       const item = new CommentListEntry(
         entry.title,
