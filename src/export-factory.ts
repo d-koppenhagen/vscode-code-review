@@ -13,6 +13,8 @@ import {
   sortCsvEntryForLines,
   sortLineSelections,
   rangeFromStringDefinition,
+  unescapeEndOfLineFromCsv,
+  escapeEndOfLineForCsv,
 } from './utils/workspace-util';
 import { CsvEntry, ReviewFileExportSection, GroupBy, ExportFormat, ExportMap, Group } from './interfaces';
 import { CommentListEntry } from './comment-list-entry';
@@ -71,6 +73,8 @@ export class ExportFactory {
           fs.writeFileSync(outputFile, `title,description${EOL}`);
         },
         handleData: (outputFile: string, row: CsvEntry): CsvEntry => {
+          row.comment = escapeEndOfLineForCsv(row.comment);
+
           this.includeCodeSelection ? (row.code = this.getCodeForFile(row.filename, row.lines)) : delete row.code;
           // cut the description (100 chars max) along with '...' at the end
           const descShort = row.comment.length > 100 ? `${row.comment.substring(0, 100)}...` : row.comment;
@@ -102,6 +106,8 @@ export class ExportFactory {
           fs.writeFileSync(outputFile, `title,description,labels,state,assignee${EOL}`);
         },
         handleData: (outputFile: string, row: CsvEntry): CsvEntry => {
+          row.comment = escapeEndOfLineForCsv(row.comment);
+
           this.includeCodeSelection ? (row.code = this.getCodeForFile(row.filename, row.lines)) : delete row.code;
           // cut the description (100 chars max) along with '...' at the end
           const descShort = row.comment.length > 100 ? `${row.comment.substring(0, 100)}...` : row.comment;
@@ -139,6 +145,8 @@ export class ExportFactory {
           );
         },
         handleData: (outputFile: string, row: CsvEntry): CsvEntry => {
+          row.comment = escapeEndOfLineForCsv(row.comment);
+
           this.includeCodeSelection ? (row.code = this.getCodeForFile(row.filename, row.lines)) : delete row.code;
           // cut the description (100 chars max) along with '...' at the end
           const descShort = row.comment.length > 100 ? `${row.comment.substring(0, 100)}...` : row.comment;
@@ -224,6 +232,8 @@ export class ExportFactory {
     parseFile(this.inputFile, { delimiter: ',', ignoreEmpty: true, headers: true })
       .on('error', this.handleError)
       .on('data', (row: CsvEntry) => {
+        row.comment = unescapeEndOfLineFromCsv(row.comment);
+
         if (exporter?.storeOutside) {
           const tmp = exporter.handleData(outputFile, row);
           data.push(tmp);
