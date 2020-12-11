@@ -1,4 +1,14 @@
-import { window, ViewColumn, ExtensionContext, workspace, Range, WebviewPanel, Uri, Position } from 'vscode';
+import {
+  window,
+  ViewColumn,
+  ExtensionContext,
+  workspace,
+  Range,
+  WebviewPanel,
+  Uri,
+  Position,
+  TextEditor,
+} from 'vscode';
 import * as path from 'path';
 import * as fs from 'fs';
 
@@ -10,9 +20,31 @@ import { unescapeEndOfLineFromCsv } from './utils/workspace-util';
 export class WebViewComponent {
   private categories: string[] = [];
   public panel: WebviewPanel | null = null;
+  /** Reference to the working editor during note edition */
+  private editor: TextEditor | null = null;
 
   constructor(public context: ExtensionContext) {
     this.categories = workspace.getConfiguration().get('code-review.categories') as string[];
+  }
+
+  /**
+   * Get and store the working text editor
+   *
+   * @return TextEditor
+   */
+  private getWorkingEditor(): TextEditor {
+    if (this.editor === null) {
+      this.editor = window.activeTextEditor ?? window.visibleTextEditors[0];
+    }
+
+    return this.editor;
+  }
+
+  /**
+   * Dispose the stored working editor
+   */
+  private disposeWorkingEditor() {
+    this.editor = null;
   }
 
   deleteComment(commentService: ReviewCommentService, entry: CommentListEntry) {
@@ -72,7 +104,7 @@ export class WebViewComponent {
 
   addComment(commentService: ReviewCommentService) {
     // highlight selected lines
-    const editor = window.activeTextEditor ?? window.visibleTextEditors[0];
+    const editor = this.getWorkingEditor();
     const ranges: Range[] = editor.selections.map((el) => {
       return new Range(new Position(el.start.line, el.start.character), new Position(el.end.line, el.end.character));
     });
@@ -92,13 +124,14 @@ export class WebViewComponent {
           case 'submit':
             const comment = JSON.parse(message.text) as CsvEntry;
             comment.priority = Number(comment.priority);
-            commentService.addComment(comment);
-            this.panel?.dispose();
-            return;
+            commentService.addComment(comment, this.getWorkingEditor());
+            break;
+
           case 'cancel':
-            this.panel?.dispose();
-            return;
+            break;
         }
+
+        this.panel?.dispose();
       },
       undefined,
       this.context.subscriptions,
@@ -107,6 +140,7 @@ export class WebViewComponent {
     this.panel.onDidDispose(() => {
       // reset highlight selected lines
       decoration.dispose();
+      this.disposeWorkingEditor();
     });
   }
 

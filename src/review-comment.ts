@@ -1,6 +1,6 @@
 import * as fs from 'fs';
 import { EOL } from 'os';
-import { window, workspace, Range, Position } from 'vscode';
+import { window, workspace, Range, Position, TextEditor } from 'vscode';
 const gitCommitId = require('git-commit-id');
 
 import { CsvEntry } from './interfaces';
@@ -29,12 +29,13 @@ export class ReviewCommentService {
   /**
    * Append a new comment
    * @param comment the comment message
+   * @param TextEditor editor The working text editor
    */
-  async addComment(comment: CsvEntry) {
+  async addComment(comment: CsvEntry, editor: TextEditor | null = null) {
     const newEntry: CsvEntry = { ...comment };
     this.checkFileExists();
 
-    const editorRef = window.activeTextEditor ?? window.visibleTextEditors[0];
+    const editorRef = editor ?? window.activeTextEditor ?? window.visibleTextEditors[0];
 
     if (!editorRef?.selection) {
       window.showErrorMessage(`Error referencing file/lines, Please select again.`);
