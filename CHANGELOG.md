@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.19.7](https://github.com/d-koppenhagen/vscode-code-review/compare/v1.19.6...v1.19.7) (2020-12-12)
+
+
+### Bug Fixes
+
+* **editor:** pick the right editor in case of multiple ones ([5d415a8](https://github.com/d-koppenhagen/vscode-code-review/commit/5d415a8921d0709d479eb9197e96c871e5a025f1))
+* **html:** end-of-line rendering in HTML export ([636c922](https://github.com/d-koppenhagen/vscode-code-review/commit/636c922be44fc4e43034ac14829102f2aab6576b))
+* **storage:** centralize storage management, avoid fragmented storage with multiple add/delete ([e45582c](https://github.com/d-koppenhagen/vscode-code-review/commit/e45582c8b896fe669929d80da9fd077d83773b9b))
+* **view:** end-of-line rendering in tree-view ([6548ac8](https://github.com/d-koppenhagen/vscode-code-review/commit/6548ac8e18aea4058be179b5e89e42352c846432))
+
 ### [1.19.6](https://github.com/d-koppenhagen/vscode-code-review/compare/v1.19.5...v1.19.6) (2020-12-04)
 
 
