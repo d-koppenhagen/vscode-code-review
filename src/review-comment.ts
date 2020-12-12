@@ -1,6 +1,6 @@
 import * as fs from 'fs';
 import { EOL } from 'os';
-import { window, workspace, Range, Position } from 'vscode';
+import { window, workspace, Range, Position, TextEditor } from 'vscode';
 const gitCommitId = require('git-commit-id');
 
 import { CsvEntry } from './interfaces';
@@ -29,12 +29,13 @@ export class ReviewCommentService {
   /**
    * Append a new comment
    * @param comment the comment message
+   * @param TextEditor editor The working text editor
    */
-  async addComment(comment: CsvEntry) {
+  async addComment(comment: CsvEntry, editor: TextEditor | null = null) {
     const newEntry: CsvEntry = { ...comment };
     this.checkFileExists();
 
-    const editorRef = window.activeTextEditor ?? window.visibleTextEditors[0];
+    const editorRef = editor ?? window.activeTextEditor ?? window.visibleTextEditors[0];
 
     if (!editorRef?.selection) {
       window.showErrorMessage(`Error referencing file/lines, Please select again.`);
@@ -48,7 +49,8 @@ export class ReviewCommentService {
       newEntry.filename = editorRef.document.fileName.replace(this.workspaceRoot, '');
     }
     // escape double quotes
-    fs.appendFileSync(this.reviewFile, this.buildCsvString(newEntry));
+
+    this.persistComments([this.buildCsvString(newEntry)], false);
   }
 
   /**
@@ -68,7 +70,8 @@ export class ReviewCommentService {
         `Update failed. Cannot find line definition '${comment.lines}' for '${comment.filename}' in '${this.reviewFile}'.`,
       );
     }
-    fs.writeFileSync(this.reviewFile, rows.join(EOL));
+
+    this.persistComments(rows);
   }
 
   async deleteComment(entry: CommentListEntry) {
@@ -82,7 +85,40 @@ export class ReviewCommentService {
     } else {
       window.showErrorMessage(`Update failed. Cannot delete comment '${entry.label}' in '${this.reviewFile}'.`);
     }
-    fs.writeFileSync(this.reviewFile, rows.join(EOL));
+
+    this.persistComments(rows);
+  }
+
+  /**
+   * Store the comments
+   *
+   * @param string[] rows The lines to store
+   * @param boolean overwrite Replace all (true) / append (false)
+   */
+  private persistComments(rows: string[], overwrite: boolean = true) {
+    var refined = this.cleanCsvStorage(rows).join(EOL);
+
+    if (overwrite) {
+      fs.writeFileSync(
+        this.reviewFile,
+        refined +
+          // The header line must always be terminated with an EOL
+          (rows.length === 1 ? EOL : ''),
+      );
+    } else {
+      // The last line must always be terminated with an EOL
+      fs.appendFileSync(this.reviewFile, refined + EOL);
+    }
+  }
+
+  /**
+   * Keep only valid lines for storage
+   *
+   * @param string[] rows The candidate lines to store
+   * @return string[]
+   */
+  private cleanCsvStorage(rows: string[]): string[] {
+    return rows.filter((row) => row?.trim()?.length ?? 0 > 0);
   }
 
   private buildCsvString(comment: CsvEntry): string {
@@ -105,7 +141,7 @@ export class ReviewCommentService {
     const endAnker = endLineNumberFromStringDefinition(comment.lines);
     const remoteUrl = this.remoteUrl(sha, comment.filename, startAnker, endAnker);
 
-    return `"${sha}","${comment.filename}","${remoteUrl}","${comment.lines}","${titleExcaped}","${commentExcaped}","${priority}","${category}","${additional}"${EOL}`;
+    return `"${sha}","${comment.filename}","${remoteUrl}","${comment.lines}","${titleExcaped}","${commentExcaped}","${priority}","${category}","${additional}"`;
   }
 
   /**
