@@ -49,6 +49,7 @@ export class WebViewComponent {
 
   deleteComment(commentService: ReviewCommentService, entry: CommentListEntry) {
     commentService.deleteComment(entry);
+    this.panel?.dispose();
   }
 
   editComment(commentService: ReviewCommentService, selections: Range[], data: CsvEntry) {
