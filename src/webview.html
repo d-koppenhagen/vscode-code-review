@@ -164,11 +164,24 @@
           </div>
         </div>
       </div>
-      <button class="action-btn primary" tabindex="0" id="add" role="button" onclick="addNote()">
+      <button
+        class="action-btn primary"
+        tabindex="0"
+        id="add"
+        role="button"
+        onclick="addNote()"
+        title="Save comment (Ctrl+Return)"
+      >
         Add Note
       </button>
 
-      <button class="action-btn secondary" tabindex="0" role="button" onclick="cancel()">
+      <button
+        class="action-btn secondary"
+        tabindex="0"
+        role="button"
+        onclick="cancel()"
+        title="Abort comment changes (Ctrl+Esc)"
+      >
         Cancel
       </button>
     </form>
@@ -200,6 +213,36 @@
         document.getElementById('add').disabled = true;
       }
     });
+
+    const KEYCODE_ENTER = 13;
+    const KEYCODE_ESC = 27;
+
+    // Intercept keystrokes
+    document.addEventListener(
+      'keydown',
+      (event) => {
+        if (event.ctrlKey && !event.shiftKey && !event.altKey) {
+          switch (event.keyCode) {
+            case KEYCODE_ENTER:
+              // Ctrl+Return: comment validation
+              if (!document.getElementById('add').disabled) {
+                event.stopPropagation();
+                addNote();
+              }
+              break;
+
+            case KEYCODE_ESC:
+              // Ctrl+Esc: comment abort
+              cancel();
+              break;
+          }
+        }
+      },
+      false,
+    );
+
+    // Give focus to the comment to allow immediate typing.
+    document.getElementById('comment').focus();
 
     function addNote() {
       const title = document.getElementById('title').value;

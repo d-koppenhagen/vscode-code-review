@@ -79,14 +79,15 @@ export class ReviewCommentService {
 
     const oldFileContent = fs.readFileSync(this.reviewFile, 'utf8'); // get old content
     const rows = oldFileContent.split(EOL);
-    const updateRowIndex = rows.findIndex((row) => row.includes(entry.label) && row.includes(entry.text));
+    // Escape text to search for
+    const textEscaped = escapeEndOfLineForCsv(escapeDoubleQuotesForCsv(entry.text));
+    const updateRowIndex = rows.findIndex((row) => row.includes(entry.label) && row.includes(textEscaped));
     if (updateRowIndex > -1) {
       rows.splice(updateRowIndex, 1);
+      this.persistComments(rows);
     } else {
       window.showErrorMessage(`Update failed. Cannot delete comment '${entry.label}' in '${this.reviewFile}'.`);
     }
-
-    this.persistComments(rows);
   }
 
   /**
@@ -96,18 +97,13 @@ export class ReviewCommentService {
    * @param boolean overwrite Replace all (true) / append (false)
    */
   private persistComments(rows: string[], overwrite: boolean = true) {
-    var refined = this.cleanCsvStorage(rows).join(EOL);
+    // The last line of the file must always be terminated with an EOL
+    const content = this.cleanCsvStorage(rows).join(EOL) + EOL;
 
     if (overwrite) {
-      fs.writeFileSync(
-        this.reviewFile,
-        refined +
-          // The header line must always be terminated with an EOL
-          (rows.length === 1 ? EOL : ''),
-      );
+      fs.writeFileSync(this.reviewFile, content);
     } else {
-      // The last line must always be terminated with an EOL
-      fs.appendFileSync(this.reviewFile, refined + EOL);
+      fs.appendFileSync(this.reviewFile, content);
     }
   }
 
