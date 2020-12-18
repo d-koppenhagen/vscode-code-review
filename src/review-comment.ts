@@ -1,6 +1,6 @@
 import * as fs from 'fs';
 import { EOL } from 'os';
-import { window, workspace, Range, Position, TextEditor } from 'vscode';
+import { window, workspace, TextEditor } from 'vscode';
 const gitCommitId = require('git-commit-id');
 
 import { CsvEntry } from './interfaces';
@@ -13,56 +13,47 @@ import {
   endLineNumberFromStringDefinition,
 } from './utils/workspace-util';
 import { CommentListEntry } from './comment-list-entry';
+import { getSelectionStringDefinition, hasSelection } from './utils/editor-utils';
 
 export class ReviewCommentService {
   constructor(private reviewFile: string, private workspaceRoot: string) {}
 
-  colorizeSelection(selections: Range[]) {
-    const decoration = window.createTextEditorDecorationType({
-      backgroundColor: 'rgba(200, 200, 50, 0.15)',
-    });
-    const editor = window.activeTextEditor ?? window.visibleTextEditors[0];
-    editor.setDecorations(decoration, selections);
-    return decoration;
-  }
-
   /**
    * Append a new comment
-   * @param comment the comment message
-   * @param TextEditor editor The working text editor
+   * @param comment The comment message
+   * @param editor The working text editor
    */
   async addComment(comment: CsvEntry, editor: TextEditor | null = null) {
-    const newEntry: CsvEntry = { ...comment };
+    //const newEntry: CsvEntry = { ...comment };
     this.checkFileExists();
 
-    const editorRef = editor ?? window.activeTextEditor ?? window.visibleTextEditors[0];
-
-    if (!editorRef?.selection) {
-      window.showErrorMessage(`Error referencing file/lines, Please select again.`);
+    if (!this.getSelectedLines(comment, editor)) {
       return;
-    } else {
-      // 2:2-12:2|19:0-19:0
-      newEntry.lines = editorRef.selections.reduce((acc, cur) => {
-        const tmp = acc ? `${acc}|` : '';
-        return `${tmp}${cur.start.line + 1}:${cur.start.character}-${cur.end.line + 1}:${cur.end.character}`;
-      }, '');
-      newEntry.filename = editorRef.document.fileName.replace(this.workspaceRoot, '');
     }
-    // escape double quotes
 
-    this.persistComments([this.buildCsvString(newEntry)], false);
+    comment.filename = editor!.document.fileName.replace(this.workspaceRoot, '');
+
+    this.persistComments([this.buildCsvString(comment)], false);
   }
 
   /**
    * Modify an existing comment
-   * @param comment the comment message
+   * @param comment The comment message
+   * @param editor The working text editor
    */
-  async updateComment(comment: CsvEntry) {
+  async updateComment(comment: CsvEntry, editor: TextEditor | null = null) {
     this.checkFileExists();
+
+    // Store previous selected lines as they will be used for comment lookup
+    const key = comment.lines;
+    // Refresh selected lines
+    if (!this.getSelectedLines(comment, editor, true)) {
+      return;
+    }
 
     const oldFileContent = fs.readFileSync(this.reviewFile, 'utf8'); // get old content
     const rows = oldFileContent.split(EOL);
-    const updateRowIndex = rows.findIndex((row) => row.includes(comment.filename) && row.includes(comment.lines));
+    const updateRowIndex = rows.findIndex((row) => row.includes(comment.filename) && row.includes(key));
     if (updateRowIndex > -1) {
       rows[updateRowIndex] = this.buildCsvString(comment);
     } else {
@@ -88,6 +79,37 @@ export class ReviewCommentService {
     } else {
       window.showErrorMessage(`Update failed. Cannot delete comment '${entry.label}' in '${this.reviewFile}'.`);
     }
+  }
+
+  /**
+   * Get the selected lines in the editor
+   *
+   * @param comment
+   * @param editor The working text editor
+   * @param ignoreIfNone Ignore the selection if nothing is selected (true)
+   * @return boolean true if selected lines were succesfuly retrieved, false otherwise
+   */
+  private getSelectedLines(
+    comment: CsvEntry,
+    editor: TextEditor | null = null,
+    ignoreIfNone: boolean = false,
+  ): boolean {
+    if (ignoreIfNone && !hasSelection(editor)) {
+      // In case of an update operation, the code lines are highlighted, but not selected.
+      // If the update is confirmed without re-selecting the code, the selection will be empty,
+      // leading to a loss of the information stored in the `lines` property.
+      // The `ignoreIfNone` argument can be used in this context to ignore the empty selection.
+      return true;
+    }
+
+    if (!editor?.selection) {
+      window.showErrorMessage(`Error referencing file/lines, Please select again.`);
+      return false;
+    }
+
+    comment.lines = getSelectionStringDefinition(editor);
+
+    return true;
   }
 
   /**
