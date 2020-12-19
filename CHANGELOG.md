@@ -2,6 +2,40 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.20.1](https://github.com/d-koppenhagen/vscode-code-review/compare/v1.20.0...v1.20.1) (2020-12-19)
+
+
+### Bug Fixes
+
+* **update-sel:** ability to update the selection of an existing note ([0adc893](https://github.com/d-koppenhagen/vscode-code-review/commit/0adc8933b7a97719f909e7c74194da6fcb92adf6))
+
+## [1.20.0](https://github.com/d-koppenhagen/vscode-code-review/compare/v1.19.6...v1.20.0) (2020-12-13)
+
+
+### Features
+
+* **productivity:** focus to description edit box, keyboard shortcuts ([1d62fae](https://github.com/d-koppenhagen/vscode-code-review/commit/1d62fae16a3caba76b37851e97d5a3b5b01fe67d))
+* **productivity:** remove undesired comma in HTML ([c8a83c5](https://github.com/d-koppenhagen/vscode-code-review/commit/c8a83c52dce9333b99e5190a8186096d381a3fe7))
+
+
+### Bug Fixes
+
+* **editor:** pick the right editor in case of multiple ones ([5d415a8](https://github.com/d-koppenhagen/vscode-code-review/commit/5d415a8921d0709d479eb9197e96c871e5a025f1))
+* **html:** end-of-line rendering in HTML export ([636c922](https://github.com/d-koppenhagen/vscode-code-review/commit/636c922be44fc4e43034ac14829102f2aab6576b))
+* **note:** fix note deletion issues (close pane, notes with quotes/CR, del all notes corrupts store) ([df8742d](https://github.com/d-koppenhagen/vscode-code-review/commit/df8742d9ab4eaaff20db90307f10d25d5392c0e4))
+* **storage:** centralize storage management, avoid fragmented storage with multiple add/delete ([e45582c](https://github.com/d-koppenhagen/vscode-code-review/commit/e45582c8b896fe669929d80da9fd077d83773b9b))
+* **view:** end-of-line rendering in tree-view ([6548ac8](https://github.com/d-koppenhagen/vscode-code-review/commit/6548ac8e18aea4058be179b5e89e42352c846432))
+
+### [1.19.7](https://github.com/d-koppenhagen/vscode-code-review/compare/v1.19.6...v1.19.7) (2020-12-12)
+
+
+### Bug Fixes
+
+* **editor:** pick the right editor in case of multiple ones ([5d415a8](https://github.com/d-koppenhagen/vscode-code-review/commit/5d415a8921d0709d479eb9197e96c871e5a025f1))
+* **html:** end-of-line rendering in HTML export ([636c922](https://github.com/d-koppenhagen/vscode-code-review/commit/636c922be44fc4e43034ac14829102f2aab6576b))
+* **storage:** centralize storage management, avoid fragmented storage with multiple add/delete ([e45582c](https://github.com/d-koppenhagen/vscode-code-review/commit/e45582c8b896fe669929d80da9fd077d83773b9b))
+* **view:** end-of-line rendering in tree-view ([6548ac8](https://github.com/d-koppenhagen/vscode-code-review/commit/6548ac8e18aea4058be179b5e89e42352c846432))
+
 ### [1.19.6](https://github.com/d-koppenhagen/vscode-code-review/compare/v1.19.5...v1.19.6) (2020-12-04)
 
 

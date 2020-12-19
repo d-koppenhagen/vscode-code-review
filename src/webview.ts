@@ -1,14 +1,4 @@
-import {
-  window,
-  ViewColumn,
-  ExtensionContext,
-  workspace,
-  Range,
-  WebviewPanel,
-  Uri,
-  Position,
-  TextEditor,
-} from 'vscode';
+import { window, ViewColumn, ExtensionContext, workspace, Range, WebviewPanel, Uri, TextEditor } from 'vscode';
 import * as path from 'path';
 import * as fs from 'fs';
 
@@ -16,6 +6,7 @@ import { ReviewCommentService } from './review-comment';
 import { CsvEntry } from './interfaces';
 import { CommentListEntry } from './comment-list-entry';
 import { unescapeEndOfLineFromCsv } from './utils/workspace-util';
+import { clearSelection, colorizeSelection, getSelectionRanges } from './utils/editor-utils';
 
 export class WebViewComponent {
   private categories: string[] = [];
@@ -53,13 +44,15 @@ export class WebViewComponent {
   }
 
   editComment(commentService: ReviewCommentService, selections: Range[], data: CsvEntry) {
+    const editor = this.getWorkingEditor();
+    // Clear the current text selection to avoid unwanted code selection changes.
+    // (see `ReviewCommentService::getSelectedLines()`).
+    clearSelection(editor);
     // highlight selection
-    const decoration = commentService.colorizeSelection(selections);
+    const decoration = colorizeSelection(selections, editor);
 
     // initialize new web tab
     this.panel = this.createWebView('Edit code review comment');
-
-    const editor = window.activeTextEditor ?? window.visibleTextEditors[0];
     this.panel.webview.html = this.getWebviewContent(editor.document.fileName);
     // const pathToHtml = Uri.file(path.join(this.context.extensionPath, 'src', 'webview.html'));
     // const pathUri = pathToHtml.with({ scheme: 'vscode-resource' });
@@ -85,7 +78,7 @@ export class WebViewComponent {
               category: formData.category || '',
               priority: formData.priority || 0,
             };
-            commentService.updateComment(newEntry);
+            commentService.updateComment(newEntry, this.getWorkingEditor());
             this.panel?.dispose();
             return;
           case 'cancel':
@@ -100,19 +93,16 @@ export class WebViewComponent {
     this.panel.onDidDispose(() => {
       // reset highlight selected lines
       decoration.dispose();
+      this.disposeWorkingEditor();
     });
   }
 
   addComment(commentService: ReviewCommentService) {
     // highlight selected lines
     const editor = this.getWorkingEditor();
-    const ranges: Range[] = editor.selections.map((el) => {
-      return new Range(new Position(el.start.line, el.start.character), new Position(el.end.line, el.end.character));
-    });
-    const decoration = commentService.colorizeSelection(ranges);
+    const decoration = colorizeSelection(getSelectionRanges(editor), editor);
 
     this.panel = this.createWebView('Add code review comment');
-
     this.panel.webview.html = this.getWebviewContent(editor.document.fileName);
     // const pathToHtml = Uri.file(path.join(this.context.extensionPath, 'src', 'webview.html'));
     // const pathUri = pathToHtml.with({ scheme: 'vscode-resource' });
