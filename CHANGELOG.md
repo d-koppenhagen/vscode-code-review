@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.20.1](https://github.com/d-koppenhagen/vscode-code-review/compare/v1.20.0...v1.20.1) (2020-12-19)
+
+
+### Bug Fixes
+
+* **update-sel:** ability to update the selection of an existing note ([0adc893](https://github.com/d-koppenhagen/vscode-code-review/commit/0adc8933b7a97719f909e7c74194da6fcb92adf6))
+
 ## [1.20.0](https://github.com/d-koppenhagen/vscode-code-review/compare/v1.19.6...v1.20.0) (2020-12-13)
 
 
