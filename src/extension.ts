@@ -166,7 +166,6 @@ export function activate(context: ExtensionContext) {
       workspace.openTextDocument(filePath).then(
         (doc) => {
           window.showTextDocument(doc, ViewColumn.One).then((textEditor) => {
-            webview.panel?.dispose(); // dispose previous ones
             if (csvRef) {
               const rangesStringArray = csvRef.lines.split('|');
               const ranges: Range[] = rangesStringArray.map((range) => rangeFromStringDefinition(range));
