@@ -1,42 +1,86 @@
-import { window, ViewColumn, ExtensionContext, workspace, Range, WebviewPanel, Uri, Position } from 'vscode';
+import { window, ViewColumn, ExtensionContext, workspace, Range, WebviewPanel, Uri, TextEditor } from 'vscode';
 import * as path from 'path';
 import * as fs from 'fs';
 
 import { ReviewCommentService } from './review-comment';
 import { CsvEntry } from './interfaces';
 import { CommentListEntry } from './comment-list-entry';
+import { unescapeEndOfLineFromCsv } from './utils/workspace-util';
+import { clearSelection, colorizeSelection, getSelectionRanges } from './utils/editor-utils';
 
 export class WebViewComponent {
   private categories: string[] = [];
-  public panel: WebviewPanel | null = null;
+  /** Panel used to add/edit a comment */
+  private panel: WebviewPanel | null = null;
+  /** Reference to the working editor during note edition */
+  private editor: TextEditor | null = null;
+
+  /**
+   * Show the comment edition panel
+   *
+   * @param title The title of the panel
+   * @param fileName The file referenced by the comment
+   * @return WebviewPanel The panel object
+   */
+  private showPanel(title: string, fileName: string): WebviewPanel {
+    this.panel?.dispose(); // Dispose existing panel to avoid duplicates
+    this.panel = this.createWebView(title);
+    this.panel.webview.html = this.getWebviewContent(fileName);
+
+    return this.panel;
+  }
 
   constructor(public context: ExtensionContext) {
     this.categories = workspace.getConfiguration().get('code-review.categories') as string[];
   }
 
+  /**
+   * Get and store the working text editor
+   *
+   * @return TextEditor
+   */
+  private getWorkingEditor(): TextEditor {
+    if (this.editor === null) {
+      this.editor = window.activeTextEditor ?? window.visibleTextEditors[0];
+    }
+
+    return this.editor;
+  }
+
+  /**
+   * Dispose the stored working editor
+   */
+  private disposeWorkingEditor() {
+    this.editor = null;
+  }
+
   deleteComment(commentService: ReviewCommentService, entry: CommentListEntry) {
     commentService.deleteComment(entry);
+    this.panel?.dispose();
   }
 
   editComment(commentService: ReviewCommentService, selections: Range[], data: CsvEntry) {
+    const editor = this.getWorkingEditor();
+    // Clear the current text selection to avoid unwanted code selection changes.
+    // (see `ReviewCommentService::getSelectedLines()`).
+    clearSelection(editor);
     // highlight selection
-    const decoration = commentService.colorizeSelection(selections);
+    const decoration = colorizeSelection(selections, editor);
 
     // initialize new web tab
-    this.panel = this.createWebView('Edit code review comment');
-
-    const editor = window.activeTextEditor ?? window.visibleTextEditors[0];
-    this.panel.webview.html = this.getWebviewContent(editor.document.fileName);
+    const panel = this.showPanel('Edit code review comment', editor.document.fileName);
     // const pathToHtml = Uri.file(path.join(this.context.extensionPath, 'src', 'webview.html'));
     // const pathUri = pathToHtml.with({ scheme: 'vscode-resource' });
     // panel.webview.html = fs.readFileSync(pathUri.fsPath, 'utf8');
     const priorities = workspace.getConfiguration().get('code-review.priorities') as string[];
 
+    data.comment = unescapeEndOfLineFromCsv(data.comment);
+
     const formData = { ...data };
-    this.panel.webview.postMessage({ comment: formData });
+    panel.webview.postMessage({ comment: formData });
 
     // Handle messages from the webview
-    this.panel.webview.onDidReceiveMessage(
+    panel.webview.onDidReceiveMessage(
       (message) => {
         switch (message.command) {
           case 'submit':
@@ -49,11 +93,11 @@ export class WebViewComponent {
               category: formData.category || '',
               priority: formData.priority || 0,
             };
-            commentService.updateComment(newEntry);
-            this.panel?.dispose();
+            commentService.updateComment(newEntry, this.getWorkingEditor());
+            panel.dispose();
             return;
           case 'cancel':
-            this.panel?.dispose();
+            panel.dispose();
             return;
         }
       },
@@ -61,49 +105,47 @@ export class WebViewComponent {
       this.context.subscriptions,
     );
 
-    this.panel.onDidDispose(() => {
+    panel.onDidDispose(() => {
       // reset highlight selected lines
       decoration.dispose();
+      this.disposeWorkingEditor();
     });
   }
 
   addComment(commentService: ReviewCommentService) {
     // highlight selected lines
-    const editor = window.activeTextEditor ?? window.visibleTextEditors[0];
-    const ranges: Range[] = editor.selections.map((el) => {
-      return new Range(new Position(el.start.line, el.start.character), new Position(el.end.line, el.end.character));
-    });
-    const decoration = commentService.colorizeSelection(ranges);
+    const editor = this.getWorkingEditor();
+    const decoration = colorizeSelection(getSelectionRanges(editor), editor);
 
-    this.panel = this.createWebView('Add code review comment');
-
-    this.panel.webview.html = this.getWebviewContent(editor.document.fileName);
+    const panel = this.showPanel('Add code review comment', editor.document.fileName);
     // const pathToHtml = Uri.file(path.join(this.context.extensionPath, 'src', 'webview.html'));
     // const pathUri = pathToHtml.with({ scheme: 'vscode-resource' });
     // panel.webview.html = fs.readFileSync(pathUri.fsPath, 'utf8');
 
     // Handle messages from the webview
-    this.panel.webview.onDidReceiveMessage(
+    panel.webview.onDidReceiveMessage(
       (message) => {
         switch (message.command) {
           case 'submit':
             const comment = JSON.parse(message.text) as CsvEntry;
             comment.priority = Number(comment.priority);
-            commentService.addComment(comment);
-            this.panel?.dispose();
-            return;
+            commentService.addComment(comment, this.getWorkingEditor());
+            break;
+
           case 'cancel':
-            this.panel?.dispose();
-            return;
+            break;
         }
+
+        panel.dispose();
       },
       undefined,
       this.context.subscriptions,
     );
 
-    this.panel.onDidDispose(() => {
+    panel.onDidDispose(() => {
       // reset highlight selected lines
       decoration.dispose();
+      this.disposeWorkingEditor();
     });
   }
 

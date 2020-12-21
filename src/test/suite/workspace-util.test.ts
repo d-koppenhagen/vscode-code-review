@@ -19,6 +19,8 @@ import {
   sortLineSelections,
   sortCsvEntryForLines,
   escapeDoubleQuotesForCsv,
+  escapeEndOfLineForCsv,
+  unescapeEndOfLineFromCsv,
   rangeFromStringDefinition,
 } from '../../utils/workspace-util';
 import { CsvEntry } from '../../interfaces';
@@ -135,6 +137,18 @@ suite('Workspace Utils', () => {
     });
   });
 
+  suite('escapeEndOfLineForCsv', () => {
+    test('should escape an end-of-line character as expected for CSV files (with a double anti-slash)', () => {
+      assert.strictEqual(escapeEndOfLineForCsv('aa\nbb'), 'aa\\nbb');
+    });
+  });
+
+  suite('unescapeEndOfLineFromCsv', () => {
+    test('should unescape an end-of-line marker as expected for CSV files (with a true eol)', () => {
+      assert.strictEqual(unescapeEndOfLineFromCsv('aa\\nbb'), 'aa\nbb');
+    });
+  });
+
   suite('startLineNumberFromStringDefinition', () => {
     test('should return the matching line before the colon', () => {
       assert.strictEqual(startLineNumberFromStringDefinition('2:4'), 2);
@@ -176,9 +190,9 @@ suite('Workspace Utils', () => {
       const result = rangeFromStringDefinition('103:18-12:4');
       assert.strictEqual(result instanceof Range, true);
       assert.strictEqual(result.start.line, 11);
-      assert.strictEqual(result.start.character, 3);
+      assert.strictEqual(result.start.character, 4);
       assert.strictEqual(result.end.line, 102);
-      assert.strictEqual(result.end.character, 17);
+      assert.strictEqual(result.end.character, 18);
     });
 
     test('should fallback to 0', () => {
