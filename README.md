@@ -294,7 +294,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
   <tr>
     <td align="center"><a href="https://github.com/bluenick2k17"><img src="https://avatars1.githubusercontent.com/u/50033488?v=4" width="100px;" alt=""/><br /><sub><b>Nick Dunne</b></sub></a><br /><a href="https://github.com/d-koppenhagen/vscode-code-review/commits?author=bluenick2k17" title="Code">💻</a></td>
     <td align="center"><a href="https://github.com/elazarcoh"><img src="https://avatars3.githubusercontent.com/u/28874499?v=4" width="100px;" alt=""/><br /><sub><b>elazarcoh</b></sub></a><br /><a href="https://github.com/d-koppenhagen/vscode-code-review/commits?author=elazarcoh" title="Code">💻</a></td>
-    <td align="center"><a href="https://fr.linkedin.com/in/michel-caradec-36997650"><img src="https://avatars2.githubusercontent.com/u/12159769?v=4" width="100px;" alt=""/><br /><sub><b>Michel Caradec</b></sub></a><br /><a href="https://github.com/d-koppenhagen/vscode-code-review/commits?author=michelcaradec" title="Code">💻</a></td>
+    <td align="center"><a href="https://fr.linkedin.com/in/michel-caradec-36997650"><img src="https://avatars2.githubusercontent.com/u/12159769?v=4" width="100px;" alt=""/><br /><sub><b>Michel Caradec</b></sub></a><br /><a href="https://github.com/d-koppenhagen/vscode-code-review/commits?author=michelcaradec" title="Code">💻</a> <a href="#ideas-michelcaradec" title="Ideas, Planning, & Feedback">🤔</a> <a href="https://github.com/d-koppenhagen/vscode-code-review/issues?q=author%3Amichelcaradec" title="Bug reports">🐛</a></td>
   </tr>
 </table>
 
