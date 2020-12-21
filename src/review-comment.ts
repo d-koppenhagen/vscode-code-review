@@ -1,6 +1,6 @@
 import * as fs from 'fs';
 import { EOL } from 'os';
-import { window, workspace, Range, Position } from 'vscode';
+import { window, workspace, TextEditor } from 'vscode';
 const gitCommitId = require('git-commit-id');
 
 import { CsvEntry } from './interfaces';
@@ -13,54 +13,47 @@ import {
   endLineNumberFromStringDefinition,
 } from './utils/workspace-util';
 import { CommentListEntry } from './comment-list-entry';
+import { getSelectionStringDefinition, hasSelection } from './utils/editor-utils';
 
 export class ReviewCommentService {
   constructor(private reviewFile: string, private workspaceRoot: string) {}
 
-  colorizeSelection(selections: Range[]) {
-    const decoration = window.createTextEditorDecorationType({
-      backgroundColor: 'rgba(200, 200, 50, 0.15)',
-    });
-    const editor = window.activeTextEditor ?? window.visibleTextEditors[0];
-    editor.setDecorations(decoration, selections);
-    return decoration;
-  }
-
   /**
    * Append a new comment
-   * @param comment the comment message
+   * @param comment The comment message
+   * @param editor The working text editor
    */
-  async addComment(comment: CsvEntry) {
-    const newEntry: CsvEntry = { ...comment };
+  async addComment(comment: CsvEntry, editor: TextEditor | null = null) {
+    //const newEntry: CsvEntry = { ...comment };
     this.checkFileExists();
 
-    const editorRef = window.activeTextEditor ?? window.visibleTextEditors[0];
-
-    if (!editorRef?.selection) {
-      window.showErrorMessage(`Error referencing file/lines, Please select again.`);
+    if (!this.getSelectedLines(comment, editor)) {
       return;
-    } else {
-      // 2:2-12:2|19:0-19:0
-      newEntry.lines = editorRef.selections.reduce((acc, cur) => {
-        const tmp = acc ? `${acc}|` : '';
-        return `${tmp}${cur.start.line + 1}:${cur.start.character}-${cur.end.line + 1}:${cur.end.character}`;
-      }, '');
-      newEntry.filename = editorRef.document.fileName.replace(this.workspaceRoot, '');
     }
-    // escape double quotes
-    fs.appendFileSync(this.reviewFile, this.buildCsvString(newEntry));
+
+    comment.filename = editor!.document.fileName.replace(this.workspaceRoot, '');
+
+    this.persistComments([this.buildCsvString(comment)], false);
   }
 
   /**
    * Modify an existing comment
-   * @param comment the comment message
+   * @param comment The comment message
+   * @param editor The working text editor
    */
-  async updateComment(comment: CsvEntry) {
+  async updateComment(comment: CsvEntry, editor: TextEditor | null = null) {
     this.checkFileExists();
+
+    // Store previous selected lines as they will be used for comment lookup
+    const key = comment.lines;
+    // Refresh selected lines
+    if (!this.getSelectedLines(comment, editor, true)) {
+      return;
+    }
 
     const oldFileContent = fs.readFileSync(this.reviewFile, 'utf8'); // get old content
     const rows = oldFileContent.split(EOL);
-    const updateRowIndex = rows.findIndex((row) => row.includes(comment.filename) && row.includes(comment.lines));
+    const updateRowIndex = rows.findIndex((row) => row.includes(comment.filename) && row.includes(key));
     if (updateRowIndex > -1) {
       rows[updateRowIndex] = this.buildCsvString(comment);
     } else {
@@ -68,7 +61,8 @@ export class ReviewCommentService {
         `Update failed. Cannot find line definition '${comment.lines}' for '${comment.filename}' in '${this.reviewFile}'.`,
       );
     }
-    fs.writeFileSync(this.reviewFile, rows.join(EOL));
+
+    this.persistComments(rows);
   }
 
   async deleteComment(entry: CommentListEntry) {
@@ -76,13 +70,73 @@ export class ReviewCommentService {
 
     const oldFileContent = fs.readFileSync(this.reviewFile, 'utf8'); // get old content
     const rows = oldFileContent.split(EOL);
-    const updateRowIndex = rows.findIndex((row) => row.includes(entry.label) && row.includes(entry.text));
+    // Escape text to search for
+    const textEscaped = escapeEndOfLineForCsv(escapeDoubleQuotesForCsv(entry.text));
+    const updateRowIndex = rows.findIndex((row) => row.includes(entry.label) && row.includes(textEscaped));
     if (updateRowIndex > -1) {
       rows.splice(updateRowIndex, 1);
+      this.persistComments(rows);
     } else {
       window.showErrorMessage(`Update failed. Cannot delete comment '${entry.label}' in '${this.reviewFile}'.`);
     }
-    fs.writeFileSync(this.reviewFile, rows.join(EOL));
+  }
+
+  /**
+   * Get the selected lines in the editor
+   *
+   * @param comment
+   * @param editor The working text editor
+   * @param ignoreIfNone Ignore the selection if nothing is selected (true)
+   * @return boolean true if selected lines were succesfuly retrieved, false otherwise
+   */
+  private getSelectedLines(
+    comment: CsvEntry,
+    editor: TextEditor | null = null,
+    ignoreIfNone: boolean = false,
+  ): boolean {
+    if (ignoreIfNone && !hasSelection(editor)) {
+      // In case of an update operation, the code lines are highlighted, but not selected.
+      // If the update is confirmed without re-selecting the code, the selection will be empty,
+      // leading to a loss of the information stored in the `lines` property.
+      // The `ignoreIfNone` argument can be used in this context to ignore the empty selection.
+      return true;
+    }
+
+    if (!editor?.selection) {
+      window.showErrorMessage(`Error referencing file/lines, Please select again.`);
+      return false;
+    }
+
+    comment.lines = getSelectionStringDefinition(editor);
+
+    return true;
+  }
+
+  /**
+   * Store the comments
+   *
+   * @param string[] rows The lines to store
+   * @param boolean overwrite Replace all (true) / append (false)
+   */
+  private persistComments(rows: string[], overwrite: boolean = true) {
+    // The last line of the file must always be terminated with an EOL
+    const content = this.cleanCsvStorage(rows).join(EOL) + EOL;
+
+    if (overwrite) {
+      fs.writeFileSync(this.reviewFile, content);
+    } else {
+      fs.appendFileSync(this.reviewFile, content);
+    }
+  }
+
+  /**
+   * Keep only valid lines for storage
+   *
+   * @param string[] rows The candidate lines to store
+   * @return string[]
+   */
+  private cleanCsvStorage(rows: string[]): string[] {
+    return rows.filter((row) => row?.trim()?.length ?? 0 > 0);
   }
 
   private buildCsvString(comment: CsvEntry): string {
@@ -105,7 +159,7 @@ export class ReviewCommentService {
     const endAnker = endLineNumberFromStringDefinition(comment.lines);
     const remoteUrl = this.remoteUrl(sha, comment.filename, startAnker, endAnker);
 
-    return `"${sha}","${comment.filename}","${remoteUrl}","${comment.lines}","${titleExcaped}","${commentExcaped}","${priority}","${category}","${additional}"${EOL}`;
+    return `"${sha}","${comment.filename}","${remoteUrl}","${comment.lines}","${titleExcaped}","${commentExcaped}","${priority}","${category}","${additional}"`;
   }
 
   /**
