@@ -3,7 +3,7 @@ import * as path from 'path';
 import * as fs from 'fs';
 
 import { ReviewCommentService } from './review-comment';
-import { createCommentFromObject, CsvEntry } from './model';
+import { CsvEntry } from './interfaces';
 import { CommentListEntry } from './comment-list-entry';
 import { unescapeEndOfLineFromCsv } from './utils/workspace-util';
 import { clearSelection, colorizeSelection, getSelectionRanges } from './utils/editor-utils';
@@ -72,11 +72,12 @@ export class WebViewComponent {
     // const pathToHtml = Uri.file(path.join(this.context.extensionPath, 'src', 'webview.html'));
     // const pathUri = pathToHtml.with({ scheme: 'vscode-resource' });
     // panel.webview.html = fs.readFileSync(pathUri.fsPath, 'utf8');
-    // const priorities = workspace.getConfiguration().get('code-review.priorities') as string[];
+    const priorities = workspace.getConfiguration().get('code-review.priorities') as string[];
 
     data.comment = unescapeEndOfLineFromCsv(data.comment);
 
-    panel.webview.postMessage({ comment: { ...data } });
+    const formData = { ...data };
+    panel.webview.postMessage({ comment: formData });
 
     // Handle messages from the webview
     panel.webview.onDidReceiveMessage(
@@ -94,11 +95,10 @@ export class WebViewComponent {
             };
             commentService.updateComment(newEntry, this.getWorkingEditor());
             panel.dispose();
-            break;
-
+            return;
           case 'cancel':
             panel.dispose();
-            break;
+            return;
         }
       },
       undefined,
@@ -127,7 +127,9 @@ export class WebViewComponent {
       (message) => {
         switch (message.command) {
           case 'submit':
-            commentService.addComment(createCommentFromObject(message.text), this.getWorkingEditor());
+            const comment = JSON.parse(message.text) as CsvEntry;
+            comment.priority = Number(comment.priority);
+            commentService.addComment(comment, this.getWorkingEditor());
             break;
 
           case 'cancel':

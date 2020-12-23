@@ -2,7 +2,7 @@ import * as path from 'path';
 import * as fs from 'fs';
 import { WorkspaceFolder, Position, Range } from 'vscode';
 import { EOL } from 'os';
-import { CsvEntry } from '../model';
+import { CsvEntry } from '../interfaces';
 
 /**
  * remove a trailing slash from a string when exists
@@ -58,6 +58,20 @@ export const getFileContentForRange = (pathToFile: string, range: Range): string
   }
   const fileContentLines = fileContent.split(EOL);
   return fileContentLines.slice(range.start.line, range.end.line).join(EOL);
+};
+
+/**
+ * Get the CSV file header (first line)
+ * @param pathToFile the actual file path and name
+ */
+export const getCsvFileHeader = (pathToFile: string): string => {
+  let fileContent = '';
+  try {
+    fileContent = fs.readFileSync(pathToFile, 'utf8');
+  } catch (error) {
+    console.log('Error reading header from file', pathToFile, error);
+  }
+  return fileContent.split(EOL).slice(0, 1).join(EOL);
 };
 
 /**
@@ -172,21 +186,4 @@ export const sortCsvEntryForLines = (a: CsvEntry, b: CsvEntry): number => {
   }
 
   return lineASplitStart - lineBSplitStart;
-};
-
-/**
- * Generate a backup file name
- *
- * @param reviewFilePath The full name of the file to backup
- * @return string
- */
-export const getBackupFilename = (reviewFilePath: string): string => {
-  const date = new Date();
-  const timeStamp = `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}T${date.getHours()}-${date.getMinutes()}-${date.getSeconds()}`;
-  const backupFilePath = path.join(
-    path.dirname(reviewFilePath),
-    path.parse(reviewFilePath).name + '-' + timeStamp + '.bak',
-  );
-
-  return backupFilePath;
 };

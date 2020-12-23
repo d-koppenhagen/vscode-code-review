@@ -3,7 +3,7 @@ import { EOL } from 'os';
 import { window, workspace, TextEditor } from 'vscode';
 const gitCommitId = require('git-commit-id');
 
-import { CsvEntry, CsvStructure } from './model';
+import { CsvEntry } from './interfaces';
 import {
   removeLeadingAndTrailingSlash,
   removeTrailingSlash,
@@ -14,7 +14,6 @@ import {
 } from './utils/workspace-util';
 import { CommentListEntry } from './comment-list-entry';
 import { getSelectionStringDefinition, hasSelection } from './utils/editor-utils';
-import { cleanCsvStorage, getCsvFileLinesAsArray } from './utils/storage-utils';
 
 export class ReviewCommentService {
   constructor(private reviewFile: string, private workspaceRoot: string) {}
@@ -25,6 +24,7 @@ export class ReviewCommentService {
    * @param editor The working text editor
    */
   async addComment(comment: CsvEntry, editor: TextEditor | null = null) {
+    //const newEntry: CsvEntry = { ...comment };
     this.checkFileExists();
 
     if (!this.getSelectedLines(comment, editor)) {
@@ -45,27 +45,23 @@ export class ReviewCommentService {
     this.checkFileExists();
 
     // Store previous selected lines as they will be used for comment lookup
-    const fallBackKey = comment.lines;
+    const key = comment.lines;
     // Refresh selected lines
     if (!this.getSelectedLines(comment, editor, true)) {
       return;
     }
 
-    const rows = getCsvFileLinesAsArray(this.reviewFile);
-    let updateRowIndex = rows.findIndex((row) => row.includes(comment.id));
-    if (updateRowIndex < 0) {
-      // Fallback method to find comment by filename/selection
-      updateRowIndex = rows.findIndex((row) => row.includes(comment.filename) && row.includes(fallBackKey));
-    }
-
-    if (updateRowIndex < 0) {
+    const oldFileContent = fs.readFileSync(this.reviewFile, 'utf8'); // get old content
+    const rows = oldFileContent.split(EOL);
+    const updateRowIndex = rows.findIndex((row) => row.includes(comment.filename) && row.includes(key));
+    if (updateRowIndex > -1) {
+      rows[updateRowIndex] = this.buildCsvString(comment);
+    } else {
       window.showErrorMessage(
         `Update failed. Cannot find line definition '${comment.lines}' for '${comment.filename}' in '${this.reviewFile}'.`,
       );
-      return;
     }
 
-    rows[updateRowIndex] = this.buildCsvString(comment);
     this.persistComments(rows);
   }
 
@@ -124,7 +120,7 @@ export class ReviewCommentService {
    */
   private persistComments(rows: string[], overwrite: boolean = true) {
     // The last line of the file must always be terminated with an EOL
-    const content = cleanCsvStorage(rows).join(EOL) + EOL;
+    const content = this.cleanCsvStorage(rows).join(EOL) + EOL;
 
     if (overwrite) {
       fs.writeFileSync(this.reviewFile, content);
@@ -133,27 +129,37 @@ export class ReviewCommentService {
     }
   }
 
+  /**
+   * Keep only valid lines for storage
+   *
+   * @param string[] rows The candidate lines to store
+   * @return string[]
+   */
+  private cleanCsvStorage(rows: string[]): string[] {
+    return rows.filter((row) => row?.trim()?.length ?? 0 > 0);
+  }
+
   private buildCsvString(comment: CsvEntry): string {
-    const copy = { ...comment };
+    // escape double quotes
+    const commentExcaped = escapeEndOfLineForCsv(escapeDoubleQuotesForCsv(comment.comment));
+    const titleExcaped = comment.title ? escapeDoubleQuotesForCsv(comment.title) : '';
+    const priority = comment.priority || 0;
+    const additional = comment.additional ? escapeDoubleQuotesForCsv(comment.additional) : '';
+    const category = comment.category || '';
 
-    copy.comment = escapeEndOfLineForCsv(escapeDoubleQuotesForCsv(copy.comment));
-    copy.title = copy.title ? escapeDoubleQuotesForCsv(copy.title) : '';
-    copy.priority = copy.priority || 0;
-    copy.additional = copy.additional ? escapeDoubleQuotesForCsv(copy.additional) : '';
-    copy.category = copy.category || '';
-
+    let sha = '';
     try {
-      copy.sha = gitCommitId({ cwd: this.workspaceRoot });
+      sha = gitCommitId({ cwd: this.workspaceRoot });
     } catch (error) {
-      copy.sha = '';
+      sha = '';
       console.log('Not in a git repository. Leaving SHA empty', error);
     }
 
-    const startAnker = startLineNumberFromStringDefinition(copy.lines);
-    const endAnker = endLineNumberFromStringDefinition(copy.lines);
-    copy.url = this.remoteUrl(copy.sha, copy.filename, startAnker, endAnker);
+    const startAnker = startLineNumberFromStringDefinition(comment.lines);
+    const endAnker = endLineNumberFromStringDefinition(comment.lines);
+    const remoteUrl = this.remoteUrl(sha, comment.filename, startAnker, endAnker);
 
-    return CsvStructure.formatAsCsvLine(copy);
+    return `"${sha}","${comment.filename}","${remoteUrl}","${comment.lines}","${titleExcaped}","${commentExcaped}","${priority}","${category}","${additional}"`;
   }
 
   /**

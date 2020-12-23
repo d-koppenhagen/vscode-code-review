@@ -11,6 +11,7 @@ import {
   removeLeadingAndTrailingSlash,
   getWorkspaceFolder,
   getFileContentForRange,
+  getCsvFileHeader,
   startLineNumberFromStringDefinition,
   startPositionNumberFromStringDefinition,
   endLineNumberFromStringDefinition,
@@ -22,8 +23,7 @@ import {
   unescapeEndOfLineFromCsv,
   rangeFromStringDefinition,
 } from '../../utils/workspace-util';
-import { createCommentFromObject, CsvEntry, CsvStructure } from '../../model';
-import { cleanCsvStorage, getCsvFileHeader } from '../../utils/storage-utils';
+import { CsvEntry } from '../../interfaces';
 
 suite('Workspace Utils', () => {
   suite('removeTrailingSlash', () => {
@@ -234,7 +234,6 @@ suite('Workspace Utils', () => {
       priority: 0,
       category: 'string',
       additional: 'string',
-      id: 'string',
     };
     const testData: CsvEntry[] = [
       {
@@ -271,36 +270,6 @@ suite('Workspace Utils', () => {
       assert.strictEqual(result[3].lines, '5:3-8:2');
       assert.strictEqual(result[4].lines, '10:5-10:12|7:2-11:3');
       assert.strictEqual(result[5].lines, '8:6-9:3');
-    });
-  });
-
-  suite('cleanCsvStorage', () => {
-    test('should return zero rows', () => {
-      assert.strictEqual(cleanCsvStorage([]).length, 0);
-    });
-
-    test('should return zero rows', () => {
-      assert.strictEqual(cleanCsvStorage(['', '  ']).length, 0);
-    });
-
-    test('should return non-empty rows', () => {
-      assert.strictEqual(cleanCsvStorage(['', '  ', 'row_1', 'row_2', '']).length, 1);
-    });
-  });
-
-  suite('createCommentFromObject', () => {
-    test('should return object with comment and id', () => {
-      const object = createCommentFromObject({ comment: 'some text' });
-      assert.strictEqual(object.comment, 'some text');
-      assert.notStrictEqual(object.id, '');
-    });
-  });
-
-  suite('formatAsCsvLine', () => {
-    test('should work even with an empty object', () => {
-      const object = createCommentFromObject({});
-      const line = CsvStructure.formatAsCsvLine(object);
-      assert.ok(line.length > 0);
     });
   });
 });
