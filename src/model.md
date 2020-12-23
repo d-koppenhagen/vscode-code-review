@@ -10,7 +10,6 @@ All the steps will be operated in the file `model.ts`.
 
 1. Add the property to the **interface** `CsvEntry`:
 
-
     ```diff
     export interface CsvEntry {
         sha: string;
@@ -25,8 +24,8 @@ All the steps will be operated in the file `model.ts`.
         code?: string;
         /** Unique identifier of the entry */
         id: string;
-+       /** The new state property */
-+       state: number;
+    +   /** The new state property */
+    +   state: number;
     }
     ```
 
@@ -44,7 +43,7 @@ All the steps will be operated in the file `model.ts`.
         'category',
         'additional',
         'id',
-+       'state'
+    +   'state'
     ];
     ```
 
@@ -56,7 +55,7 @@ All the steps will be operated in the file `model.ts`.
     private static readonly defaults: Map<string, () => any>
         = new Map([
             ['id', () => uuidv4()],
-+           ['state', () => 0]
+    +       ['state', () => 0]
         ]);
     ```
 
@@ -75,6 +74,7 @@ export function createCommentFromObject(object: any): CsvEntry {
 
     return comment;
 }
+```
 
 ## How To Delete A Property
 
