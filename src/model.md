@@ -67,28 +67,14 @@ All the steps will be operated in the file `model.ts`.
 4. Update the **instantiation** function `createCommentFromObject()`  
    *This step is optional.*
 
-Before:
-
-```typescript
+```diff
 export function createCommentFromObject(object: any): CsvEntry {
     const comment = JSON.parse(object) as CsvEntry;
     comment.id = CsvStructure.getDefaultValue('id')!;
++   comment.state = CsvStructure.getDefaultValue('state')!;
 
     return comment;
 }
-```
-
-After:
-
-```typescript
-export function createCommentFromObject(object: any): CsvEntry {
-    const comment = JSON.parse(object) as CsvEntry;
-    comment.id = CsvStructure.getDefaultValue('id')!;
-    comment.state = CsvStructure.getDefaultValue('state')!;
-
-    return comment;
-}
-```
 
 ## How To Delete A Property
 
