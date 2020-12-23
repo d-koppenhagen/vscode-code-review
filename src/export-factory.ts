@@ -16,8 +16,10 @@ import {
   unescapeEndOfLineFromCsv,
   escapeEndOfLineForCsv,
 } from './utils/workspace-util';
-import { CsvEntry, ReviewFileExportSection, GroupBy, ExportFormat, ExportMap, Group } from './interfaces';
+import { ReviewFileExportSection, GroupBy, ExportFormat, ExportMap, Group } from './interfaces';
+import { CsvEntry } from './model';
 import { CommentListEntry } from './comment-list-entry';
+import { FileGenerator } from './file-generator';
 
 export class ExportFactory {
   private defaultFileName = 'code-review';
@@ -199,7 +201,7 @@ export class ExportFactory {
   /**
    * for trying out: https://stackblitz.com/edit/code-review-template
    */
-  constructor(private context: ExtensionContext, private workspaceRoot: string) {
+  constructor(private context: ExtensionContext, private workspaceRoot: string, private generator: FileGenerator) {
     const configFileName = workspace.getConfiguration().get('code-review.filename') as string;
     if (configFileName) {
       this.defaultFileName = configFileName;
@@ -294,11 +296,11 @@ export class ExportFactory {
   }
 
   getFilesContainingComments(): Thenable<CommentListEntry[]> {
-    const entries: CsvEntry[] = [];
-
-    if (!fs.existsSync(this.inputFile)) {
+    if (!fs.existsSync(this.inputFile) || !this.generator.check()) {
       return Promise.resolve([]);
     }
+
+    const entries: CsvEntry[] = [];
 
     return new Promise((resolve) => {
       parseFile(this.inputFile, { delimiter: ',', ignoreEmpty: true, headers: true })
