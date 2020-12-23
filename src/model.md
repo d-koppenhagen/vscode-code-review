@@ -102,7 +102,7 @@ A sample way to deprecate a property is to add a comment above it in the **inter
 export interface CsvEntry {
     sha: string;
     filename: string;
-    /** Obsolete property */
+    /** @deprecated */
     url: string;
     lines: string;
     title: string;
