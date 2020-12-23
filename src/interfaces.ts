@@ -1,20 +1,8 @@
 import { Uri } from 'vscode';
+import { CsvEntry } from './model';
 
 export interface CodeReviewConfig {
   filename: string;
-}
-
-export interface CsvEntry {
-  sha: string;
-  filename: string;
-  url: string;
-  lines: string;
-  title: string;
-  comment: string;
-  priority: number;
-  category: string;
-  additional: string;
-  code?: string;
 }
 
 export interface ReviewFileExportSection {
