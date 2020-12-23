@@ -20,7 +20,8 @@
       "avatar_url": "https://avatars3.githubusercontent.com/u/28874499?v=4",
       "profile": "https://github.com/elazarcoh",
       "contributions": [
-        "code"
+        "code",
+        "bug"
       ]
     },
     {
@@ -29,7 +30,25 @@
       "avatar_url": "https://avatars2.githubusercontent.com/u/12159769?v=4",
       "profile": "https://fr.linkedin.com/in/michel-caradec-36997650",
       "contributions": [
+        "code",
+        "ideas",
         "code"
+      ]
+    },
+    {
+      "login": "d-koppenhagen",
+      "name": "Danny Koppenhagen",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/4279702?v=4",
+      "profile": "http://d-koppenhagen.de",
+      "contributions": [
+        "code",
+        "test",
+        "review",
+        "maintenance",
+        "ideas",
+        "example",
+        "doc",
+        "bug"
       ]
     }
   ],

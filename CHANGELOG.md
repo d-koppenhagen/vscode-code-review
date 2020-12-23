@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.20.2](https://github.com/d-koppenhagen/vscode-code-review/compare/v1.20.1...v1.20.2) (2020-12-19)
+
+
+### Bug Fixes
+
+* **double-webview:** avoid duplicate panel when adding a note ([0dda4cd](https://github.com/d-koppenhagen/vscode-code-review/commit/0dda4cd9839b40db2c92dc68ec5e952618fc4aa0))
+
 ### [1.20.1](https://github.com/d-koppenhagen/vscode-code-review/compare/v1.20.0...v1.20.1) (2020-12-19)
 
 
