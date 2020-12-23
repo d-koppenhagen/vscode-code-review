@@ -52,22 +52,11 @@ All the steps will be operated in the file `model.ts`.
 
 3. Declare an **initializer** for the property in the dictionary `CsvStructure.defaults`:
 
-    Before:
-
-    ```typescript
-    private static readonly defaults: Map<string, () => any>
-        = new Map([
-            ['id', () => uuidv4()]
-        ]);
-    ```
-
-    After:
-
-    ```typescript
+    ```diff
     private static readonly defaults: Map<string, () => any>
         = new Map([
             ['id', () => uuidv4()],
-            ['state', () => 0]
++           ['state', () => 0]
         ]);
     ```
 
