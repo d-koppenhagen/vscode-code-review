@@ -10,9 +10,8 @@ All the steps will be operated in the file `model.ts`.
 
 1. Add the property to the **interface** `CsvEntry`:
 
-    Before:
 
-    ```typescript
+    ```diff
     export interface CsvEntry {
         sha: string;
         filename: string;
@@ -26,27 +25,8 @@ All the steps will be operated in the file `model.ts`.
         code?: string;
         /** Unique identifier of the entry */
         id: string;
-    }
-    ```
-
-    After:
-
-    ```typescript
-    export interface CsvEntry {
-        sha: string;
-        filename: string;
-        url: string;
-        lines: string;
-        title: string;
-        comment: string;
-        priority: number;
-        category: string;
-        additional: string;
-        code?: string;
-        /** Unique identifier of the entry */
-        id: string;
-        /** The new state property */
-        state: number;
++       /** The new state property */
++       state: number;
     }
     ```
 
