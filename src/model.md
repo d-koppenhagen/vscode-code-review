@@ -118,4 +118,4 @@ export interface CsvEntry {
 }
 ```
 
-*Here, we marked the property `url` with an obsolete comment.*
+*Here, we marked the property `url` with the `@deprecated` annotation for IDE support.*
