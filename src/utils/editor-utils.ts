@@ -15,7 +15,7 @@ export const clearSelection = (editor: TextEditor): void => {
  * Check if there is some selected text in an editor
  *
  * @param editor The editor to check
- * @return bool
+ * @return boolean
  */
 export const hasSelection = (editor: TextEditor | null): boolean => {
   const isSelectionNone =
