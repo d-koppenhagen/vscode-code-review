@@ -32,26 +32,7 @@ All the steps will be operated in the file `model.ts`.
 
 2. Reference the new property as being part of the **CSV header** in the array `CsvStructure.headers`:
 
-    Before:
-
-    ```typescript
-    private static readonly headers: string[] = [
-        'sha',
-        'filename',
-        'url',
-        'lines',
-        'title',
-        'comment',
-        'priority',
-        'category',
-        'additional',
-        'id'
-    ];
-    ```
-
-    After:
-
-    ```typescript
+    ```diff
     private static readonly headers: string[] = [
         'sha',
         'filename',
@@ -63,7 +44,7 @@ All the steps will be operated in the file `model.ts`.
         'category',
         'additional',
         'id',
-        'state'
++       'state'
     ];
     ```
 
