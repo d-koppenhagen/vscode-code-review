@@ -1,27 +1,18 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 
-import {
-  commands,
-  workspace,
-  window,
-  ExtensionContext,
-  WorkspaceFolder,
-  Uri,
-  Range,
-  ViewColumn,
-  Selection,
-} from 'vscode';
+import { commands, workspace, window, ExtensionContext, WorkspaceFolder, Uri, Range, ViewColumn } from 'vscode';
 import * as path from 'path';
 import * as fs from 'fs';
 
-import { FileGenerator } from './file-generator';
+import { CheckFlag, FileGenerator } from './file-generator';
 import { ReviewCommentService } from './review-comment';
 import { getWorkspaceFolder, rangeFromStringDefinition } from './utils/workspace-util';
 import { WebViewComponent } from './webview';
 import { ExportFactory } from './export-factory';
 import { CommentView, CommentsProvider } from './comment-view';
-import { ReviewFileExportSection, CsvEntry } from './interfaces';
+import { ReviewFileExportSection } from './interfaces';
+import { CsvEntry } from './model';
 import { CommentListEntry } from './comment-list-entry';
 
 const checkForCodeReviewFile = (fileName: string) => {
@@ -33,6 +24,7 @@ const checkForCodeReviewFile = (fileName: string) => {
 export function activate(context: ExtensionContext) {
   const workspaceRoot: string = getWorkspaceFolder(workspace.workspaceFolders as WorkspaceFolder[]);
   const generator = new FileGenerator(workspaceRoot);
+  generator.check(CheckFlag.format | CheckFlag.migrate);
   const webview = new WebViewComponent(context);
 
   const defaultConfigurationTemplatePath = workspace
@@ -42,7 +34,7 @@ export function activate(context: ExtensionContext) {
     ? Uri.file(defaultConfigurationTemplatePath)
     : Uri.parse(context.asAbsolutePath(path.join('dist', 'template.default.hbs')));
 
-  const exportFactory = new ExportFactory(context, workspaceRoot);
+  const exportFactory = new ExportFactory(context, workspaceRoot, generator);
 
   /**
    * register comment view
@@ -78,7 +70,11 @@ export function activate(context: ExtensionContext) {
       window.showErrorMessage(`No selection made. Please select something you want to add a comment to and try again.`);
       return;
     }
-    generator.create(); // execute every time a comment will be added to check file format
+    // Execute every time a comment will be added to check file format
+    if (!generator.create()) {
+      return;
+    }
+
     webview.addComment(commentService);
     commentProvider.refresh();
   });
@@ -87,6 +83,10 @@ export function activate(context: ExtensionContext) {
    * delete an existing comment
    */
   const deleteNoteRegistration = commands.registerCommand('codeReview.deleteNote', (entry: CommentListEntry) => {
+    if (!generator.check()) {
+      return;
+    }
+
     webview.deleteComment(commentService, entry);
     commentProvider.refresh();
   });
@@ -162,6 +162,10 @@ export function activate(context: ExtensionContext) {
   const openSelectionRegistration = commands.registerCommand(
     'codeReview.openSelection',
     (fileSection: ReviewFileExportSection, csvRef?: CsvEntry) => {
+      if (!generator.check()) {
+        return;
+      }
+
       const filePath = path.join(workspaceRoot, fileSection.group);
       workspace.openTextDocument(filePath).then(
         (doc) => {

@@ -20,7 +20,8 @@
       "avatar_url": "https://avatars3.githubusercontent.com/u/28874499?v=4",
       "profile": "https://github.com/elazarcoh",
       "contributions": [
-        "code"
+        "code",
+        "bug"
       ]
     },
     {
@@ -31,6 +32,7 @@
       "contributions": [
         "code",
         "ideas",
+        "bug"
         "doc",
         "test"
       ]
