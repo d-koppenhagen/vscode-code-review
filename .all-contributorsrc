@@ -32,7 +32,9 @@
       "contributions": [
         "code",
         "ideas",
-        "code"
+        "bug"
+        "doc",
+        "test"
       ]
     },
     {
