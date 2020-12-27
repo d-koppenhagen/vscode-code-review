@@ -200,6 +200,12 @@
             "medium",
             "high"
           ]
+        },
+        "code-review.gitDirectory": {
+          "type": "string",
+          "title": "The folder containing the Git repository",
+          "markdownDescription": "Use this setting when the Git repository is located in an other directory than the workspace one.\nThe path can be **relative** (prefixed with `.` or `..`) or **absolute** (prefixed with `/` on Linux/MacOS or `{drive}:\\` on Windows).\nExamples:\n- `./app`: for {workspace}/app (Linux/MacOS)\n- `../app`: for a folder at the same level as the workspace (Linux/MacOS)\n- `/path/to/my/app`: for an absolute path (Linux/MacOS)\n- `C:\\Path\\To\\My\\App`: for an absolute path (Windows)",
+          "default": "."
         }
       }
     },
