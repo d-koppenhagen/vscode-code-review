@@ -33,6 +33,7 @@ This extension allows you to create a code review file you can hand over to a cu
     - [`code-review.reportWithCodeSelection`](#code-reviewreportwithcodeselection)
     - [`code-review.defaultTemplatePath`](#code-reviewdefaulttemplatepath)
     - [`code-review.priorities`](#code-reviewpriorities)
+    - [`code-review.gitDirectory`](#code-reviewgitdirectory)
   - [Keybindings](#keybindings)
   - [The review approach](#the-review-approach)
   - [Contributors ✨](#contributors-)
@@ -262,6 +263,45 @@ The defaults are listed below:
   ] // list must contain exact 4 items
 }
 ```
+
+### `code-review.gitDirectory`
+
+Use this setting when the Git repository is located in an other directory than the workspace one.  
+The path can be **relative** (prefixed with `.` or `..`) or **absolute** (prefixed with `/` on Linux/MacOS or `{drive}:\` on Windows).
+
+Examples:
+
+- `./app`: for {workspace}/app (Linux/MacOS)
+
+  ```json
+  {
+    "code-review.gitDirectory": "./app"
+  }
+  ```
+
+- `../app`: for a folder at the same level as the workspace (Linux/MacOS)
+
+  ```json
+  {
+    "code-review.gitDirectory": "../app"
+  }
+  ```
+
+- `/path/to/my/app`: for an absolute path (Linux/MacOS)
+
+  ```json
+  {
+    "code-review.gitDirectory": "/path/to/my/app"
+  }
+  ```
+
+- `C:\Path\To\My\App`: for an absolute path (Windows)
+
+  ```json
+  {
+    "code-review.gitDirectory": "C:\\Path\\To\\My\\App"
+  }
+  ```
 
 ## Keybindings
 

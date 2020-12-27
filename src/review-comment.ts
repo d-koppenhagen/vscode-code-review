@@ -15,6 +15,7 @@ import {
 import { CommentListEntry } from './comment-list-entry';
 import { getSelectionStringDefinition, hasSelection } from './utils/editor-utils';
 import { cleanCsvStorage, getCsvFileLinesAsArray } from './utils/storage-utils';
+import path from 'path';
 
 export class ReviewCommentService {
   constructor(private reviewFile: string, private workspaceRoot: string) {}
@@ -142,8 +143,11 @@ export class ReviewCommentService {
     copy.additional = copy.additional ? escapeDoubleQuotesForCsv(copy.additional) : '';
     copy.category = copy.category || '';
 
+    const gitDirectory = workspace.getConfiguration().get('code-review.gitDirectory') as string;
+    const gitRepositoryPath = path.resolve(this.workspaceRoot, gitDirectory);
+
     try {
-      copy.sha = gitCommitId({ cwd: this.workspaceRoot });
+      copy.sha = gitCommitId({ cwd: gitRepositoryPath });
     } catch (error) {
       copy.sha = '';
       console.log('Not in a git repository. Leaving SHA empty', error);
