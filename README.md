@@ -36,6 +36,10 @@ This extension allows you to create a code review file you can hand over to a cu
     - [`code-review.defaultTemplatePath`](#code-reviewdefaulttemplatepath)
     - [`code-review.priorities`](#code-reviewpriorities)
     - [`code-review.gitDirectory`](#code-reviewgitdirectory)
+  - [Themable colors](#themable-colors)
+    - [`codereview.priority.green`](#codereviewprioritygreen)
+    - [`codereview.priority.yellow`](#codereviewpriorityyellow)
+    - [`codereview.priority.red`](#codereviewpriorityred)
   - [Keybindings](#keybindings)
   - [The review approach](#the-review-approach)
   - [Contributors ✨](#contributors-)
@@ -326,6 +330,20 @@ Examples:
     "code-review.gitDirectory": "C:\\Path\\To\\My\\App"
   }
   ```
+
+## Themable colors
+
+### `codereview.priority.green`
+
+Color for comments with priority **level 1**.
+
+### `codereview.priority.yellow`
+
+Color for comments with priority **level 2**.
+
+### `codereview.priority.red`
+
+Color for comments with priority **level 3**.
 
 ## Keybindings
 
