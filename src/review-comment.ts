@@ -142,6 +142,7 @@ export class ReviewCommentService {
     copy.priority = copy.priority || 0;
     copy.additional = copy.additional ? escapeDoubleQuotesForCsv(copy.additional) : '';
     copy.category = copy.category || '';
+    copy.private = copy.private || 0;
 
     const gitDirectory = workspace.getConfiguration().get('code-review.gitDirectory') as string;
     const gitRepositoryPath = path.resolve(this.workspaceRoot, gitDirectory);

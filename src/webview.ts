@@ -91,6 +91,7 @@ export class WebViewComponent {
               comment: formData.comment || '',
               category: formData.category || '',
               priority: formData.priority || 0,
+              private: formData.private || 0,
             };
             commentService.updateComment(newEntry, this.getWorkingEditor());
             panel.dispose();
