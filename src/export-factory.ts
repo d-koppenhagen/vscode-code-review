@@ -2,7 +2,16 @@ import * as fs from 'fs';
 import * as path from 'path';
 const Handlebars = require('handlebars');
 const stripIndent = require('strip-indent');
-import { workspace, Uri, window, ViewColumn, TreeItemCollapsibleState, ExtensionContext } from 'vscode';
+import {
+  workspace,
+  Uri,
+  window,
+  ViewColumn,
+  TreeItemCollapsibleState,
+  ExtensionContext,
+  ThemeIcon,
+  ThemeColor,
+} from 'vscode';
 const parseFile = require('@fast-csv/parse').parseFile;
 import { EOL } from 'os';
 import { encode, decode } from 'js-base64';
@@ -25,6 +34,8 @@ export class ExportFactory {
   private defaultFileName = 'code-review';
   private groupBy: GroupBy;
   private includeCodeSelection = false;
+  private includePrivateComments = false;
+  private privateCommentIcon: string;
 
   private exportHandlerMap = new Map<ExportFormat, ExportMap>([
     [
@@ -212,6 +223,8 @@ export class ExportFactory {
     }
     this.groupBy = groupByConfig as GroupBy;
     this.includeCodeSelection = workspace.getConfiguration().get('code-review.reportWithCodeSelection') as boolean;
+    this.includePrivateComments = workspace.getConfiguration().get('code-review.reportWithPrivateComments') as boolean;
+    this.privateCommentIcon = workspace.getConfiguration().get('code-review.privateCommentIcon') as string;
   }
 
   get basePath(): string {
@@ -229,21 +242,26 @@ export class ExportFactory {
   exportForFormat(format: ExportFormat, template?: Uri) {
     const exporter = this.exportHandlerMap.get(format);
     const outputFile = `${this.basePath}.${exporter?.fileExtension}`;
-    const data: CsvEntry[] = [];
     exporter?.writeFileHeader(outputFile);
+
+    const data: CsvEntry[] = [];
     parseFile(this.inputFile, { delimiter: ',', ignoreEmpty: true, headers: true })
       .on('error', this.handleError)
       .on('data', (row: CsvEntry) => {
         row.comment = unescapeEndOfLineFromCsv(row.comment);
+        row.priority = Number(row.priority);
+        row.private = Number(row.private);
 
-        if (exporter?.storeOutside) {
-          const tmp = exporter.handleData(outputFile, row);
-          data.push(tmp);
+        if (this.includePrivateComments || row.private === 0) {
+          if (exporter?.storeOutside) {
+            const tmp = exporter.handleData(outputFile, row);
+            data.push(tmp);
+          }
+          exporter?.handleData(outputFile, row);
         }
-        return exporter?.handleData(outputFile, row);
       })
-      .on('end', (rows: CsvEntry[]) => {
-        return exporter?.handleEnd(outputFile, exporter?.storeOutside ? data : rows, template);
+      .on('end', (_rows: number) => {
+        return exporter?.handleEnd(outputFile, exporter?.storeOutside ? data : [], template);
       });
   }
 
@@ -255,6 +273,7 @@ export class ExportFactory {
       entry.comment = unescapeEndOfLineFromCsv(entry.comment);
 
       const prio = Number(entry.priority);
+      const priv = Number(entry.private);
       const item = new CommentListEntry(
         entry.title,
         entry.comment,
@@ -262,6 +281,7 @@ export class ExportFactory {
         TreeItemCollapsibleState.None,
         commentGroupedInFile.data,
         prio,
+        priv,
       );
       item.contextValue = 'comment';
       item.command = {
@@ -269,30 +289,57 @@ export class ExportFactory {
         title: 'Open comment',
         arguments: [commentGroupedInFile.data, entry],
       };
-      item.iconPath = this.getIcon(prio);
+      item.iconPath = this.getIcon(prio, priv);
       return item;
     });
     return Promise.resolve(result);
   }
 
-  private getIcon(prio: number): { light: string; dark: string } {
-    let icon = '';
-    switch (prio) {
-      case 3:
-        icon = 'red.svg';
-        break;
-      case 2:
-        icon = 'yellow.svg';
-        break;
-      case 1:
-        icon = 'green.svg';
-        break;
-      default:
-        icon = 'unset.svg';
-        break;
+  private getIcon(prio: number, priv: number): { light: string; dark: string } | ThemeIcon {
+    switch (priv) {
+      default: {
+        // Public comments
+        let icon = '';
+        switch (prio) {
+          case 3:
+            icon = 'red.svg';
+            break;
+          case 2:
+            icon = 'yellow.svg';
+            break;
+          case 1:
+            icon = 'green.svg';
+            break;
+          default:
+            icon = 'unset.svg';
+            break;
+        }
+
+        const iPath = this.context.asAbsolutePath(path.join('dist', icon));
+        return { light: iPath, dark: iPath };
+      }
+
+      case 1: {
+        // Private comments
+        let themeColor: ThemeColor | undefined = undefined;
+
+        switch (prio) {
+          case 3:
+            themeColor = new ThemeColor('codereview.priority.red');
+            break;
+
+          case 2:
+            themeColor = new ThemeColor('codereview.priority.yellow');
+            break;
+
+          case 1:
+            themeColor = new ThemeColor('codereview.priority.green');
+            break;
+        }
+
+        return new ThemeIcon(this.privateCommentIcon, themeColor);
+      }
     }
-    const iPath = this.context.asAbsolutePath(path.join('dist', icon));
-    return { light: iPath, dark: iPath };
   }
 
   getFilesContainingComments(): Thenable<CommentListEntry[]> {

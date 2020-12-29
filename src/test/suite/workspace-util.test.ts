@@ -235,6 +235,7 @@ suite('Workspace Utils', () => {
       category: 'string',
       additional: 'string',
       id: 'string',
+      private: 0,
     };
     const testData: CsvEntry[] = [
       {

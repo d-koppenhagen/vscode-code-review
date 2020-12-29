@@ -31,6 +31,8 @@ This extension allows you to create a code review file you can hand over to a cu
     - [`code-review.groupBy`](#code-reviewgroupby)
     - [`code-review.categories`](#code-reviewcategories)
     - [`code-review.reportWithCodeSelection`](#code-reviewreportwithcodeselection)
+    - [`code-review.reportWithPrivateComments`](#code-reviewreportwithprivatecomments)
+    - [`code-review.privateCommentIcon`](#code-reviewprivatecommenticon)
     - [`code-review.defaultTemplatePath`](#code-reviewdefaulttemplatepath)
     - [`code-review.priorities`](#code-reviewpriorities)
     - [`code-review.gitDirectory`](#code-reviewgitdirectory)
@@ -232,6 +234,28 @@ You can decode this by using the provided Handlebars helper function **`codeBloc
   {{/each}}
 </section>
 {{/each}}
+```
+
+### `code-review.reportWithPrivateComments`
+
+Define wether to include private comments in generated reports or not.
+
+```json
+{
+  "code-review.reportWithPrivateComments": true
+}
+```
+
+### `code-review.privateCommentIcon`
+
+Identifier of the icon to show next to a private comment.  
+The available icons are listed in <https://code.visualstudio.com/api/references/icons-in-labels#icon-listing>.  
+A search engine can be found at <https://microsoft.github.io/vscode-codicons/dist/codicon.html>.
+
+```json
+{
+  "code-review.privateCommentIcon": "eye-closed"
+}
 ```
 
 ### `code-review.defaultTemplatePath`
