@@ -178,6 +178,12 @@
           "description": "Define weather to include the code selection(s) in generated reports or not.",
           "default": false
         },
+        "code-review.reportWithPrivateComments": {
+          "type": "boolean",
+          "title": "Include Private Comments in Report",
+          "description": "Define wether to include private comments in generated reports or not.",
+          "default": false
+        },
         "code-review.defaultTemplatePath": {
           "type": "string",
           "title": "The path to a default Handlebars template to be used for HTML default export",
@@ -206,6 +212,12 @@
           "title": "The folder containing the Git repository",
           "markdownDescription": "Use this setting when the Git repository is located in an other directory than the workspace one.\nThe path can be **relative** (prefixed with `.` or `..`) or **absolute** (prefixed with `/` on Linux/MacOS or `{drive}:\\` on Windows).\nExamples:\n- `./app`: for {workspace}/app (Linux/MacOS)\n- `../app`: for a folder at the same level as the workspace (Linux/MacOS)\n- `/path/to/my/app`: for an absolute path (Linux/MacOS)\n- `C:\\Path\\To\\My\\App`: for an absolute path (Windows)",
           "default": "."
+        },
+        "code-review.privateCommentIcon": {
+          "type": "string",
+          "title": "Identifier of the icon to show next to a private comment",
+          "markdownDescription": "The available icons are listed in <https://code.visualstudio.com/api/references/icons-in-labels#icon-listing>.  \nA search engine can be found at <https://microsoft.github.io/vscode-codicons/dist/codicon.html>.",
+          "default": "eye-closed"
         }
       }
     },
@@ -239,6 +251,35 @@
         "view": "code-review.list",
         "contents": "No review comments found.\nCreate a comment by selecting the lines the comment is related to, then right click and choose:\n\"Code Review: Add Note\"\n[learn more](https://marketplace.visualstudio.com/items?itemName=d-koppenhagen.vscode-code-review)\n[Add a note](command:codeReview.addNote)"
       }
+    ],
+    "colors": [
+      {
+        "id": "codereview.priority.green",
+        "description": "Color for comments with priority level 1 in code-review extension.",
+        "defaults": {
+          "dark": "#008000",
+          "light": "#008000",
+          "highContrast": "#008000"
+        }
+      },
+      {
+        "id": "codereview.priority.yellow",
+        "description": "Color for comments with priority level 2 in code-review extension",
+        "defaults": {
+          "dark": "#ffff00",
+          "light": "#ffff00",
+          "highContrast": "#ffff00"
+        }
+      },
+      {
+        "id": "codereview.priority.red",
+        "description": "Color for comments with priority level 3 in code-review extension",
+        "defaults": {
+          "dark": "#ff0000",
+          "light": "#ff0000",
+          "highContrast": "#ff0000"
+        }
+      }
     ]
   },
   "scripts": {
@@ -262,7 +303,7 @@
     "@types/js-base64": "^3.0.0",
     "@types/mocha": "^8.0.3",
     "@types/node": "^14.11.8",
-    "@types/vscode": "^1.50.0",
+    "@types/vscode": "^1.52.0",
     "@typescript-eslint/eslint-plugin": "^4.4.1",
     "@typescript-eslint/parser": "^4.4.1",
     "commitizen": "^4.2.1",

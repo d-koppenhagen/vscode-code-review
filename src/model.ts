@@ -24,6 +24,11 @@ export interface CsvEntry {
   code?: string;
   /** Unique identifier of the entry */
   id: string;
+  /** Private state of the entry
+   * 0 = public
+   * 1 = private
+   */
+  private: number;
 }
 
 /**
@@ -65,6 +70,7 @@ export class CsvStructure {
     'category',
     'additional',
     'id',
+    'private',
   ];
 
   /**
@@ -73,7 +79,10 @@ export class CsvStructure {
    * **Attention!**
    * Any stored property added to CsvEntry must have a corresponding entry in this map.
    */
-  private static readonly defaults: Map<string, () => any> = new Map([['id', () => uuidv4()]]);
+  private static readonly defaults: Map<string, () => any> = new Map([
+    ['id', () => uuidv4()],
+    ['private', () => 0],
+  ]);
 
   /**
    * Get the header of a CSV file

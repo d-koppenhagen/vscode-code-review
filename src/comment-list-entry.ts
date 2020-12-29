@@ -11,6 +11,7 @@ export class CommentListEntry extends TreeItem {
     public readonly collapsibleState: TreeItemCollapsibleState,
     public readonly data: ReviewFileExportSection,
     public readonly prio?: number,
+    public readonly priv?: number,
   ) {
     super(label, collapsibleState);
   }
