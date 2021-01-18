@@ -11,6 +11,7 @@ import {
   ExtensionContext,
   ThemeIcon,
   ThemeColor,
+  commands,
 } from 'vscode';
 const parseFile = require('@fast-csv/parse').parseFile;
 import { EOL } from 'os';
@@ -29,6 +30,7 @@ import { ReviewFileExportSection, GroupBy, ExportFormat, ExportMap, Group } from
 import { CsvEntry } from './model';
 import { CommentListEntry } from './comment-list-entry';
 import { FileGenerator } from './file-generator';
+const gitCommitId = require('git-commit-id');
 
 export class ExportFactory {
   private defaultFileName = 'code-review';
@@ -36,6 +38,16 @@ export class ExportFactory {
   private includeCodeSelection = false;
   private includePrivateComments = false;
   private privateCommentIcon: string;
+  private filterByCommit: boolean = false;
+  private currentCommitId: string | null = null;
+
+  /**
+   * Get comment eligibility
+   * @param entry The comment to evaluate
+   */
+  private isCommentEligible(entry: CsvEntry): boolean {
+    return this.currentCommitId === null || entry.sha === this.currentCommitId;
+  }
 
   private exportHandlerMap = new Map<ExportFormat, ExportMap>([
     [
@@ -225,6 +237,9 @@ export class ExportFactory {
     this.includeCodeSelection = workspace.getConfiguration().get('code-review.reportWithCodeSelection') as boolean;
     this.includePrivateComments = workspace.getConfiguration().get('code-review.reportWithPrivateComments') as boolean;
     this.privateCommentIcon = workspace.getConfiguration().get('code-review.privateCommentIcon') as string;
+
+    this.filterByCommit = workspace.getConfiguration().get('code-review.filterCommentsByCommit') as boolean;
+    this.setFilterByCommit(this.filterByCommit);
   }
 
   get basePath(): string {
@@ -248,16 +263,18 @@ export class ExportFactory {
     parseFile(this.inputFile, { delimiter: ',', ignoreEmpty: true, headers: true })
       .on('error', this.handleError)
       .on('data', (row: CsvEntry) => {
-        row.comment = unescapeEndOfLineFromCsv(row.comment);
-        row.priority = Number(row.priority);
-        row.private = Number(row.private);
+        if (this.isCommentEligible(row)) {
+          row.comment = unescapeEndOfLineFromCsv(row.comment);
+          row.priority = Number(row.priority);
+          row.private = Number(row.private);
 
-        if (this.includePrivateComments || row.private === 0) {
-          if (exporter?.storeOutside) {
-            const tmp = exporter.handleData(outputFile, row);
-            data.push(tmp);
+          if (this.includePrivateComments || row.private === 0) {
+            if (exporter?.storeOutside) {
+              const tmp = exporter.handleData(outputFile, row);
+              data.push(tmp);
+            }
+            exporter?.handleData(outputFile, row);
           }
-          exporter?.handleData(outputFile, row);
         }
       })
       .on('end', (_rows: number) => {
@@ -269,29 +286,32 @@ export class ExportFactory {
    * get the comments as CommentListEntry for VSCode view
    */
   getComments(commentGroupedInFile: CommentListEntry): Thenable<CommentListEntry[]> {
-    const result = commentGroupedInFile.data.lines.map((entry: CsvEntry) => {
-      entry.comment = unescapeEndOfLineFromCsv(entry.comment);
+    const result = commentGroupedInFile.data.lines
+      .filter((entry: CsvEntry) => this.isCommentEligible(entry))
+      .map((entry: CsvEntry) => {
+        entry.comment = unescapeEndOfLineFromCsv(entry.comment);
 
-      const prio = Number(entry.priority);
-      const priv = Number(entry.private);
-      const item = new CommentListEntry(
-        entry.title,
-        entry.comment,
-        entry.comment,
-        TreeItemCollapsibleState.None,
-        commentGroupedInFile.data,
-        prio,
-        priv,
-      );
-      item.contextValue = 'comment';
-      item.command = {
-        command: 'codeReview.openSelection',
-        title: 'Open comment',
-        arguments: [commentGroupedInFile.data, entry],
-      };
-      item.iconPath = this.getIcon(prio, priv);
-      return item;
-    });
+        const prio = Number(entry.priority);
+        const priv = Number(entry.private);
+        const item = new CommentListEntry(
+          entry.title,
+          entry.comment,
+          entry.comment,
+          TreeItemCollapsibleState.None,
+          commentGroupedInFile.data,
+          prio,
+          priv,
+        );
+        item.contextValue = 'comment';
+        item.command = {
+          command: 'codeReview.openSelection',
+          title: 'Open comment',
+          arguments: [commentGroupedInFile.data, entry],
+        };
+        item.iconPath = this.getIcon(prio, priv);
+        return item;
+      });
+
     return Promise.resolve(result);
   }
 
@@ -352,7 +372,11 @@ export class ExportFactory {
     return new Promise((resolve) => {
       parseFile(this.inputFile, { delimiter: ',', ignoreEmpty: true, headers: true })
         .on('error', () => this.handleError)
-        .on('data', (row: CsvEntry) => entries.push(row))
+        .on('data', (row: CsvEntry) => {
+          if (this.isCommentEligible(row)) {
+            entries.push(row);
+          }
+        })
         .on('end', () => {
           const sortedByFile = this.groupResults(entries, Group.filename);
           const listEntries = sortedByFile.map((el: ReviewFileExportSection) => {
@@ -441,5 +465,39 @@ export class ExportFactory {
       enableScripts: true,
     });
     panel.webview.html = fs.readFileSync(outputFile, 'utf8');
+  }
+
+  /**
+   * Refresh comments filtering state
+   */
+  public refreshFilterByCommit() {
+    this.setFilterByCommit(this.filterByCommit);
+  }
+
+  /**
+   * Enable/Disable filtering comments by commit
+   * @param state The state of the filter
+   */
+  public setFilterByCommit(state: boolean): boolean {
+    this.filterByCommit = state;
+    if (this.filterByCommit) {
+      try {
+        const gitDirectory = workspace.getConfiguration().get('code-review.gitDirectory') as string;
+        const gitRepositoryPath = path.resolve(this.workspaceRoot, gitDirectory);
+
+        this.currentCommitId = gitCommitId({ cwd: gitRepositoryPath });
+      } catch (error) {
+        this.filterByCommit = false;
+        this.currentCommitId = null;
+
+        console.log('Not in a git repository. Disabling filter by commit', error);
+      }
+    } else {
+      this.currentCommitId = null;
+    }
+
+    commands.executeCommand('setContext', 'isFilteredByCommit', this.filterByCommit);
+
+    return this.filterByCommit;
   }
 }

@@ -72,6 +72,22 @@
       {
         "command": "codeReview.deleteNote",
         "title": "Delete"
+      },
+      {
+        "command": "codeReview.enableFilterByCommit",
+        "title": "Code Review: View comments from the current commit",
+        "icon": {
+          "light": "images/icons/filter-off-light.svg",
+          "dark": "images/icons/filter-off-dark.svg"
+        }
+      },
+      {
+        "command": "codeReview.disableFilterByCommit",
+        "title": "CodeReview: View comments from all commits",
+        "icon": {
+          "light": "images/icons/filter-on-light.svg",
+          "dark": "images/icons/filter-on-dark.svg"
+        }
       }
     ],
     "menus": {
@@ -109,6 +125,16 @@
         {
           "command": "codeReview.addNote",
           "when": "view == code-review.list",
+          "group": "navigation"
+        },
+        {
+          "command": "codeReview.enableFilterByCommit",
+          "when": "view == code-review.list && !isFilteredByCommit",
+          "group": "navigation"
+        },
+        {
+          "command": "codeReview.disableFilterByCommit",
+          "when": "view == code-review.list && isFilteredByCommit",
           "group": "navigation"
         }
       ],
@@ -175,13 +201,13 @@
         "code-review.reportWithCodeSelection": {
           "type": "boolean",
           "title": "Include Code Selection in Report",
-          "description": "Define weather to include the code selection(s) in generated reports or not.",
+          "description": "Define whether to include the code selection(s) in generated reports or not.",
           "default": false
         },
         "code-review.reportWithPrivateComments": {
           "type": "boolean",
           "title": "Include Private Comments in Report",
-          "description": "Define wether to include private comments in generated reports or not.",
+          "description": "Define whether to include private comments in generated reports or not.",
           "default": false
         },
         "code-review.defaultTemplatePath": {
@@ -218,6 +244,12 @@
           "title": "Identifier of the icon to show next to a private comment",
           "markdownDescription": "The available icons are listed in <https://code.visualstudio.com/api/references/icons-in-labels#icon-listing>.  \nA search engine can be found at <https://microsoft.github.io/vscode-codicons/dist/codicon.html>.",
           "default": "eye-closed"
+        },
+        "code-review.filterCommentsByCommit": {
+          "type": "boolean",
+          "title": "Only view comments from the current commit",
+          "description": "Define whether to view only the comments from the current commit or not.",
+          "default": false
         }
       }
     },
