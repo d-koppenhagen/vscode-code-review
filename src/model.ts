@@ -40,10 +40,9 @@ export interface CsvEntry {
  * @param object The object (JSON)
  * @return CsvEntry
  */
-export function createCommentFromObject(object: any): CsvEntry {
-  const comment = JSON.parse(object) as CsvEntry;
+export function createCommentFromObject(object: any | CsvEntry): CsvEntry {
+  const comment = object as CsvEntry;
   comment.id = CsvStructure.getDefaultValue('id')!;
-
   return comment;
 }
 

@@ -36,6 +36,7 @@ This extension allows you to create a code review file you can hand over to a cu
     - [`code-review.defaultTemplatePath`](#code-reviewdefaulttemplatepath)
     - [`code-review.priorities`](#code-reviewpriorities)
     - [`code-review.gitDirectory`](#code-reviewgitdirectory)
+    - [`code-review.filterCommentsByCommit`](#code-reviewfiltercommentsbycommit)
   - [Themable colors](#themable-colors)
     - [`codereview.priority.green`](#codereviewprioritygreen)
     - [`codereview.priority.yellow`](#codereviewpriorityyellow)
@@ -170,6 +171,7 @@ This setting would lead into something like this: `https://github.com/foo/bar/bl
 
 The custom URL is used to build a full link to the file.
 The following placeholders are available:
+
 - `{sha}`: insert the SHA ref for the file
 - `{file}`: insert the file name/path
 - `{start}`: insert the start of the lines selection as an anker
@@ -187,6 +189,7 @@ This setting would lead into something like this: `https://gitlab.com/foo/bar/ba
 
 This setting is used when [generating a report](#export-created-notes-as-html).
 The comments will be grouped by either:
+
 - `filename`: default, group by filename
 - `priority`: grouping by priorities
 - `category`: grouping by the used categories
@@ -213,7 +216,7 @@ Here you can define the categories that will be available for selection when you
 
 ### `code-review.reportWithCodeSelection`
 
-Define weather to include the code selection(s) in generated reports or not.
+Define whether to include the code selection(s) in generated reports or not.
 
 ```json
 {
@@ -242,7 +245,7 @@ You can decode this by using the provided Handlebars helper function **`codeBloc
 
 ### `code-review.reportWithPrivateComments`
 
-Define wether to include private comments in generated reports or not.
+Define whether to include private comments in generated reports or not.
 
 ```json
 {
@@ -331,6 +334,16 @@ Examples:
   }
   ```
 
+### `code-review.filterCommentsByCommit`
+
+Define whether to view only the comments from the current commit or not.
+
+```json
+{
+  "code-review.filterCommentsByCommit": true
+}
+```
+
 ## Themable colors
 
 ### `codereview.priority.green`
@@ -351,12 +364,12 @@ To easily add a *new* comment, you can use the keybinding combination `ctrl` + â
 
 ## The review approach
 
-If you got a customer request for doing a code review you will ideally receive read access to it's github / gitlab repoistory or similar.
+If you got a customer request for doing a code review you will ideally receive read access to it's github / gitlab repository or similar.
 To create a code review with a report you should install this extension and go on with the following steps:
 
 - Download / clone the customer code and checkout the correct branch
 - Open the project in vscode
-- [Configure th `baseURL` option](#extension-settings) with the remote URL
+- [Configure the `baseURL` option](#extension-settings) with the remote URL
   - this will cause that the link in the report is generate with the correct target including SHA, file and line reference
 - [Start creating your review notes](#create-review-notes).
 - [Export the report](#export-created-notes-as-html).

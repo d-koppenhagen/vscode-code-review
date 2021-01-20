@@ -285,7 +285,7 @@ suite('Workspace Utils', () => {
     });
 
     test('should return non-empty rows', () => {
-      assert.strictEqual(cleanCsvStorage(['', '  ', 'row_1', 'row_2', '']).length, 1);
+      assert.strictEqual(cleanCsvStorage(['', '  ', 'row_1', 'row_2', '']).length, 2);
     });
   });
 

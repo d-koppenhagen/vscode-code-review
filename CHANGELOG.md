@@ -2,6 +2,25 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.22.0](https://github.com/d-koppenhagen/vscode-code-review/compare/v1.21.0...v1.22.0) (2021-01-20)
+
+
+### Features
+
+* **filter:** filter comments by commit ID ([#89](https://github.com/d-koppenhagen/vscode-code-review/issues/89)) ([097b016](https://github.com/d-koppenhagen/vscode-code-review/commit/097b016876a3f90496a08019518ca3f229b6ff04)), closes [#88](https://github.com/d-koppenhagen/vscode-code-review/issues/88)
+
+## [1.21.0](https://github.com/d-koppenhagen/vscode-code-review/compare/v1.20.3...v1.21.0) (2020-12-29)
+
+
+### Features
+
+* **config:** git directory setting ([#83](https://github.com/d-koppenhagen/vscode-code-review/issues/83)) ([3d43e6c](https://github.com/d-koppenhagen/vscode-code-review/commit/3d43e6c07388660c50e96d6e97c2bce981572edb))
+
+
+### Bug Fixes
+
+* **doc:** bad indentation in documentation after github merge ([#80](https://github.com/d-koppenhagen/vscode-code-review/issues/80)) ([60d04f5](https://github.com/d-koppenhagen/vscode-code-review/commit/60d04f507f82621a0f26a8c69132a84b0b809525))
+
 ### [1.20.3](https://github.com/d-koppenhagen/vscode-code-review/compare/v1.20.2...v1.20.3) (2020-12-23)
 
 ### [1.20.2](https://github.com/d-koppenhagen/vscode-code-review/compare/v1.20.1...v1.20.2) (2020-12-19)
