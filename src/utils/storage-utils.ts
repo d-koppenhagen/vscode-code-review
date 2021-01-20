@@ -46,7 +46,7 @@ export function getCsvFileLinesAsArray(pathToFile: string): string[] {
  * @param pathToFile The actual file path
  */
 export const getCsvFileHeader = (pathToFile: string): string => {
-  return getCsvFileLinesAsIterable(pathToFile).next().value;
+  return getCsvFileLinesAsIterable(pathToFile).next().value || '';
 };
 
 /**
