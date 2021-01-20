@@ -56,6 +56,15 @@ export function activate(context: ExtensionContext) {
     checkForCodeReviewFile(generator.reviewFilePath);
   });
 
+  // Refresh comment view on git switch
+  const gitDirectory = (workspace.getConfiguration().get('code-review.gitDirectory') as string) ?? '.';
+  const gitHeadPath = path.resolve(gitDirectory, '.git/HEAD');
+  const gitWatcher = workspace.createFileSystemWatcher(`**${gitHeadPath}`);
+  gitWatcher.onDidChange(() => {
+    exportFactory.refreshFilterByCommit();
+    commentProvider.refresh();
+  });
+
   // instantiate comment view
   new CommentView(commentProvider);
 
@@ -77,6 +86,19 @@ export function activate(context: ExtensionContext) {
 
     webview.addComment(commentService);
     commentProvider.refresh();
+  });
+
+  const setFilterByCommit = (state: boolean) => {
+    exportFactory.setFilterByCommit(state);
+    commentProvider.refresh();
+  };
+
+  const enableFilterByCommitRegistration = commands.registerCommand('codeReview.enableFilterByCommit', () => {
+    setFilterByCommit(true);
+  });
+
+  const disableFilterByCommitRegistration = commands.registerCommand('codeReview.disableFilterByCommit', () => {
+    setFilterByCommit(false);
   });
 
   /**
@@ -193,6 +215,8 @@ export function activate(context: ExtensionContext) {
   context.subscriptions.push(
     addNoteRegistration,
     deleteNoteRegistration,
+    enableFilterByCommitRegistration,
+    disableFilterByCommitRegistration,
     exportAsHtmlWithDefaultTemplateRegistration,
     exportAsHtmlWithHandlebarsTemplateRegistration,
     exportAsGitLabImportableCsvRegistration,
@@ -200,6 +224,8 @@ export function activate(context: ExtensionContext) {
     exportAsJiraImportableCsvRegistration,
     exportAsJsonRegistration,
     openSelectionRegistration,
+    gitWatcher,
+    fileWatcher,
   );
 }
 
