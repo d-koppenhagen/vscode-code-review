@@ -41,7 +41,10 @@ export interface CsvEntry {
  * @return CsvEntry
  */
 export function createCommentFromObject(object: any | CsvEntry): CsvEntry {
-  const comment = object as CsvEntry;
+  if (typeof object !== 'string') {
+    object = JSON.stringify(object);
+  }
+  const comment = JSON.parse(object) as CsvEntry;
   comment.id = CsvStructure.getDefaultValue('id')!;
   return comment;
 }
