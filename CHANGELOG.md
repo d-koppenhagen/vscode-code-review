@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.22.1](https://github.com/d-koppenhagen/vscode-code-review/compare/v1.22.0...v1.22.1) (2021-01-20)
+
+
+### Bug Fixes
+
+* **add:** fix error on a new comment ([#91](https://github.com/d-koppenhagen/vscode-code-review/issues/91)) ([d810c22](https://github.com/d-koppenhagen/vscode-code-review/commit/d810c22d8a481c9ce5e65fb0c0745318ed18ffb0))
+
 ## [1.22.0](https://github.com/d-koppenhagen/vscode-code-review/compare/v1.21.0...v1.22.0) (2021-01-20)
 
 
