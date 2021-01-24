@@ -11,6 +11,7 @@ import {
   escapeEndOfLineForCsv,
   startLineNumberFromStringDefinition,
   endLineNumberFromStringDefinition,
+  standardizeFilename,
 } from './utils/workspace-util';
 import { CommentListEntry } from './comment-list-entry';
 import { getSelectionStringDefinition, hasSelection } from './utils/editor-utils';
@@ -32,7 +33,7 @@ export class ReviewCommentService {
       return;
     }
 
-    comment.filename = editor!.document.fileName.replace(this.workspaceRoot, '');
+    comment.filename = standardizeFilename(this.workspaceRoot, editor!.document.fileName);
 
     this.persistComments([this.buildCsvString(comment)], false);
   }

@@ -74,7 +74,7 @@
         "title": "Delete"
       },
       {
-        "command": "codeReview.enableFilterByCommit",
+        "command": "codeReview.filterByCommitEnable",
         "title": "Code Review: View comments from the current commit",
         "icon": {
           "light": "images/icons/filter-off-light.svg",
@@ -82,11 +82,27 @@
         }
       },
       {
-        "command": "codeReview.disableFilterByCommit",
+        "command": "codeReview.filterByCommitDisable",
         "title": "CodeReview: View comments from all commits",
         "icon": {
           "light": "images/icons/filter-on-light.svg",
           "dark": "images/icons/filter-on-dark.svg"
+        }
+      },
+      {
+        "command": "codeReview.filterByFilenameEnable",
+        "title": "Code Review: View comments from the current file",
+        "icon": {
+          "light": "images/icons/filter-filename-off-light.svg",
+          "dark": "images/icons/filter-filename-off-dark.svg"
+        }
+      },
+      {
+        "command": "codeReview.filterByFilenameDisable",
+        "title": "CodeReview: View comments from all files",
+        "icon": {
+          "light": "images/icons/filter-filename-on-light.svg",
+          "dark": "images/icons/filter-filename-on-dark.svg"
         }
       }
     ],
@@ -125,17 +141,27 @@
         {
           "command": "codeReview.addNote",
           "when": "view == code-review.list",
-          "group": "navigation"
+          "group": "navigation@0"
         },
         {
-          "command": "codeReview.enableFilterByCommit",
+          "command": "codeReview.filterByCommitEnable",
           "when": "view == code-review.list && !isFilteredByCommit",
-          "group": "navigation"
+          "group": "navigation@1"
         },
         {
-          "command": "codeReview.disableFilterByCommit",
+          "command": "codeReview.filterByCommitDisable",
           "when": "view == code-review.list && isFilteredByCommit",
-          "group": "navigation"
+          "group": "navigation@1"
+        },
+        {
+          "command": "codeReview.filterByFilenameEnable",
+          "when": "view == code-review.list && !isFilteredByFilename",
+          "group": "navigation@2"
+        },
+        {
+          "command": "codeReview.filterByFilenameDisable",
+          "when": "view == code-review.list && isFilteredByFilename",
+          "group": "navigation@2"
         }
       ],
       "view/item/context": [
@@ -249,6 +275,12 @@
           "type": "boolean",
           "title": "Only view comments from the current commit",
           "description": "Define whether to view only the comments from the current commit or not.",
+          "default": false
+        },
+        "code-review.filterCommentsByFilename": {
+          "type": "boolean",
+          "title": "Only view comments from the current file",
+          "description": "Define whether to view only the comments from the current file or not.",
           "default": false
         }
       }
