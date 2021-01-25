@@ -99,7 +99,7 @@
       },
       {
         "command": "codeReview.filterByFilenameDisable",
-        "title": "CodeReview: View comments from all files",
+        "title": "Code Review: View comments from all files",
         "icon": {
           "light": "images/icons/filter-filename-on-light.svg",
           "dark": "images/icons/filter-filename-on-dark.svg"
