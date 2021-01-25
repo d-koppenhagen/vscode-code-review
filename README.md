@@ -345,7 +345,7 @@ Define whether to view only the comments from the current commit or not.
 }
 ```
 
-### `filterCommentsByFilename`
+### `code-review.filterCommentsByFilename`
 
 Define whether to view only the comments from the current file or not.
 
