@@ -21,6 +21,7 @@ import {
   escapeEndOfLineForCsv,
   unescapeEndOfLineFromCsv,
   rangeFromStringDefinition,
+  standardizeFilename,
 } from '../../utils/workspace-util';
 import { createCommentFromObject, CsvEntry, CsvStructure } from '../../model';
 import { cleanCsvStorage, getCsvFileHeader } from '../../utils/storage-utils';
@@ -302,6 +303,15 @@ suite('Workspace Utils', () => {
       const object = createCommentFromObject({});
       const line = CsvStructure.formatAsCsvLine(object);
       assert.ok(line.length > 0);
+    });
+  });
+
+  suite('standardizeFilename', () => {
+    test('should return a refined filename', () => {
+      const workspaceRoot = '/path/to/my/workspace';
+      const filename = '/my/file';
+      const refined = standardizeFilename(workspaceRoot, workspaceRoot + filename);
+      assert.strictEqual(refined, filename);
     });
   });
 });
