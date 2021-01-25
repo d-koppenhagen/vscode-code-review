@@ -83,7 +83,7 @@
       },
       {
         "command": "codeReview.filterByCommitDisable",
-        "title": "CodeReview: View comments from all commits",
+        "title": "Code Review: View comments from all commits",
         "icon": {
           "light": "images/icons/filter-on-light.svg",
           "dark": "images/icons/filter-on-dark.svg"
