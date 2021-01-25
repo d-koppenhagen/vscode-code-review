@@ -25,6 +25,7 @@ import {
   rangeFromStringDefinition,
   unescapeEndOfLineFromCsv,
   escapeEndOfLineForCsv,
+  standardizeFilename,
 } from './utils/workspace-util';
 import { ReviewFileExportSection, GroupBy, ExportFormat, ExportMap, Group } from './interfaces';
 import { CsvEntry } from './model';
@@ -40,13 +41,18 @@ export class ExportFactory {
   private privateCommentIcon: string;
   private filterByCommit: boolean = false;
   private currentCommitId: string | null = null;
+  private filterByFilename: boolean = false;
+  private currentFilename: string | null = null;
 
   /**
    * Get comment eligibility
    * @param entry The comment to evaluate
    */
   private isCommentEligible(entry: CsvEntry): boolean {
-    return this.currentCommitId === null || entry.sha === this.currentCommitId;
+    return (
+      (this.currentCommitId === null || entry.sha === this.currentCommitId) &&
+      (this.currentFilename === null || entry.filename === this.currentFilename)
+    );
   }
 
   private exportHandlerMap = new Map<ExportFormat, ExportMap>([
@@ -240,6 +246,9 @@ export class ExportFactory {
 
     this.filterByCommit = workspace.getConfiguration().get('code-review.filterCommentsByCommit') as boolean;
     this.setFilterByCommit(this.filterByCommit);
+
+    this.filterByFilename = workspace.getConfiguration().get('code-review.filterCommentsByFilename') as boolean;
+    this.setFilterByFilename(this.filterByFilename, true);
   }
 
   get basePath(): string {
@@ -362,7 +371,7 @@ export class ExportFactory {
     }
   }
 
-  getFilesContainingComments(): Thenable<CommentListEntry[]> {
+  public getFilesContainingComments(): Thenable<CommentListEntry[]> {
     if (!fs.existsSync(this.inputFile) || !this.generator.check()) {
       return Promise.resolve([]);
     }
@@ -379,12 +388,15 @@ export class ExportFactory {
         })
         .on('end', () => {
           const sortedByFile = this.groupResults(entries, Group.filename);
-          const listEntries = sortedByFile.map((el: ReviewFileExportSection) => {
+          const listEntries = sortedByFile.map((el: ReviewFileExportSection, index: number) => {
             const item = new CommentListEntry(
               el.group,
               `(${el.lines.length})`,
               `${el.lines.length} comments`,
-              TreeItemCollapsibleState.Collapsed,
+              // Expand the first (and only) file when in filtered by filename mode
+              this.filterByFilename && index === 0
+                ? TreeItemCollapsibleState.Expanded
+                : TreeItemCollapsibleState.Collapsed,
               el,
             );
             item.command = {
@@ -397,8 +409,10 @@ export class ExportFactory {
               light: this.context.asAbsolutePath(path.join('dist', 'document-light.svg')),
               dark: this.context.asAbsolutePath(path.join('dist', 'document-dark.svg')),
             };
+
             return item;
           });
+
           resolve(listEntries);
         });
     });
@@ -477,6 +491,7 @@ export class ExportFactory {
   /**
    * Enable/Disable filtering comments by commit
    * @param state The state of the filter
+   * @returns The new state of the filter
    */
   public setFilterByCommit(state: boolean): boolean {
     this.filterByCommit = state;
@@ -499,5 +514,44 @@ export class ExportFactory {
     commands.executeCommand('setContext', 'isFilteredByCommit', this.filterByCommit);
 
     return this.filterByCommit;
+  }
+
+  /**
+   * Refresh comments filtering state
+   * @returns True if the state changed, False otherwise
+   */
+  public refreshFilterByFilename(): boolean {
+    return this.setFilterByFilename(this.filterByFilename);
+  }
+
+  /**
+   * Enable/Disable filtering comments by filename
+   * @param state The state of the filter
+   * @param force Force the state change, even if it was already correctly set
+   * @returns True if the state changed, False otherwise
+   */
+  public setFilterByFilename(state: boolean, force: boolean = false): boolean {
+    let changedState = this.filterByFilename !== state || force;
+    this.filterByFilename = state;
+    let changedFile = false;
+
+    if (this.filterByFilename) {
+      let filename = window.activeTextEditor?.document.fileName;
+      if (filename) {
+        filename = standardizeFilename(this.workspaceRoot, filename);
+        if (this.currentFilename !== filename) {
+          changedFile = true;
+          this.currentFilename = filename;
+        }
+      }
+    } else {
+      this.currentFilename = null;
+    }
+
+    if (changedState) {
+      commands.executeCommand('setContext', 'isFilteredByFilename', this.filterByFilename);
+    }
+
+    return changedState || changedFile;
   }
 }

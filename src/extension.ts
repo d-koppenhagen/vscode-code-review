@@ -65,6 +65,13 @@ export function activate(context: ExtensionContext) {
     commentProvider.refresh();
   });
 
+  // Refresh comment view on file focus
+  window.onDidChangeActiveTextEditor((_) => {
+    if (exportFactory.refreshFilterByFilename()) {
+      commentProvider.refresh();
+    }
+  });
+
   // instantiate comment view
   new CommentView(commentProvider);
 
@@ -93,12 +100,25 @@ export function activate(context: ExtensionContext) {
     commentProvider.refresh();
   };
 
-  const enableFilterByCommitRegistration = commands.registerCommand('codeReview.enableFilterByCommit', () => {
+  const filterByCommitEnableRegistration = commands.registerCommand('codeReview.filterByCommitEnable', () => {
     setFilterByCommit(true);
   });
 
-  const disableFilterByCommitRegistration = commands.registerCommand('codeReview.disableFilterByCommit', () => {
+  const filterByCommitDisableRegistration = commands.registerCommand('codeReview.filterByCommitDisable', () => {
     setFilterByCommit(false);
+  });
+
+  const setFilterByFilename = (state: boolean) => {
+    exportFactory.setFilterByFilename(state);
+    commentProvider.refresh();
+  };
+
+  const filterByFilenameEnableRegistration = commands.registerCommand('codeReview.filterByFilenameEnable', () => {
+    setFilterByFilename(true);
+  });
+
+  const filterByFilenameDisableRegistration = commands.registerCommand('codeReview.filterByFilenameDisable', () => {
+    setFilterByFilename(false);
   });
 
   /**
@@ -215,8 +235,10 @@ export function activate(context: ExtensionContext) {
   context.subscriptions.push(
     addNoteRegistration,
     deleteNoteRegistration,
-    enableFilterByCommitRegistration,
-    disableFilterByCommitRegistration,
+    filterByCommitEnableRegistration,
+    filterByCommitDisableRegistration,
+    filterByFilenameEnableRegistration,
+    filterByFilenameDisableRegistration,
     exportAsHtmlWithDefaultTemplateRegistration,
     exportAsHtmlWithHandlebarsTemplateRegistration,
     exportAsGitLabImportableCsvRegistration,
