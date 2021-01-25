@@ -37,7 +37,7 @@ This extension allows you to create a code review file you can hand over to a cu
     - [`code-review.priorities`](#code-reviewpriorities)
     - [`code-review.gitDirectory`](#code-reviewgitdirectory)
     - [`code-review.filterCommentsByCommit`](#code-reviewfiltercommentsbycommit)
-    - [`filterCommentsByFilename`](#filtercommentsbyfilename)
+    - [`code-review.filterCommentsByFilename`](#filtercommentsbyfilename)
   - [Themable colors](#themable-colors)
     - [`codereview.priority.green`](#codereviewprioritygreen)
     - [`codereview.priority.yellow`](#codereviewpriorityyellow)
