@@ -357,7 +357,8 @@
     "pretest": "npm run compile && npm run lint",
     "test": "node ./out/test/runTest.js",
     "release": "standard-version",
-    "publish": "vsce package && vsce publish"
+    "publish": "vsce package && vsce publish",
+    "publish:ovsx": "npx ovsx publish"
   },
   "devDependencies": {
     "@commitlint/cli": "^11.0.0",
