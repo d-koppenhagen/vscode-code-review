@@ -6,6 +6,7 @@
 <a href="https://www.buymeacoffee.com/dkoppenhagen" target="_blank"><img src="https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png" alt="Buy Me A Coffee" style="height: 41px !important;width: 174px !important;box-shadow: 0px 3px 2px 0px rgba(190, 190, 190, 0.5) !important;-webkit-box-shadow: 0px 3px 2px 0px rgba(190, 190, 190, 0.5) !important;" ></a>
 
 [![VSCode Marketplace](https://vsmarketplacebadge.apphb.com/version/d-koppenhagen.vscode-code-review.svg)](https://marketplace.visualstudio.com/items?itemName=d-koppenhagen.vscode-code-review)
+[![Open VSX Registry](https://img.shields.io/open-vsx/v/d-koppenhagen/vscode-code-review)](https://open-vsx.org/extension/d-koppenhagen/vscode-code-review)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](http://makeapullrequest.com)
 [![Open Source Love](https://badges.frapsoft.com/os/v1/open-source.svg?v=102)](https://github.com/ellerbrock/open-source-badge/)
 
@@ -37,7 +38,7 @@ This extension allows you to create a code review file you can hand over to a cu
     - [`code-review.priorities`](#code-reviewpriorities)
     - [`code-review.gitDirectory`](#code-reviewgitdirectory)
     - [`code-review.filterCommentsByCommit`](#code-reviewfiltercommentsbycommit)
-    - [`code-review.filterCommentsByFilename`](#filtercommentsbyfilename)
+    - [`code-review.filterCommentsByFilename`](#code-reviewfiltercommentsbyfilename)
   - [Themable colors](#themable-colors)
     - [`codereview.priority.green`](#codereviewprioritygreen)
     - [`codereview.priority.yellow`](#codereviewpriorityyellow)
@@ -256,8 +257,8 @@ Define whether to include private comments in generated reports or not.
 
 ### `code-review.privateCommentIcon`
 
-Identifier of the icon to show next to a private comment.  
-The available icons are listed in <https://code.visualstudio.com/api/references/icons-in-labels#icon-listing>.  
+Identifier of the icon to show next to a private comment.
+The available icons are listed in <https://code.visualstudio.com/api/references/icons-in-labels#icon-listing>.
 A search engine can be found at <https://microsoft.github.io/vscode-codicons/dist/codicon.html>.
 
 ```json
@@ -298,7 +299,7 @@ The defaults are listed below:
 
 ### `code-review.gitDirectory`
 
-Use this setting when the Git repository is located in an other directory than the workspace one.  
+Use this setting when the Git repository is located in an other directory than the workspace one.
 The path can be **relative** (prefixed with `.` or `..`) or **absolute** (prefixed with `/` on Linux/MacOS or `{drive}:\` on Windows).
 
 Examples:
