@@ -23,12 +23,11 @@ import {
   sortCsvEntryForLines,
   sortLineSelections,
   rangeFromStringDefinition,
-  unescapeEndOfLineFromCsv,
   escapeEndOfLineForCsv,
   standardizeFilename,
 } from './utils/workspace-util';
 import { ReviewFileExportSection, GroupBy, ExportFormat, ExportMap, Group } from './interfaces';
-import { CsvEntry } from './model';
+import { CsvEntry, CsvStructure } from './model';
 import { CommentListEntry } from './comment-list-entry';
 import { FileGenerator } from './file-generator';
 const gitCommitId = require('git-commit-id');
@@ -271,18 +270,16 @@ export class ExportFactory {
     const data: CsvEntry[] = [];
     parseFile(this.inputFile, { delimiter: ',', ignoreEmpty: true, headers: true })
       .on('error', this.handleError)
-      .on('data', (row: CsvEntry) => {
-        if (this.isCommentEligible(row)) {
-          row.comment = unescapeEndOfLineFromCsv(row.comment);
-          row.priority = Number(row.priority);
-          row.private = Number(row.private);
+      .on('data', (comment: CsvEntry) => {
+        comment = CsvStructure.finalizeParse(comment);
 
-          if (this.includePrivateComments || row.private === 0) {
+        if (this.isCommentEligible(comment)) {
+          if (this.includePrivateComments || comment.private === 0) {
             if (exporter?.storeOutside) {
-              const tmp = exporter.handleData(outputFile, row);
+              const tmp = exporter.handleData(outputFile, comment);
               data.push(tmp);
             }
-            exporter?.handleData(outputFile, row);
+            exporter?.handleData(outputFile, comment);
           }
         }
       })
@@ -298,18 +295,16 @@ export class ExportFactory {
     const result = commentGroupedInFile.data.lines
       .filter((entry: CsvEntry) => this.isCommentEligible(entry))
       .map((entry: CsvEntry) => {
-        entry.comment = unescapeEndOfLineFromCsv(entry.comment);
+        entry = CsvStructure.finalizeParse(entry);
 
-        const prio = Number(entry.priority);
-        const priv = Number(entry.private);
         const item = new CommentListEntry(
           entry.title,
           entry.comment,
           entry.comment,
           TreeItemCollapsibleState.None,
           commentGroupedInFile.data,
-          prio,
-          priv,
+          entry.priority,
+          entry.private,
         );
         item.contextValue = 'comment';
         item.command = {
@@ -317,7 +312,8 @@ export class ExportFactory {
           title: 'Open comment',
           arguments: [commentGroupedInFile.data, entry],
         };
-        item.iconPath = this.getIcon(prio, priv);
+        item.iconPath = this.getIcon(entry.priority, entry.private);
+
         return item;
       });
 

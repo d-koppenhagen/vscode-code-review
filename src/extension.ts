@@ -1,10 +1,19 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 
-import { commands, workspace, window, ExtensionContext, WorkspaceFolder, Uri, Range, ViewColumn } from 'vscode';
+import {
+  commands,
+  workspace,
+  window,
+  ExtensionContext,
+  WorkspaceFolder,
+  Uri,
+  Range,
+  ViewColumn,
+  QuickPickItem,
+} from 'vscode';
 import * as path from 'path';
 import * as fs from 'fs';
-
 import { CheckFlag, FileGenerator } from './file-generator';
 import { ReviewCommentService } from './review-comment';
 import { getWorkspaceFolder, rangeFromStringDefinition } from './utils/workspace-util';
@@ -14,6 +23,7 @@ import { CommentView, CommentsProvider } from './comment-view';
 import { ReviewFileExportSection } from './interfaces';
 import { CsvEntry } from './model';
 import { CommentListEntry } from './comment-list-entry';
+import { ImportFactory, ConflictMode } from './import-factory';
 
 const checkForCodeReviewFile = (fileName: string) => {
   commands.executeCommand('setContext', 'codeReview:displayCodeReviewExplorer', fs.existsSync(fileName));
@@ -35,6 +45,7 @@ export function activate(context: ExtensionContext) {
     : Uri.parse(context.asAbsolutePath(path.join('dist', 'template.default.hbs')));
 
   const exportFactory = new ExportFactory(context, workspaceRoot, generator);
+  const importFactory = new ImportFactory(workspaceRoot, exportFactory.inputFile, generator);
 
   /**
    * register comment view
@@ -201,6 +212,86 @@ export function activate(context: ExtensionContext) {
     exportFactory.exportForFormat('json');
   });
 
+  /**
+   * allow users to import comments from a JSON file
+   */
+  const importFromJsonRegistration = commands.registerCommand('codeReview.importFromJson', () => {
+    // File selection
+    window
+      .showOpenDialog({
+        canSelectFolders: false,
+        canSelectFiles: true,
+        canSelectMany: false,
+        openLabel: 'Select comments file to import',
+        filters: {
+          Template: ['json'],
+        },
+      })
+      .then((files) => {
+        const filename = files?.length ? files[0] : undefined;
+        if (filename) {
+          const mode = workspace.getConfiguration().get('code-review.importConflictMode') as string;
+          if (mode !== '') {
+            importFactory.importCommentsFromFile(filename!.fsPath, mode as ConflictMode).then((result) => {
+              if (result) {
+                commentProvider.refresh();
+              }
+            });
+          } else {
+            // Select the import conflict mode
+            class PickItem implements QuickPickItem {
+              constructor(
+                public mode: ConflictMode,
+                public label: string,
+                public description?: string | undefined,
+                public detail?: string | undefined,
+                public picked?: boolean | undefined,
+                public alwaysShow?: boolean | undefined,
+              ) {}
+            }
+
+            window
+              .showQuickPick<PickItem>(
+                [
+                  {
+                    label: 'Skip',
+                    description:
+                      'In case of conflict, the existing comment will be kept and the imported one will be ignored.',
+                    alwaysShow: true,
+                    mode: ConflictMode.skipImported,
+                  } as PickItem,
+                  {
+                    label: 'Overwrite',
+                    description: 'In case of conflict, the existing comment will be replaced with the imported one.',
+                    alwaysShow: true,
+                    mode: ConflictMode.replaceWithImported,
+                  } as PickItem,
+                  {
+                    label: 'Clone',
+                    description: 'In case of conflict, both the existing and the imported comments will be kept.',
+                    alwaysShow: true,
+                    mode: ConflictMode.importCopy,
+                  } as PickItem,
+                ],
+                {
+                  canPickMany: false,
+                  placeHolder: 'Select the import conflict mode',
+                },
+              )
+              .then((item) => {
+                if (item) {
+                  importFactory.importCommentsFromFile(filename!.fsPath, item.mode).then((result) => {
+                    if (result) {
+                      commentProvider.refresh();
+                    }
+                  });
+                }
+              });
+          }
+        }
+      });
+  });
+
   const openSelectionRegistration = commands.registerCommand(
     'codeReview.openSelection',
     (fileSection: ReviewFileExportSection, csvRef?: CsvEntry) => {
@@ -245,6 +336,7 @@ export function activate(context: ExtensionContext) {
     exportAsGitHubImportableCsvRegistration,
     exportAsJiraImportableCsvRegistration,
     exportAsJsonRegistration,
+    importFromJsonRegistration,
     openSelectionRegistration,
     gitWatcher,
     fileWatcher,
