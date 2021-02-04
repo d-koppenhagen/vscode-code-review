@@ -63,18 +63,37 @@ All the steps will be operated in the file `model.ts`.
 
     This initializer will be used at **migration** time to fill values of the exisiting rows in the CSV file.
 
-4. Update the **instantiation** function `createCommentFromObject()`  
+4. Declare a **serializer** for the property in the dictionary `CsvStructure.serializers`:  
    *This step is optional.*
 
-```diff
-export function createCommentFromObject(object: any): CsvEntry {
-    const comment = JSON.parse(object) as CsvEntry;
-    comment.id = CsvStructure.getDefaultValue('id')!;
-+   comment.state = CsvStructure.getDefaultValue('state')!;
+    ```diff
+    private static readonly serializers: Map<string, (value: any) => any> = new Map([
+      ['comment', (comment: any) => escapeEndOfLineForCsv(escapeDoubleQuotesForCsv(comment))],
+      ['title', (title: any) => title ? escapeDoubleQuotesForCsv(title) : ''],
+      ['priority', (priority: any) => priority || 0],
+      ['additional', (additional: any) => additional ? escapeDoubleQuotesForCsv(additional) : ''],
+      ['category', (category: any) => category || ''],
+      ['private', (priv: any) => priv || 0],
+    + ['state', (state: any) => state || 0]
+    ]);
+    ```
 
-    return comment;
-}
-```
+    *Here, the property will be assigned a value of `0` is missing.*
+
+    This serializer will be used before saving comments to the CSV file.
+
+5. Update the **instantiation** function `createCommentFromObject()`  
+   *This step is optional.*
+
+    ```diff
+    export function createCommentFromObject(object: any): CsvEntry {
+        const comment = JSON.parse(object) as CsvEntry;
+        comment.id = CsvStructure.getDefaultValue('id')!;
+    +   comment.state = CsvStructure.getDefaultValue('state')!;
+
+        return comment;
+    }
+    ```
 
 ## How To Delete A Property
 
@@ -84,11 +103,11 @@ A property can only be deprecated (by not being used anymore in the implementati
 
 A sample way to deprecate a property is to add a comment above it in the **interface** `CsvEntry`:
 
-```typescript
+```diff
 export interface CsvEntry {
     sha: string;
     filename: string;
-    /** @deprecated */
++   /** @deprecated */
     url: string;
     lines: string;
     title: string;

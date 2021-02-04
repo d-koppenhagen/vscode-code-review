@@ -178,11 +178,18 @@ export const sortCsvEntryForLines = (a: CsvEntry, b: CsvEntry): number => {
  * Generate a backup file name
  *
  * @param reviewFilePath The full name of the file to backup
- * @return string
+ * @return The name of the backup file
  */
 export const getBackupFilename = (reviewFilePath: string): string => {
   const date = new Date();
-  const timeStamp = `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}T${date.getHours()}-${date.getMinutes()}-${date.getSeconds()}`;
+
+  const year = date.getFullYear();
+  const month = (date.getMonth() + 1).toLocaleString('en', { minimumIntegerDigits: 2 });
+  const hours = date.getHours().toLocaleString('en', { minimumIntegerDigits: 2 });
+  const minutes = date.getMinutes().toLocaleString('en', { minimumIntegerDigits: 2 });
+  const seconds = date.getSeconds().toLocaleString('en', { minimumIntegerDigits: 2 });
+
+  const timeStamp = `${year}-${month}-${date.getDate()}T${hours}-${minutes}-${seconds}`;
   const backupFilePath = path.join(
     path.dirname(reviewFilePath),
     path.parse(reviewFilePath).name + '-' + timeStamp + '.bak',

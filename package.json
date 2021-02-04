@@ -70,6 +70,10 @@
         "title": "Code Review: Export as JSON file"
       },
       {
+        "command": "codeReview.importFromJson",
+        "title": "Code Review: Import from JSON file"
+      },
+      {
         "command": "codeReview.deleteNote",
         "title": "Delete"
       },
@@ -116,27 +120,38 @@
       "view/title": [
         {
           "command": "codeReview.exportAsHtmlWithDefaultTemplate",
-          "when": "view == code-review.list"
+          "when": "view == code-review.list",
+          "group": "export_html@0"
         },
         {
           "command": "codeReview.exportAsHtmlWithHandlebarsTemplate",
-          "when": "view == code-review.list"
+          "when": "view == code-review.list",
+          "group": "export_html@1"
         },
         {
           "command": "codeReview.exportAsGitLabImportableCsv",
-          "when": "view == code-review.list"
+          "when": "view == code-review.list",
+          "group": "export_source_control@1"
         },
         {
           "command": "codeReview.exportAsGitHubImportableCsv",
-          "when": "view == code-review.list"
+          "when": "view == code-review.list",
+          "group": "export_source_control@0"
         },
         {
           "command": "codeReview.exportAsJson",
-          "when": "view == code-review.list"
+          "when": "view == code-review.list",
+          "group": "share@1"
         },
         {
           "command": "codeReview.exportAsJiraImportableCsv",
-          "when": "view == code-review.list"
+          "when": "view == code-review.list",
+          "group": "export_source_control@2"
+        },
+        {
+          "command": "codeReview.importFromJson",
+          "when": "view == code-review.list",
+          "group": "share@0"
         },
         {
           "command": "codeReview.addNote",
@@ -282,6 +297,29 @@
           "title": "Only view comments from the current file",
           "description": "Define whether to view only the comments from the current file or not.",
           "default": false
+        },
+        "code-review.importBackup": {
+          "type": "boolean",
+          "title": "Make a copy of the comments before importing.",
+          "description": "Define whether to backup the existing comments before importing new ones or not.",
+          "default": true
+        },
+        "code-review.importCloneSuffix": {
+          "type": "string",
+          "title": "Cloned comments title suffix.",
+          "description": "Suffix to append to the title when existing comments are imported in 'clone' mode.",
+          "default": "(copy)"
+        },
+        "code-review.importConflictMode": {
+          "enum": [
+            "",
+            "skip",
+            "overwrite",
+            "clone"
+          ],
+          "default": "",
+          "title": "Import conflict action.",
+          "markdownDescription": "Action to automatically take when importing comments already present:\n- *empty*: always ask.\n- `skip`: keep the existing comment.\n- `overwrite`: replace the existing comment with the imported one.\n- `clone`: keep both the existing and the imported comment."
         }
       }
     },

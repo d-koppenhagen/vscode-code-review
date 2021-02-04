@@ -1,4 +1,7 @@
-const { v4: uuidv4 } = require('uuid');
+import * as fs from 'fs';
+import * as path from 'path';
+import { escapeDoubleQuotesForCsv, escapeEndOfLineForCsv, unescapeEndOfLineFromCsv } from './utils/workspace-util';
+const { v4: uuidv4, validate: uuidValidate } = require('uuid');
 
 // See detailed instructions in model.md
 
@@ -9,7 +12,8 @@ const { v4: uuidv4 } = require('uuid');
  * For every stored property added:
  * 1. Append it to CsvStructure.headers array.
  * 2. Add an entry to CsvStructure.defaults.
- * 3. Update createCommentFromObject() (optional).
+ * 3. Add an entry to CsvStructure.serializers (optional).
+ * 4. Update createCommentFromObject() (optional).
  */
 export interface CsvEntry {
   sha: string;
@@ -79,12 +83,50 @@ export class CsvStructure {
    * Map of default property values builders
    *
    * **Attention!**
-   * Any stored property added to CsvEntry must have a corresponding entry in this map.
+   * Any stored property added to CsvEntry **must** have a corresponding entry in this map.
    */
   private static readonly defaults: Map<string, () => any> = new Map([
     ['id', () => uuidv4()],
     ['private', () => 0],
   ]);
+
+  /**
+   * Map of transformations to apply before storage
+   *
+   * **Attention!**
+   * Any stored property added to CsvEntry **may** have a corresponding entry in this map.
+   */
+  private static readonly serializers: Map<string, (value: any) => any> = new Map([
+    ['comment', (comment: any) => (comment ? escapeEndOfLineForCsv(escapeDoubleQuotesForCsv(comment)) : '')],
+    ['title', (title: any) => (title ? escapeDoubleQuotesForCsv(title) : '')],
+    ['priority', (priority: any) => priority || 0],
+    ['additional', (additional: any) => (additional ? escapeDoubleQuotesForCsv(additional) : '')],
+    ['category', (category: any) => category || ''],
+    ['private', (priv: any) => priv || 0],
+  ]);
+
+  /**
+   * Verify if a comment is valid
+   *
+   * @param comment The comment to evaluate
+   * @param workspaceRoot The root folder of the workspace
+   * @return true if the comment is valid, false otherwise
+   */
+  public static isValidComment(comment: CsvEntry, workspaceRoot: string | undefined = undefined): boolean {
+    let isValid =
+      comment &&
+      (comment['comment']?.length ?? 0) > 0 &&
+      (comment['filename']?.length ?? 0) > 0 &&
+      (comment['lines']?.match(/^(\d+:\d+-\d+:\d+)(\|(\d+:\d+-\d+:\d+))*$/gm) ?? false) &&
+      uuidValidate(comment['id'] ?? '');
+
+    if (isValid && workspaceRoot) {
+      const filename = path.join(workspaceRoot, comment['filename']);
+      isValid &&= fs.existsSync(filename);
+    }
+
+    return isValid;
+  }
 
   /**
    * Get the header of a CSV file
@@ -115,9 +157,25 @@ export class CsvStructure {
     let columns: string[] = [];
     // Pick the comment properties values in the order of the columns
     for (const property of CsvStructure.headers) {
-      columns.push(`"${dict[property] ?? ''}"`);
+      let value = dict[property];
+      value = CsvStructure.serializers.get(property)?.(dict[property]) ?? value;
+      columns.push(`"${value ?? ''}"`);
     }
 
     return columns.join(CsvStructure.separator);
+  }
+
+  /**
+   * Finalize the parsing of a comment (after being loaded)
+   *
+   * @param comment The comment to finalize
+   * @return The finalized comment
+   */
+  public static finalizeParse(comment: CsvEntry): CsvEntry {
+    comment.comment = unescapeEndOfLineFromCsv(comment.comment);
+    comment.priority = Number(comment.priority);
+    comment.private = Number(comment.private);
+
+    return comment;
   }
 }
