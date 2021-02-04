@@ -3,9 +3,8 @@ import * as path from 'path';
 import * as fs from 'fs';
 
 import { ReviewCommentService } from './review-comment';
-import { createCommentFromObject, CsvEntry } from './model';
+import { createCommentFromObject, CsvEntry, CsvStructure } from './model';
 import { CommentListEntry } from './comment-list-entry';
-import { unescapeEndOfLineFromCsv } from './utils/workspace-util';
 import { clearSelection, colorizeSelection, getSelectionRanges } from './utils/editor-utils';
 
 export class WebViewComponent {
@@ -73,9 +72,7 @@ export class WebViewComponent {
     // const pathUri = pathToHtml.with({ scheme: 'vscode-resource' });
     // panel.webview.html = fs.readFileSync(pathUri.fsPath, 'utf8');
     // const priorities = workspace.getConfiguration().get('code-review.priorities') as string[];
-
-    data.comment = unescapeEndOfLineFromCsv(data.comment);
-
+    data = CsvStructure.finalizeParse(data);
     panel.webview.postMessage({ comment: { ...data } });
 
     // Handle messages from the webview

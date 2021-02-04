@@ -14,38 +14,40 @@ This extension allows you to create a code review file you can hand over to a cu
 
 <hr>
 
-- [vscode-code-review](#vscode-code-review)
-  - [Features](#features)
-    - [create review notes](#create-review-notes)
-    - [Code Review Comment Explorer - update, view and delete comments](#code-review-comment-explorer---update-view-and-delete-comments)
-    - [export created notes as HTML](#export-created-notes-as-html)
-      - [Default template](#default-template)
-      - [Custom handlebars template](#custom-handlebars-template)
-    - [Export for Issue Tracking System](#export-for-issue-tracking-system)
-      - [export created notes as GitLab importable CSV file](#export-created-notes-as-gitlab-importable-csv-file)
-      - [export created notes as GitHub importable CSV file](#export-created-notes-as-github-importable-csv-file)
-      - [export created notes as JIRA importable CSV file](#export-created-notes-as-jira-importable-csv-file)
-  - [Extension Settings](#extension-settings)
-    - [`code-review.filename`](#code-reviewfilename)
-    - [`code-review.baseUrl`](#code-reviewbaseurl)
-    - [`code-review.customUrl`](#code-reviewcustomurl)
-    - [`code-review.groupBy`](#code-reviewgroupby)
-    - [`code-review.categories`](#code-reviewcategories)
-    - [`code-review.reportWithCodeSelection`](#code-reviewreportwithcodeselection)
-    - [`code-review.reportWithPrivateComments`](#code-reviewreportwithprivatecomments)
-    - [`code-review.privateCommentIcon`](#code-reviewprivatecommenticon)
-    - [`code-review.defaultTemplatePath`](#code-reviewdefaulttemplatepath)
-    - [`code-review.priorities`](#code-reviewpriorities)
-    - [`code-review.gitDirectory`](#code-reviewgitdirectory)
-    - [`code-review.filterCommentsByCommit`](#code-reviewfiltercommentsbycommit)
-    - [`code-review.filterCommentsByFilename`](#code-reviewfiltercommentsbyfilename)
-  - [Themable colors](#themable-colors)
-    - [`codereview.priority.green`](#codereviewprioritygreen)
-    - [`codereview.priority.yellow`](#codereviewpriorityyellow)
-    - [`codereview.priority.red`](#codereviewpriorityred)
-  - [Keybindings](#keybindings)
-  - [The review approach](#the-review-approach)
-  - [Contributors ✨](#contributors-)
+- [Features](#features)
+  - [create review notes](#create-review-notes)
+  - [Code Review Comment Explorer - update, view and delete comments](#code-review-comment-explorer---update-view-and-delete-comments)
+  - [export created notes as HTML](#export-created-notes-as-html)
+    - [Default template](#default-template)
+    - [Custom handlebars template](#custom-handlebars-template)
+  - [Export for Issue Tracking System](#export-for-issue-tracking-system)
+    - [export created notes as GitLab importable CSV file](#export-created-notes-as-gitlab-importable-csv-file)
+    - [export created notes as GitHub importable CSV file](#export-created-notes-as-github-importable-csv-file)
+    - [export created notes as JIRA importable CSV file](#export-created-notes-as-jira-importable-csv-file)
+- [Extension Settings](#extension-settings)
+  - [`code-review.filename`](#code-reviewfilename)
+  - [`code-review.baseUrl`](#code-reviewbaseurl)
+  - [`code-review.customUrl`](#code-reviewcustomurl)
+  - [`code-review.groupBy`](#code-reviewgroupby)
+  - [`code-review.categories`](#code-reviewcategories)
+  - [`code-review.reportWithCodeSelection`](#code-reviewreportwithcodeselection)
+  - [`code-review.reportWithPrivateComments`](#code-reviewreportwithprivatecomments)
+  - [`code-review.privateCommentIcon`](#code-reviewprivatecommenticon)
+  - [`code-review.defaultTemplatePath`](#code-reviewdefaulttemplatepath)
+  - [`code-review.priorities`](#code-reviewpriorities)
+  - [`code-review.gitDirectory`](#code-reviewgitdirectory)
+  - [`code-review.filterCommentsByCommit`](#code-reviewfiltercommentsbycommit)
+  - [`code-review.filterCommentsByFilename`](#code-reviewfiltercommentsbyfilename)
+  - [`code-review.importBackup`](#code-reviewimportbackup)
+  - [`code-review.importConflictMode`](#code-reviewimportconflictmode)
+  - [`code-review.importCloneSuffix`](#code-reviewimportclonesuffix)
+- [Themable colors](#themable-colors)
+  - [`codereview.priority.green`](#codereviewprioritygreen)
+  - [`codereview.priority.yellow`](#codereviewpriorityyellow)
+  - [`codereview.priority.red`](#codereviewpriorityred)
+- [Keybindings](#keybindings)
+- [The review approach](#the-review-approach)
+- [Contributors ✨](#contributors-)
 
 <hr>
 
@@ -353,6 +355,41 @@ Define whether to view only the comments from the current file or not.
 ```json
 {
   "code-review.filterCommentsByFilename": true
+}
+```
+
+### `code-review.importBackup`
+
+Define whether to backup the existing comments before importing new ones or not
+
+```json
+{
+  "code-review.importBackup": true
+}
+```
+
+### `code-review.importConflictMode`
+
+Action to automatically take when importing comments already present:
+
+- *empty*: always ask.
+- `skip`: keep the existing comment.
+- `overwrite`: replace the existing comment with the imported one.
+- `clone`: keep both the existing and the imported comments.
+
+```json
+{
+  "code-review.importConflictMode": "clone"
+}
+```
+
+### `code-review.importCloneSuffix`
+
+Suffix to append to the title when existing comments are imported in [`clone`](#code-reviewimportconflictmode) mode.
+
+```json
+{
+  "code-review.importCloneSuffix": "(copy)"
 }
 ```
 

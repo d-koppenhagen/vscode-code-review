@@ -1,8 +1,6 @@
 import * as fs from 'fs';
-import { EOL } from 'os';
 import { window, workspace, TextEditor } from 'vscode';
 const gitCommitId = require('git-commit-id');
-
 import { CsvEntry, CsvStructure } from './model';
 import {
   removeLeadingAndTrailingSlash,
@@ -15,7 +13,7 @@ import {
 } from './utils/workspace-util';
 import { CommentListEntry } from './comment-list-entry';
 import { getSelectionStringDefinition, hasSelection } from './utils/editor-utils';
-import { cleanCsvStorage, getCsvFileLinesAsArray } from './utils/storage-utils';
+import { getCsvFileLinesAsArray, setCsvFileLines } from './utils/storage-utils';
 import path from 'path';
 
 export class ReviewCommentService {
@@ -35,7 +33,7 @@ export class ReviewCommentService {
 
     comment.filename = standardizeFilename(this.workspaceRoot, editor!.document.fileName);
 
-    this.persistComments([this.buildCsvString(comment)], false);
+    setCsvFileLines(this.reviewFile, [CsvStructure.formatAsCsvLine(this.finalizeComment(comment))], false);
   }
 
   /**
@@ -67,21 +65,21 @@ export class ReviewCommentService {
       return;
     }
 
-    rows[updateRowIndex] = this.buildCsvString(comment);
-    this.persistComments(rows);
+    rows[updateRowIndex] = CsvStructure.formatAsCsvLine(this.finalizeComment(comment));
+    setCsvFileLines(this.reviewFile, rows);
   }
 
   async deleteComment(entry: CommentListEntry) {
     this.checkFileExists();
 
-    const oldFileContent = fs.readFileSync(this.reviewFile, 'utf8'); // get old content
-    const rows = oldFileContent.split(EOL);
+    // Get old content
+    const rows = getCsvFileLinesAsArray(this.reviewFile);
     // Escape text to search for
     const textEscaped = escapeEndOfLineForCsv(escapeDoubleQuotesForCsv(entry.text));
     const updateRowIndex = rows.findIndex((row) => row.includes(entry.label) && row.includes(textEscaped));
     if (updateRowIndex > -1) {
       rows.splice(updateRowIndex, 1);
-      this.persistComments(rows);
+      setCsvFileLines(this.reviewFile, rows);
     } else {
       window.showErrorMessage(`Update failed. Cannot delete comment '${entry.label}' in '${this.reviewFile}'.`);
     }
@@ -119,31 +117,12 @@ export class ReviewCommentService {
   }
 
   /**
-   * Store the comments
-   *
-   * @param string[] rows The lines to store
-   * @param boolean overwrite Replace all (true) / append (false)
+   * Finalize the construction of a comment
+   * @param comment The comment to finalize
+   * @return The finalized comment
    */
-  private persistComments(rows: string[], overwrite: boolean = true) {
-    // The last line of the file must always be terminated with an EOL
-    const content = cleanCsvStorage(rows).join(EOL) + EOL;
-
-    if (overwrite) {
-      fs.writeFileSync(this.reviewFile, content);
-    } else {
-      fs.appendFileSync(this.reviewFile, content);
-    }
-  }
-
-  private buildCsvString(comment: CsvEntry): string {
+  private finalizeComment(comment: CsvEntry): CsvEntry {
     const copy = { ...comment };
-
-    copy.comment = escapeEndOfLineForCsv(escapeDoubleQuotesForCsv(copy.comment));
-    copy.title = copy.title ? escapeDoubleQuotesForCsv(copy.title) : '';
-    copy.priority = copy.priority || 0;
-    copy.additional = copy.additional ? escapeDoubleQuotesForCsv(copy.additional) : '';
-    copy.category = copy.category || '';
-    copy.private = copy.private || 0;
 
     const gitDirectory = workspace.getConfiguration().get('code-review.gitDirectory') as string;
     const gitRepositoryPath = path.resolve(this.workspaceRoot, gitDirectory);
@@ -159,7 +138,7 @@ export class ReviewCommentService {
     const endAnker = endLineNumberFromStringDefinition(copy.lines);
     copy.url = this.remoteUrl(copy.sha, copy.filename, startAnker, endAnker);
 
-    return CsvStructure.formatAsCsvLine(copy);
+    return copy;
   }
 
   /**
@@ -194,7 +173,6 @@ export class ReviewCommentService {
   private checkFileExists() {
     if (!fs.existsSync(this.reviewFile)) {
       window.showErrorMessage(`Could not add to file: '${this.reviewFile}': File does not exist`);
-      return;
     }
   }
 }
