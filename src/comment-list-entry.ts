@@ -5,6 +5,7 @@ import { ReviewFileExportSection } from './interfaces';
 
 export class CommentListEntry extends TreeItem {
   constructor(
+    public readonly id: string,
     public readonly label: string,
     public readonly text: string,
     public readonly hoverLabel: string,

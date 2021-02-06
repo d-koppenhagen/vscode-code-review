@@ -5,8 +5,6 @@ import { CsvEntry, CsvStructure } from './model';
 import {
   removeLeadingAndTrailingSlash,
   removeTrailingSlash,
-  escapeDoubleQuotesForCsv,
-  escapeEndOfLineForCsv,
   startLineNumberFromStringDefinition,
   endLineNumberFromStringDefinition,
   standardizeFilename,
@@ -70,13 +68,15 @@ export class ReviewCommentService {
   }
 
   async deleteComment(entry: CommentListEntry) {
+    if (entry.id === '') {
+      return;
+    }
+
     this.checkFileExists();
 
     // Get old content
     const rows = getCsvFileLinesAsArray(this.reviewFile);
-    // Escape text to search for
-    const textEscaped = escapeEndOfLineForCsv(escapeDoubleQuotesForCsv(entry.text));
-    const updateRowIndex = rows.findIndex((row) => row.includes(entry.label) && row.includes(textEscaped));
+    const updateRowIndex = rows.findIndex((row) => row.includes(entry.id!));
     if (updateRowIndex > -1) {
       rows.splice(updateRowIndex, 1);
       setCsvFileLines(this.reviewFile, rows);

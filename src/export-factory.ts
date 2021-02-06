@@ -298,6 +298,7 @@ export class ExportFactory {
         entry = CsvStructure.finalizeParse(entry);
 
         const item = new CommentListEntry(
+          entry.id,
           entry.title,
           entry.comment,
           entry.comment,
@@ -386,6 +387,7 @@ export class ExportFactory {
           const sortedByFile = this.groupResults(entries, Group.filename);
           const listEntries = sortedByFile.map((el: ReviewFileExportSection, index: number) => {
             const item = new CommentListEntry(
+              '',
               el.group,
               `(${el.lines.length})`,
               `${el.lines.length} comments`,
