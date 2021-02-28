@@ -25,6 +25,7 @@ import {
 } from '../../utils/workspace-util';
 import { createCommentFromObject, CsvEntry, CsvStructure } from '../../model';
 import { cleanCsvStorage, getCsvFileHeader } from '../../utils/storage-utils';
+import { isValidColorDefinition } from '../../utils/editor-utils';
 
 suite('Workspace Utils', () => {
   suite('removeTrailingSlash', () => {
@@ -449,6 +450,27 @@ suite('Workspace Utils', () => {
           lines: '0:0-0:0|0:0-0:0|0:0-0:0',
         } as unknown) as CsvEntry),
       );
+    });
+  });
+
+  suite('isValidColorDefinition', () => {
+    test('should match color definition', () => {
+      assert.ok(isValidColorDefinition('#C8C832'));
+      assert.ok(isValidColorDefinition('#C8C83226'));
+
+      assert.ok(isValidColorDefinition('rgba(200, 200, 50, 0)'));
+      assert.ok(isValidColorDefinition('rgba(200, 200, 50, 1)'));
+      assert.ok(isValidColorDefinition('rgba(200, 200, 50, 0.15)'));
+    });
+
+    test('should not match color definition', () => {
+      assert.ok(!isValidColorDefinition(''));
+      assert.ok(!isValidColorDefinition('C8C832'));
+      assert.ok(!isValidColorDefinition('C8C83226'));
+      assert.ok(!isValidColorDefinition('#ABCDE'));
+      assert.ok(!isValidColorDefinition('#ABCDEF1'));
+
+      assert.ok(!isValidColorDefinition('rgba(200, 200, 50)'));
     });
   });
 });

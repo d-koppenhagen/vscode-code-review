@@ -1,4 +1,13 @@
-import { Position, Range, Selection, TextEditor, TextEditorDecorationType, window } from 'vscode';
+import {
+  Position,
+  Range,
+  Selection,
+  TextEditor,
+  TextEditorDecorationType,
+  ThemeColor,
+  window,
+  workspace,
+} from 'vscode';
 
 /**
  * Reset the selection in an editor
@@ -51,6 +60,9 @@ export const getSelectionRanges = (editor: TextEditor): Range[] => {
   });
 };
 
+const backgroundColorDefaultID = 'codereview.code.selection.background';
+const backgroundColorDefault = new ThemeColor(backgroundColorDefaultID);
+
 /**
  * Highlight a selection in an editor
  *
@@ -59,10 +71,36 @@ export const getSelectionRanges = (editor: TextEditor): Range[] => {
  * @return TextEditorDecorationType
  */
 export const colorizeSelection = (selections: Range[], editor: TextEditor): TextEditorDecorationType => {
+  const color = workspace.getConfiguration().get('code-review.codeSelectionBackgroundColor') as string;
+
+  let backgroundColor: string | ThemeColor;
+  if (color === backgroundColorDefaultID) {
+    backgroundColor = backgroundColorDefault;
+  } else if (isValidColorDefinition(color)) {
+    backgroundColor = color;
+  } else {
+    console.log(`Invalid background color definition: ${color}`);
+    backgroundColor = backgroundColorDefault;
+  }
+
   const decoration = window.createTextEditorDecorationType({
-    backgroundColor: 'rgba(200, 200, 50, 0.15)',
+    backgroundColor: backgroundColor,
   });
   editor.setDecorations(decoration, selections);
 
   return decoration;
+};
+
+/**
+ * Check if a color definition is valid or not
+ *
+ * @param text The definition of the color, in hexadecimal or using rgba
+ */
+export const isValidColorDefinition = (text: string): boolean => {
+  // Matches #FFFFFF and #FFFFFFFF
+  const regexHex = /^#([0-9a-fA-F]{6})([0-9a-fA-F]{2})?$/gm;
+  // Matches rgba(111, 222, 333, 0.5)
+  const regexRgba = /^rgba\((\d{1,3}),\s*(\d{1,3}),\s*(\d{1,3}),\s*(1|(0(.\d{1,2})?))\)$/gm;
+
+  return regexHex.test(text) || regexRgba.test(text);
 };
