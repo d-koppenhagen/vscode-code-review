@@ -320,6 +320,12 @@
           "default": "",
           "title": "Import conflict action.",
           "markdownDescription": "Action to automatically take when importing comments already present:\n- *empty*: always ask.\n- `skip`: keep the existing comment.\n- `overwrite`: replace the existing comment with the imported one.\n- `clone`: keep both the existing and the imported comment."
+        },
+        "code-review.codeSelectionBackgroundColor": {
+          "type": "string",
+          "title": "Code selection background color.",
+          "markdownDescription": "Background color used to highlight the code associated to a comment.\nMust be specified using a hexadecimal representation - with or without the alpha part (`#C8C832` or `#C8C83226`) - or a `rgba()` definition.",
+          "default": "codereview.code.selection.background"
         }
       }
     },
@@ -380,6 +386,15 @@
           "dark": "#ff0000",
           "light": "#ff0000",
           "highContrast": "#ff0000"
+        }
+      },
+      {
+        "id": "codereview.code.selection.background",
+        "description": "Background color for highlighted code",
+        "defaults": {
+          "dark": "#C8C83226",
+          "light": "#C8C83226",
+          "highContrast": "#C8C83226"
         }
       }
     ]

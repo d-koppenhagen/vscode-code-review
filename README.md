@@ -41,10 +41,12 @@ This extension allows you to create a code review file you can hand over to a cu
   - [`code-review.importBackup`](#code-reviewimportbackup)
   - [`code-review.importConflictMode`](#code-reviewimportconflictmode)
   - [`code-review.importCloneSuffix`](#code-reviewimportclonesuffix)
+  - [`code-review.codeSelectionBackgroundColor`](#code-reviewcodeselectionbackgroundcolor)
 - [Themable colors](#themable-colors)
   - [`codereview.priority.green`](#codereviewprioritygreen)
   - [`codereview.priority.yellow`](#codereviewpriorityyellow)
   - [`codereview.priority.red`](#codereviewpriorityred)
+  - [`codereview.code.selection.background`](#codereviewcodeselectionbackground)
 - [Keybindings](#keybindings)
 - [The review approach](#the-review-approach)
 - [Contributors ✨](#contributors-)
@@ -393,6 +395,23 @@ Suffix to append to the title when existing comments are imported in [`clone`](#
 }
 ```
 
+### `code-review.codeSelectionBackgroundColor`
+
+Background color used to highlight the code associated to a comment.  
+Must be specified using a hexadecimal representation - with or without the alpha part (`#C8C832` or `#C8C83226`) - or a `rgba()` definition.
+
+```json
+{
+  "code-review.codeSelectionBackgroundColor": "#C8C83226"
+}
+```
+
+```json
+{
+  "code-review.codeSelectionBackgroundColor": "rgba(200, 200, 50, 0.15)"
+}
+```
+
 ## Themable colors
 
 ### `codereview.priority.green`
@@ -406,6 +425,10 @@ Color for comments with priority **level 2**.
 ### `codereview.priority.red`
 
 Color for comments with priority **level 3**.
+
+### `codereview.code.selection.background`
+
+Background color for highlighted code.
 
 ## Keybindings
 
