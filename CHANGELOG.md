@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.25.0](https://github.com/d-koppenhagen/vscode-code-review/compare/v1.24.1...v1.25.0) (2021-03-02)
+
+
+### Features
+
+* **select-setting:** setting to define background color selection ([#102](https://github.com/d-koppenhagen/vscode-code-review/issues/102)) ([a82cfda](https://github.com/d-koppenhagen/vscode-code-review/commit/a82cfda14a420d1b2e2d90c34ac14912dc17639f)), closes [#101](https://github.com/d-koppenhagen/vscode-code-review/issues/101)
+
 ### [1.24.1](https://github.com/d-koppenhagen/vscode-code-review/compare/v1.24.0...v1.24.1) (2021-02-08)
 
 
