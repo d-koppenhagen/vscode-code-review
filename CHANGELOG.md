@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.26.0](https://github.com/d-koppenhagen/vscode-code-review/compare/v1.25.0...v1.26.0) (2021-08-10)
+
+
+### Features
+
+* support multi-root workspaces ([8f48086](https://github.com/d-koppenhagen/vscode-code-review/commit/8f48086f87a737a5c5a728374cef75fb1d3f3528)), closes [#106](https://github.com/d-koppenhagen/vscode-code-review/issues/106)
+
 ## [1.25.0](https://github.com/d-koppenhagen/vscode-code-review/compare/v1.24.1...v1.25.0) (2021-03-02)
 
 
