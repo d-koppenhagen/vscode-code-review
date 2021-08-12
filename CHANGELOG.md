@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.27.0](https://github.com/d-koppenhagen/vscode-code-review/compare/v1.26.0...v1.27.0) (2021-08-12)
+
+
+### Features
+
+* provide textedito icons and hover with comment message ([bf517e2](https://github.com/d-koppenhagen/vscode-code-review/commit/bf517e2d98f34103f1240399b29107b31b5312d7)), closes [#105](https://github.com/d-koppenhagen/vscode-code-review/issues/105)
+
 ## [1.26.0](https://github.com/d-koppenhagen/vscode-code-review/compare/v1.25.0...v1.26.0) (2021-08-10)
 
 
