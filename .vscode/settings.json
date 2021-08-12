@@ -30,5 +30,6 @@
   "[markdown]": {
     "editor.defaultFormatter": null
   },
-  "cSpell.words": ["gitlab", "jira", "prio", "vsce"]
+  "cSpell.words": ["gitlab", "jira", "prio", "vsce"],
+  "markdown.extension.toc.levels": "2..6"
 }
