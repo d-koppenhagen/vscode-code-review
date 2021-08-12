@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.27.1](https://github.com/d-koppenhagen/vscode-code-review/compare/v1.27.0...v1.27.1) (2021-08-12)
+
+
+### Bug Fixes
+
+* correctly resolve path on win ([1da2664](https://github.com/d-koppenhagen/vscode-code-review/commit/1da26647fe2f8c6ab5888ca5beeef625a5191868)), closes [#103](https://github.com/d-koppenhagen/vscode-code-review/issues/103)
+
 ## [1.27.0](https://github.com/d-koppenhagen/vscode-code-review/compare/v1.26.0...v1.27.0) (2021-08-12)
 
 
