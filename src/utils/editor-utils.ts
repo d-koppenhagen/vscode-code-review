@@ -46,7 +46,7 @@ export const hasSelection = (editor: TextEditor | null): boolean => {
  * Get the selected lines string representation in an editor
  *
  * @param editor The editor to work on
- * @return string The string represention of the selected lines
+ * @return string The string representation of the selected lines
  */
 export const getSelectionStringDefinition = (editor: TextEditor): string => {
   return editor.selections.reduce((acc, cur) => {
@@ -125,8 +125,6 @@ export const displayGutterIcon = (
   csvEntries: CsvEntry[],
   editor: TextEditor,
 ): TextEditorDecorationType => {
-  console.log('++++++++++++++++');
-  console.log(csvEntries);
   const decoration = window.createTextEditorDecorationType({
     gutterIconPath: context.asAbsolutePath(path.join('dist', 'speech-bubble-light.svg')),
     dark: {
@@ -140,10 +138,9 @@ export const displayGutterIcon = (
   // build decoration options for each comment block
   csvEntries.forEach((entry) => {
     const additionalDescription = entry.additional
-      ? `${EOL}${EOL}**Additonal Information:**${EOL}${EOL}${entry.additional}`
+      ? `${EOL}${EOL}**Additional Information:**${EOL}${EOL}${entry.additional}`
       : '';
     entry.lines.split('|').forEach((range: string) => {
-      console.log(range, rangeFromStringDefinition(range));
       decorationOptions.push({
         range: rangeFromStringDefinition(range),
         hoverMessage: new MarkdownString(`## ${entry.title}${EOL}${EOL}${EOL}${entry.comment}${additionalDescription}`),
@@ -158,8 +155,6 @@ export const displayGutterIcon = (
       });
     });
   });
-  console.log(decorationOptions);
-
   editor.setDecorations(decoration, decorationOptions);
   return decoration;
 };

@@ -198,7 +198,6 @@ export class WorkspaceContext {
           (err) => {
             const msg = `Cannot not open file: '${filePath}': File does not exist.`;
             window.showErrorMessage(msg);
-            console.log(msg, err);
           },
         );
       },

@@ -161,7 +161,9 @@ export class WebViewComponent {
     let selectListString = this.categories.reduce((current, category) => {
       return (current += `<option value="${category}">${category}</option>`);
     }, '');
-    const uri = Uri.parse(this.context.asAbsolutePath(path.join('dist', 'webview.html')));
+
+    const uri = Uri.joinPath(this.context.extensionUri, 'dist', 'webview.html');
+    console.log('CODE REVIEW DEBUG, URI for webview.html', uri);
     const pathUri = uri.with({ scheme: 'vscode-resource' });
     // const linesString = selections.reduce((prev, curr) => {
     //   const range = curr.isSingleLine ? curr.start.line : `${curr.start.line}-${curr.end.line}`;
