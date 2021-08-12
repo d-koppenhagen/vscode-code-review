@@ -74,6 +74,9 @@ E.g. `"1:0-1:4|4:0-4:3"` means that the comment is related to the range marked f
 
 ![Demo](./images/demo.gif)
 
+After adding a review note, an icon on the left and a color indicator on the right that represents the priority you defined, will be visible in the active editor.
+You can also review and edit the comment in the comment explorer (see below).
+
 ### Code Review Comment Explorer - update, view and delete comments
 
 Once you created your first code review comment and the plugin can find the associated review file (by default `code-review.csv`), a new button will appear in the sidebar.
@@ -397,7 +400,7 @@ Suffix to append to the title when existing comments are imported in [`clone`](#
 
 ### `code-review.codeSelectionBackgroundColor`
 
-Background color used to highlight the code associated to a comment.  
+Background color used to highlight the code associated to a comment.
 Must be specified using a hexadecimal representation - with or without the alpha part (`#C8C832` or `#C8C83226`) - or a `rgba()` definition.
 
 ```json
