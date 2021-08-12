@@ -3,20 +3,20 @@ import {
   workspace,
   window,
   ExtensionContext,
-  WorkspaceFolder,
   Uri,
   Range,
   ViewColumn,
   QuickPickItem,
-  Event,
   Disposable,
   FileSystemWatcher,
+  TextEditor,
+  TextEditorDecorationType,
 } from 'vscode';
 import * as path from 'path';
 import * as fs from 'fs';
 import { CheckFlag, FileGenerator } from './file-generator';
 import { ReviewCommentService } from './review-comment';
-import { getWorkspaceFolder, rangeFromStringDefinition } from './utils/workspace-util';
+import { rangeWholeLinesFromStringDefinition } from './utils/workspace-util';
 import { WebViewComponent } from './webview';
 import { ExportFactory } from './export-factory';
 import { CommentsProvider, CommentView } from './comment-view';
@@ -24,6 +24,7 @@ import { ReviewFileExportSection } from './interfaces';
 import { CsvEntry } from './model';
 import { CommentListEntry } from './comment-list-entry';
 import { ImportFactory, ConflictMode } from './import-factory';
+import { displayGutterIcon } from './utils/editor-utils';
 
 const checkForCodeReviewFile = (fileName: string) => {
   commands.executeCommand('setContext', 'codeReview:displayCodeReviewExplorer', fs.existsSync(fileName));
@@ -38,6 +39,7 @@ export class WorkspaceContext {
   private webview: WebViewComponent;
   private commentsProvider!: CommentsProvider;
   private fileWatcher!: FileSystemWatcher;
+  private gutterIconDecoration!: TextEditorDecorationType;
 
   private openSelectionRegistration!: Disposable;
   private addNoteRegistration!: Disposable;
@@ -78,13 +80,35 @@ export class WorkspaceContext {
     this.watchGitSwitch();
     this.watchActiveEditor();
     new CommentView(this.commentsProvider);
+    if (window.activeTextEditor) {
+      this.highlightCommentsInActiveEditor(window.activeTextEditor);
+    }
   }
 
   watchActiveEditor() {
     // Refresh comment view on file focus
-    window.onDidChangeActiveTextEditor((_) => {
+    window.onDidChangeActiveTextEditor((editor) => {
       if (this.exportFactory.refreshFilterByFilename()) {
         this.commentsProvider.refresh();
+      }
+      if (editor) {
+        this.highlightCommentsInActiveEditor(editor);
+      }
+    });
+  }
+
+  highlightCommentsInActiveEditor(editor: TextEditor) {
+    this.exportFactory.getFilesContainingComments().then((fileEntries) => {
+      const matchingFile = fileEntries.find((file) => editor.document.fileName.endsWith(file.label));
+      if (matchingFile) {
+        // iterate over all comments associated with this file
+        this.exportFactory.getComments(matchingFile).then((comments) => {
+          if (this.gutterIconDecoration) {
+            this.gutterIconDecoration.dispose();
+          }
+          // comments[0] as we only need a single comment related to a line to identify the place where to put it
+          this.gutterIconDecoration = displayGutterIcon(this.context, comments[0].data.lines, editor);
+        });
       }
     });
   }
@@ -165,7 +189,7 @@ export class WorkspaceContext {
             window.showTextDocument(doc, ViewColumn.One).then((textEditor) => {
               if (csvRef) {
                 const rangesStringArray = csvRef.lines.split('|');
-                const ranges: Range[] = rangesStringArray.map((range) => rangeFromStringDefinition(range));
+                const ranges: Range[] = rangesStringArray.map((range) => rangeWholeLinesFromStringDefinition(range));
                 textEditor.revealRange(ranges[0]);
                 this.webview.editComment(this.commentService, ranges, csvRef);
               }

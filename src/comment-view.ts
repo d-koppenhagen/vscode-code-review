@@ -1,5 +1,4 @@
 import { ExtensionContext, TreeDataProvider, TreeItem, window, EventEmitter, Event } from 'vscode';
-
 import { CommentListEntry } from './comment-list-entry';
 import { ExportFactory } from './export-factory';
 

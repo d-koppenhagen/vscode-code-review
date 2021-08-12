@@ -139,6 +139,22 @@ export const rangeFromStringDefinition = (input: string, offset: number = 0): Ra
 };
 
 /**
+ * Get the range for the lines string representation for CSV files
+ * @param input the input string
+ */
+export const rangeWholeLinesFromStringDefinition = (input: string, offset: number = 0): Range => {
+  // Position expectes a zero-based index, but line numbers in the csv it saved as one-based index
+  const startPosition = startPositionNumberFromStringDefinition(input);
+  const endLine = endLineNumberFromStringDefinition(input) - 1 + offset;
+
+  return new Range(
+    // fall back to 0 when value is lower than 0
+    new Position(0, startPosition > 0 ? startPosition : 0),
+    new Position(endLine > 0 ? endLine : 0, 1024),
+  );
+};
+
+/**
  * Sort function to order the lines string representation for CSV files
  * @param localA compare value a
  * @param localB compare value b

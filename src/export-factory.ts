@@ -30,6 +30,7 @@ import { ReviewFileExportSection, GroupBy, ExportFormat, ExportMap, Group } from
 import { CsvEntry, CsvStructure } from './model';
 import { CommentListEntry } from './comment-list-entry';
 import { FileGenerator } from './file-generator';
+import { themeColorForPriority } from './utils/editor-utils';
 const gitCommitId = require('git-commit-id');
 
 export class ExportFactory {
@@ -346,24 +347,7 @@ export class ExportFactory {
       }
 
       case 1: {
-        // Private comments
-        let themeColor: ThemeColor | undefined = undefined;
-
-        switch (prio) {
-          case 3:
-            themeColor = new ThemeColor('codereview.priority.red');
-            break;
-
-          case 2:
-            themeColor = new ThemeColor('codereview.priority.yellow');
-            break;
-
-          case 1:
-            themeColor = new ThemeColor('codereview.priority.green');
-            break;
-        }
-
-        return new ThemeIcon(this.privateCommentIcon, themeColor);
+        return new ThemeIcon(this.privateCommentIcon, themeColorForPriority(prio));
       }
     }
   }

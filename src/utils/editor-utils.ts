@@ -1,4 +1,7 @@
 import {
+  DecorationOptions,
+  ExtensionContext,
+  MarkdownString,
   Position,
   Range,
   Selection,
@@ -8,6 +11,10 @@ import {
   window,
   workspace,
 } from 'vscode';
+import * as path from 'path';
+import { CsvEntry } from '../model';
+import { rangeFromStringDefinition } from './workspace-util';
+import { EOL } from 'os';
 
 /**
  * Reset the selection in an editor
@@ -103,4 +110,74 @@ export const isValidColorDefinition = (text: string): boolean => {
   const regexRgba = /^rgba\((\d{1,3}),\s*(\d{1,3}),\s*(\d{1,3}),\s*(1|(0(.\d{1,2})?))\)$/gm;
 
   return regexHex.test(text) || regexRgba.test(text);
+};
+
+/**
+ * Highlight a matching review comment
+ *
+ * @param context The extensions context
+ * @param selections The selection to highlight
+ * @param editor The editor to work on
+ * @return TextEditorDecorationType
+ */
+export const displayGutterIcon = (
+  context: ExtensionContext,
+  csvEntries: CsvEntry[],
+  editor: TextEditor,
+): TextEditorDecorationType => {
+  console.log('++++++++++++++++');
+  console.log(csvEntries);
+  const decoration = window.createTextEditorDecorationType({
+    gutterIconPath: context.asAbsolutePath(path.join('dist', 'speech-bubble-light.svg')),
+    dark: {
+      gutterIconPath: context.asAbsolutePath(path.join('dist', 'speech-bubble-dark.svg')),
+    },
+    isWholeLine: true,
+  });
+
+  const decorationOptions: DecorationOptions[] = [];
+
+  // build decoration options for each comment block
+  csvEntries.forEach((entry) => {
+    const additionalDescription = entry.additional
+      ? `${EOL}${EOL}**Additonal Information:**${EOL}${EOL}${entry.additional}`
+      : '';
+    entry.lines.split('|').forEach((range: string) => {
+      console.log(range, rangeFromStringDefinition(range));
+      decorationOptions.push({
+        range: rangeFromStringDefinition(range),
+        hoverMessage: new MarkdownString(`## ${entry.title}${EOL}${EOL}${EOL}${entry.comment}${additionalDescription}`),
+        renderOptions: {
+          after: {
+            contentText: '•',
+            color: themeColorForPriority(entry.priority),
+            margin: '5px',
+            fontWeight: 'bold',
+          },
+        },
+      });
+    });
+  });
+  console.log(decorationOptions);
+
+  editor.setDecorations(decoration, decorationOptions);
+  return decoration;
+};
+
+/**
+ * Determine the color value based on the priority
+ * @param priority the priority value
+ * @returns a matching theme color based on the priority and configured color values for the extension in `settings.json`
+ */
+export const themeColorForPriority = (priority: number): ThemeColor | undefined => {
+  switch (priority) {
+    case 3:
+      return new ThemeColor('codereview.priority.red');
+    case 2:
+      return new ThemeColor('codereview.priority.yellow');
+    case 1:
+      return new ThemeColor('codereview.priority.green');
+    default:
+      return undefined; // private comments
+  }
 };
