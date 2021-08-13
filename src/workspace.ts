@@ -76,36 +76,33 @@ export class WorkspaceContext {
     this.updateReviewCommentService();
     this.updateCommentsProvider();
     this.setupFileWatcher();
-    this.watchForFileChanges();
     this.watchGitSwitch();
     this.watchActiveEditor();
+    this.watchForFileChanges();
     new CommentView(this.commentsProvider);
-    if (window.activeTextEditor) {
-      this.highlightCommentsInActiveEditor(window.activeTextEditor);
-    }
+    this.updateDecorations();
   }
 
   watchActiveEditor() {
     // Refresh comment view on file focus
-    window.onDidChangeActiveTextEditor((editor) => {
+    window.onDidChangeActiveTextEditor((_) => {
       if (this.exportFactory.refreshFilterByFilename()) {
         this.commentsProvider.refresh();
       }
-      if (editor) {
-        this.highlightCommentsInActiveEditor(editor);
-      }
+      this.updateDecorations();
     });
   }
 
   highlightCommentsInActiveEditor(editor: TextEditor) {
+    // clear previous gutter decoration
+    if (this.gutterIconDecoration) {
+      this.gutterIconDecoration.dispose();
+    }
     this.exportFactory.getFilesContainingComments().then((fileEntries) => {
       const matchingFile = fileEntries.find((file) => editor.document.fileName.endsWith(file.label));
       if (matchingFile) {
         // iterate over all comments associated with this file
         this.exportFactory.getComments(matchingFile).then((comments) => {
-          if (this.gutterIconDecoration) {
-            this.gutterIconDecoration.dispose();
-          }
           // comments[0] as we only need a single comment related to a line to identify the place where to put it
           this.gutterIconDecoration = displayGutterIcon(this.context, comments[0].data.lines, editor);
         });
@@ -123,6 +120,7 @@ export class WorkspaceContext {
     gitWatcher.onDidChange(() => {
       this.exportFactory.refreshFilterByCommit();
       this.commentsProvider.refresh();
+      this.updateDecorations();
     });
   }
 
@@ -150,6 +148,15 @@ export class WorkspaceContext {
       this.commentsProvider.refresh();
       checkForCodeReviewFile(this.generator.reviewFilePath);
     });
+  }
+
+  /**
+   * refresh highlighted comments in text editor
+   */
+  updateDecorations() {
+    if (window.activeTextEditor) {
+      this.highlightCommentsInActiveEditor(window.activeTextEditor);
+    }
   }
 
   updateGenerator() {
@@ -220,6 +227,7 @@ export class WorkspaceContext {
 
       this.webview.addComment(this.commentService);
       this.commentsProvider.refresh();
+      this.updateDecorations();
     });
 
     this.filterByCommitEnableRegistration = commands.registerCommand('codeReview.filterByCommitEnable', () => {
@@ -245,9 +253,9 @@ export class WorkspaceContext {
       if (!this.generator.check()) {
         return;
       }
-
       this.webview.deleteComment(this.commentService, entry);
       this.commentsProvider.refresh();
+      this.updateDecorations();
     });
 
     /**
