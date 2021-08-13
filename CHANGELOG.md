@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.27.2](https://github.com/d-koppenhagen/vscode-code-review/compare/v1.27.1...v1.27.2) (2021-08-13)
+
+
+### Bug Fixes
+
+* update comment decorations on events ([1dbfa9f](https://github.com/d-koppenhagen/vscode-code-review/commit/1dbfa9f04dc82da993458045fbcba99ad42d9c6c)), closes [#109](https://github.com/d-koppenhagen/vscode-code-review/issues/109)
+
 ### [1.27.1](https://github.com/d-koppenhagen/vscode-code-review/compare/v1.27.0...v1.27.1) (2021-08-12)
 
 
