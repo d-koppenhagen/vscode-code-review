@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.27.3](https://github.com/d-koppenhagen/vscode-code-review/compare/v1.27.2...v1.27.3) (2021-08-16)
+
+
+### Bug Fixes
+
+* correctly highlight current selection ([3a8bf42](https://github.com/d-koppenhagen/vscode-code-review/commit/3a8bf42849291067f4b2fce5e0a3e524cb0d5477)), closes [#110](https://github.com/d-koppenhagen/vscode-code-review/issues/110)
+
 ### [1.27.2](https://github.com/d-koppenhagen/vscode-code-review/compare/v1.27.1...v1.27.2) (2021-08-13)
 
 
