@@ -16,7 +16,7 @@ import * as path from 'path';
 import * as fs from 'fs';
 import { CheckFlag, FileGenerator } from './file-generator';
 import { ReviewCommentService } from './review-comment';
-import { rangeWholeLinesFromStringDefinition } from './utils/workspace-util';
+import { rangeFromStringDefinition } from './utils/workspace-util';
 import { WebViewComponent } from './webview';
 import { ExportFactory } from './export-factory';
 import { CommentsProvider, CommentView } from './comment-view';
@@ -196,7 +196,7 @@ export class WorkspaceContext {
             window.showTextDocument(doc, ViewColumn.One).then((textEditor) => {
               if (csvRef) {
                 const rangesStringArray = csvRef.lines.split('|');
-                const ranges: Range[] = rangesStringArray.map((range) => rangeWholeLinesFromStringDefinition(range));
+                const ranges: Range[] = rangesStringArray.map((range) => rangeFromStringDefinition(range));
                 textEditor.revealRange(ranges[0]);
                 this.webview.editComment(this.commentService, ranges, csvRef);
               }
