@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.27.4](https://github.com/d-koppenhagen/vscode-code-review/compare/v1.27.3...v1.27.4) (2021-08-16)
+
+
+### Bug Fixes
+
+* use path of active file as review file path when not in workspace ([034b2ae](https://github.com/d-koppenhagen/vscode-code-review/commit/034b2aef376cac1a510ccf1c350dd4f63398ad65)), closes [#108](https://github.com/d-koppenhagen/vscode-code-review/issues/108) [#108](https://github.com/d-koppenhagen/vscode-code-review/issues/108)
+
 ### [1.27.3](https://github.com/d-koppenhagen/vscode-code-review/compare/v1.27.2...v1.27.3) (2021-08-16)
 
 
