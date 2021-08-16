@@ -1,6 +1,6 @@
 import * as path from 'path';
 import * as fs from 'fs';
-import { WorkspaceFolder, Position, Range } from 'vscode';
+import { WorkspaceFolder, Position, Range, window } from 'vscode';
 import { EOL } from 'os';
 import { CsvEntry } from '../model';
 
@@ -29,7 +29,10 @@ export const removeLeadingAndTrailingSlash = (s: string): string => removeLeadin
  */
 export const getWorkspaceFolder = (folders: WorkspaceFolder[] | undefined): string => {
   if (!folders || !folders[0] || !folders[0].uri || !folders[0].uri.fsPath) {
-    return '';
+    // Edge-Case (See Issue #108): Handle the case we are not actually in an workspace but a single file has been picked for review in VSCode
+    // In this case, the review file will be stored next to this file in the same directory
+    const currentFile = window.activeTextEditor?.document.fileName;
+    return currentFile ? path.dirname(currentFile) : '';
   }
   return folders[0].uri.fsPath;
 };
