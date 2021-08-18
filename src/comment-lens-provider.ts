@@ -2,6 +2,7 @@ import { CancellationToken, CodeLens, CodeLensProvider, Range, TextDocument, Com
 import { ExportFactory } from './export-factory';
 import { ReviewFileExportSection } from './interfaces';
 import { CsvEntry } from './model';
+import { symbolForPriority } from './utils/editor-utils';
 import { rangesFromStringDefinition } from './utils/workspace-util';
 
 export class CommentLensProvider implements CodeLensProvider {
@@ -18,8 +19,12 @@ export class CommentLensProvider implements CodeLensProvider {
               lines: el.data.lines,
             };
             const csvRef: CsvEntry | undefined = csvEntry;
+            const prio = Number(csvEntry.priority); // be sure the value is a number
+            const priorityString = prio
+              ? ` | Priority: ${csvEntry.priority}${symbolForPriority(Number(csvEntry.priority))}`
+              : '';
             const command: Command = {
-              title: `Code Review: ${csvEntry.title}`,
+              title: `Code Review: ${csvEntry.title}${priorityString}`,
               tooltip: csvEntry.comment,
               command: 'codeReview.openSelection',
               arguments: [fileSection, csvRef],

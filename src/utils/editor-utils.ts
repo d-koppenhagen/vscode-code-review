@@ -170,3 +170,22 @@ export const themeColorForPriority = (priority: number): ThemeColor | undefined 
       return undefined; // private comments
   }
 };
+
+/**
+ * Determine the representing ASCII symbol based on the priority
+ * @param priority the priority value
+ * @returns a matching string representation (text icon) for the priority
+ */
+export const symbolForPriority = (priority: number): string | undefined => {
+  console.log('DBG', priority, typeof priority);
+  switch (priority) {
+    case 3:
+      return '⇡';
+    case 2:
+      return '⇢';
+    case 1:
+      return '⇣';
+    default:
+      return undefined; // private comments
+  }
+};
