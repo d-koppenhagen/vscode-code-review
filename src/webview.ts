@@ -116,9 +116,6 @@ export class WebViewComponent {
     const decoration = colorizeSelection(getSelectionRanges(editor), editor);
 
     const panel = this.showPanel('Add code review comment', editor.document.fileName);
-    // const pathToHtml = Uri.file(path.join(this.context.extensionPath, 'src', 'webview.html'));
-    // const pathUri = pathToHtml.with({ scheme: 'vscode-resource' });
-    // panel.webview.html = fs.readFileSync(pathUri.fsPath, 'utf8');
 
     // Handle messages from the webview
     panel.webview.onDidReceiveMessage(
@@ -159,16 +156,10 @@ export class WebViewComponent {
 
   getWebviewContent(fileName: string): string {
     let selectListString = this.categories.reduce((current, category) => {
-      return (current += `<option value="${category}">${category}</option>`);
+      return current + `<option value="${category}">${category}</option>`;
     }, '');
-
     const uri = Uri.joinPath(this.context.extensionUri, 'dist', 'webview.html');
-    console.log('CODE REVIEW DEBUG, URI for webview.html', uri);
     const pathUri = uri.with({ scheme: 'vscode-resource' });
-    // const linesString = selections.reduce((prev, curr) => {
-    //   const range = curr.isSingleLine ? curr.start.line : `${curr.start.line}-${curr.end.line}`;
-    //   return prev + `${prev ? ', ' : ''}${range}`;
-    // }, '');
     return fs
       .readFileSync(pathUri.fsPath, 'utf8')
       .replace('SELECT_LIST_STRING', selectListString)

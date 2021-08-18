@@ -177,7 +177,6 @@ export const themeColorForPriority = (priority: number): ThemeColor | undefined 
  * @returns a matching string representation (text icon) for the priority
  */
 export const symbolForPriority = (priority: number): string | undefined => {
-  console.log('DBG', priority, typeof priority);
   switch (priority) {
     case 3:
       return '⇡';

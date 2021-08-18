@@ -1,7 +1,8 @@
 import * as fs from 'fs';
 import * as path from 'path';
+import stripIndent from 'strip-indent';
 const Handlebars = require('handlebars');
-const stripIndent = require('strip-indent');
+
 import {
   workspace,
   Uri,
@@ -10,7 +11,6 @@ import {
   TreeItemCollapsibleState,
   ExtensionContext,
   ThemeIcon,
-  ThemeColor,
   commands,
 } from 'vscode';
 const parseFile = require('@fast-csv/parse').parseFile;

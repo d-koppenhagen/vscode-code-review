@@ -128,7 +128,7 @@ export const endPositionNumberFromStringDefinition = (input: string): number => 
  * @param input the input string
  */
 export const rangeFromStringDefinition = (input: string, offset: number = 0): Range => {
-  // Position expectes a zero-based index, but line numbers in the csv it saved as one-based index
+  // Position expects a zero-based index, but line numbers in the csv it saved as one-based index
   const startLine = startLineNumberFromStringDefinition(input) - 1;
   const startPosition = startPositionNumberFromStringDefinition(input);
   const endLine = endLineNumberFromStringDefinition(input) - 1 + offset;
@@ -151,7 +151,7 @@ export const rangesFromStringDefinition = (input: string, offset: number = 0): R
 
 /**
  * split strings like `0:12-15:14|2:34-19:23` by `|` character
- * @param input the unsplitted string definition
+ * @param input the raw string definition
  */
 export const splitStringDefinition = (input: string): string[] => input.split('|').map((str) => str.trim());
 
@@ -207,12 +207,7 @@ export const getBackupFilename = (reviewFilePath: string): string => {
   const seconds = date.getSeconds().toLocaleString('en', { minimumIntegerDigits: 2 });
 
   const timeStamp = `${year}-${month}-${date.getDate()}T${hours}-${minutes}-${seconds}`;
-  const backupFilePath = path.join(
-    path.dirname(reviewFilePath),
-    path.parse(reviewFilePath).name + '-' + timeStamp + '.bak',
-  );
-
-  return backupFilePath;
+  return path.join(path.dirname(reviewFilePath), path.parse(reviewFilePath).name + '-' + timeStamp + '.bak');
 };
 
 /**

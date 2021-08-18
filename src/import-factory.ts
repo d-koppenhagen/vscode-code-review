@@ -74,11 +74,11 @@ export class ImportFactory {
 
     return new Promise((resolve) => {
       // Read all comments
-      const existings: CsvEntry[] = [];
+      const existingComments: CsvEntry[] = [];
       parseFile(this.reviewFile, { delimiter: ',', ignoreEmpty: true, headers: true })
-        .on('error', (error: Error) => console.log(error))
+        .on('error', console.log)
         .on('data', (comment: CsvEntry) => {
-          existings.push(CsvStructure.finalizeParse(comment));
+          existingComments.push(CsvStructure.finalizeParse(comment));
         })
         .on('end', (_count: number) => {
           //#region Merge using import mode
@@ -91,9 +91,9 @@ export class ImportFactory {
 
           for (const comment of comments) {
             if (CsvStructure.isValidComment(comment, this.workspaceRoot)) {
-              const existingIdx = existings.findIndex((existing) => existing.id === comment.id);
+              const existingIdx = existingComments.findIndex((existing) => existing.id === comment.id);
               if (existingIdx < 0) {
-                existings.push(comment);
+                existingComments.push(comment);
                 addedCount++;
               } else {
                 //#region Apply conflict strategy
@@ -104,7 +104,7 @@ export class ImportFactory {
                     break;
 
                   case ConflictMode.replaceWithImported:
-                    existings[existingIdx] = comment;
+                    existingComments[existingIdx] = comment;
                     replaceCount++;
                     break;
 
@@ -114,7 +114,7 @@ export class ImportFactory {
                         (comment.title?.length ?? 0) > 0 ? comment.title + ' ' + this.copySuffix! : this.copySuffix!;
                     }
                     comment.id = CsvStructure.getDefaultValue('id')!;
-                    existings.push(comment);
+                    existingComments.push(comment);
                     cloneCount++;
                     break;
                 }
@@ -144,7 +144,9 @@ export class ImportFactory {
             if (
               setCsvFileLines(
                 this.reviewFile,
-                [CsvStructure.headerLine].concat(existings.map((comment) => CsvStructure.formatAsCsvLine(comment))),
+                [CsvStructure.headerLine].concat(
+                  existingComments.map((comment) => CsvStructure.formatAsCsvLine(comment)),
+                ),
               )
             ) {
               window.showInformationMessage(
