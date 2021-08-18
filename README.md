@@ -74,8 +74,9 @@ E.g. `"1:0-1:4|4:0-4:3"` means that the comment is related to the range marked f
 
 ![Demo](./images/demo.gif)
 
-After adding a review note, an icon on the left and a color indicator on the right that represents the priority you defined, will be visible in the active editor.
-You can also review and edit the comment in the comment explorer (see below).
+After adding a review note, your can directly edit and review it from the source by clicking on the annotation above the referenced lines(s).
+Parts in the code that are already commented will be decorated by a small underline and by an icon at the end of the referenced code part.
+You can also explore and edit/view all comments in the comment explorer (see below).
 
 ### Code Review Comment Explorer - update, view and delete comments
 
