@@ -1,15 +1,17 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 
-import { workspace, ExtensionContext, WorkspaceFolder, window, languages, DocumentFilter } from 'vscode';
-import { CommentLensProvider } from './comment-lens-provider';
+import { workspace, ExtensionContext, WorkspaceFolder, window } from 'vscode';
 import { getWorkspaceFolder } from './utils/workspace-util';
 import { WorkspaceContext } from './workspace';
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
 export function activate(context: ExtensionContext) {
-  let workspaceRoot: string = getWorkspaceFolder(workspace.workspaceFolders as WorkspaceFolder[]);
+  let workspaceRoot: string = getWorkspaceFolder(
+    workspace.workspaceFolders as WorkspaceFolder[],
+    window.activeTextEditor,
+  );
   const workspaceContext = new WorkspaceContext(context, workspaceRoot);
   workspaceContext.registerCommands();
 
@@ -18,9 +20,10 @@ export function activate(context: ExtensionContext) {
    */
   const activeTextEditorWorkspaceChangesRegistration = window.onDidChangeActiveTextEditor((editor) => {
     if (editor?.document.uri) {
-      const newWorkspaceRoot = getWorkspaceFolder([
-        workspace.getWorkspaceFolder(editor.document.uri),
-      ] as WorkspaceFolder[]);
+      const newWorkspaceRoot = getWorkspaceFolder(
+        [workspace.getWorkspaceFolder(editor.document.uri)] as WorkspaceFolder[],
+        window.activeTextEditor,
+      );
       // prevent refresh everything when workspace stays the same as before
       if (workspaceContext.workspaceRoot !== newWorkspaceRoot) {
         workspaceContext.workspaceRoot = newWorkspaceRoot;

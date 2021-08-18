@@ -1,6 +1,6 @@
 import * as path from 'path';
 import * as fs from 'fs';
-import { WorkspaceFolder, Position, Range, window } from 'vscode';
+import { WorkspaceFolder, Position, Range, TextEditor } from 'vscode';
 import { EOL } from 'os';
 import { CsvEntry } from '../model';
 
@@ -27,11 +27,11 @@ export const removeLeadingAndTrailingSlash = (s: string): string => removeLeadin
  * workspace root, assumed to be the first item in the array
  * @param folders the workspace folder object from vscode (via: `vscode.workspace.workspaceFolders`)
  */
-export const getWorkspaceFolder = (folders: WorkspaceFolder[] | undefined): string => {
+export const getWorkspaceFolder = (folders: WorkspaceFolder[] | undefined, activeTextEditor?: TextEditor): string => {
   if (!folders || !folders[0] || !folders[0].uri || !folders[0].uri.fsPath) {
     // Edge-Case (See Issue #108): Handle the case we are not actually in an workspace but a single file has been picked for review in VSCode
     // In this case, the review file will be stored next to this file in the same directory
-    const currentFile = window.activeTextEditor?.document.fileName;
+    const currentFile = activeTextEditor?.document.fileName;
     return currentFile ? path.dirname(currentFile) : '';
   }
   return folders[0].uri.fsPath;
@@ -198,15 +198,7 @@ export const sortCsvEntryForLines = (a: CsvEntry, b: CsvEntry): number => {
  * @return The name of the backup file
  */
 export const getBackupFilename = (reviewFilePath: string): string => {
-  const date = new Date();
-
-  const year = date.getFullYear();
-  const month = (date.getMonth() + 1).toLocaleString('en', { minimumIntegerDigits: 2 });
-  const hours = date.getHours().toLocaleString('en', { minimumIntegerDigits: 2 });
-  const minutes = date.getMinutes().toLocaleString('en', { minimumIntegerDigits: 2 });
-  const seconds = date.getSeconds().toLocaleString('en', { minimumIntegerDigits: 2 });
-
-  const timeStamp = `${year}-${month}-${date.getDate()}T${hours}-${minutes}-${seconds}`;
+  const timeStamp = new Date().toISOString().replace(/[:,\.]/g, '-');
   return path.join(path.dirname(reviewFilePath), path.parse(reviewFilePath).name + '-' + timeStamp + '.bak');
 };
 

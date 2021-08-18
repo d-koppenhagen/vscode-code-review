@@ -2,7 +2,7 @@ import * as assert from 'assert';
 import * as fs from 'fs';
 import { EOL } from 'os';
 
-import { WorkspaceFolder, Uri, Range, Position } from 'vscode';
+import { WorkspaceFolder, Uri, Range, Position, TextEdit, TextEditor } from 'vscode';
 
 import {
   toAbsolutePath,
@@ -22,6 +22,9 @@ import {
   unescapeEndOfLineFromCsv,
   rangeFromStringDefinition,
   standardizeFilename,
+  rangesFromStringDefinition,
+  splitStringDefinition,
+  getBackupFilename,
 } from '../../utils/workspace-util';
 import { createCommentFromObject, CsvEntry, CsvStructure } from '../../model';
 import { cleanCsvStorage, getCsvFileHeader } from '../../utils/storage-utils';
@@ -53,7 +56,6 @@ suite('Workspace Utils', () => {
     test('should return an empty string when undefined', () => {
       assert.strictEqual(getWorkspaceFolder(undefined), '');
     });
-
     test('should return the workspace folder string', () => {
       const workspaceFolders: WorkspaceFolder[] = [
         {
@@ -64,6 +66,15 @@ suite('Workspace Utils', () => {
       ];
       const folders = workspaceFolders as WorkspaceFolder[];
       assert.strictEqual(getWorkspaceFolder(folders), '/foo/bar/baz.js');
+    });
+    test('should fallback to activeTextEditor when defined', () => {
+      assert.strictEqual(getWorkspaceFolder([]), '');
+      assert.strictEqual(getWorkspaceFolder([], { document: {} } as TextEditor), '');
+      assert.strictEqual(getWorkspaceFolder([], { document: { fileName: '' } } as TextEditor), '');
+      assert.strictEqual(
+        getWorkspaceFolder([], { document: { fileName: '/foo/bar/baz.txt' } } as TextEditor),
+        '/foo/bar',
+      );
     });
   });
 
@@ -216,6 +227,39 @@ suite('Workspace Utils', () => {
       assert.strictEqual(result.start.character, 0);
       assert.strictEqual(result.end.line, 0);
       assert.strictEqual(result.end.character, 0);
+    });
+  });
+
+  suite('rangesFromStringDefinition', () => {
+    test('should return a range class based on the given string definition', () => {
+      const result = rangesFromStringDefinition('103:18-12:4|10:3-17:4|19:5-200:1');
+      assert.strictEqual(result.length, 3);
+
+      assert.strictEqual(result[0] instanceof Range, true);
+      assert.strictEqual(result[0].start.line, 11);
+      assert.strictEqual(result[0].start.character, 4);
+      assert.strictEqual(result[0].end.line, 102);
+      assert.strictEqual(result[0].end.character, 18);
+
+      assert.strictEqual(result[1] instanceof Range, true);
+      assert.strictEqual(result[1].start.line, 9);
+      assert.strictEqual(result[1].start.character, 3);
+      assert.strictEqual(result[1].end.line, 16);
+      assert.strictEqual(result[1].end.character, 4);
+
+      assert.strictEqual(result[2] instanceof Range, true);
+      assert.strictEqual(result[2].start.line, 18);
+      assert.strictEqual(result[2].start.character, 5);
+      assert.strictEqual(result[2].end.line, 199);
+      assert.strictEqual(result[2].end.character, 1);
+    });
+  });
+
+  suite('splitStringDefinition', () => {
+    test('should split a string definition by the "|" character', () => {
+      const result = splitStringDefinition('103:18-12:4|10:3-17:4|19:5-200:1');
+      assert.strictEqual(result.length, 3);
+      assert.deepStrictEqual(result, ['103:18-12:4', '10:3-17:4', '19:5-200:1']);
     });
   });
 
@@ -471,6 +515,25 @@ suite('Workspace Utils', () => {
       assert.ok(!isValidColorDefinition('#ABCDEF1'));
 
       assert.ok(!isValidColorDefinition('rgba(200, 200, 50)'));
+    });
+  });
+
+  suite('getBackupFilename', () => {
+    test('should return the actual filename with a current timestamp', () => {
+      const date = new Date();
+      const year = date.getFullYear();
+      const month = (date.getMonth() + 1).toLocaleString('en', { minimumIntegerDigits: 2 });
+
+      assert.ok(getBackupFilename('test-csv').startsWith('test-csv-'));
+      assert.ok(getBackupFilename('test-csv').includes(`${year.toString()}-`));
+      assert.ok(getBackupFilename('test-csv').includes(`${month.toString()}-`));
+      assert.ok(getBackupFilename('test-csv').endsWith('Z.bak'));
+    });
+  });
+
+  suite('standardizeFilename', () => {
+    test('should remove the workspace-part from the filename', () => {
+      assert.strictEqual(standardizeFilename('/foo/bar', '/foo/bar/baz.txt'), '/baz.txt');
     });
   });
 });
