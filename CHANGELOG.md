@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.28.0](https://github.com/d-koppenhagen/vscode-code-review/compare/v1.27.4...v1.28.0) (2021-08-18)
+
+
+### Features
+
+* allow to edit comments from the source ([eb08ba5](https://github.com/d-koppenhagen/vscode-code-review/commit/eb08ba55f4e726d07a88bbaf3b9991ac1a535389)), closes [#111](https://github.com/d-koppenhagen/vscode-code-review/issues/111)
+* display priority in code lens feature ([fc2c65f](https://github.com/d-koppenhagen/vscode-code-review/commit/fc2c65f89afbee4902e0cf77f7f625589acfbdc3))
+* use better decoration in source ([1c82dcf](https://github.com/d-koppenhagen/vscode-code-review/commit/1c82dcfa4f4cabe9471b9a39404b94390c12fc14))
+
 ### [1.27.4](https://github.com/d-koppenhagen/vscode-code-review/compare/v1.27.3...v1.27.4) (2021-08-16)
 
 
