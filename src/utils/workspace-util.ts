@@ -142,6 +142,20 @@ export const rangeFromStringDefinition = (input: string, offset: number = 0): Ra
 };
 
 /**
+ * Get the ranges for the lines string representation for CSV files
+ * @param input the input string (can have multiple blocks, joined by '|' character)
+ */
+export const rangesFromStringDefinition = (input: string, offset: number = 0): Range[] => {
+  return splitStringDefinition(input).map((str) => rangeFromStringDefinition(str, offset));
+};
+
+/**
+ * split strings like `0:12-15:14|2:34-19:23` by `|` character
+ * @param input the unsplitted string definition
+ */
+export const splitStringDefinition = (input: string): string[] => input.split('|').map((str) => str.trim());
+
+/**
  * Sort function to order the lines string representation for CSV files
  * @param localA compare value a
  * @param localB compare value b
@@ -156,8 +170,8 @@ export const sortLineSelections = (localA: string, localB: string): number =>
  * @see https://github.com/d-koppenhagen/vscode-code-review/issues/38
  */
 export const sortCsvEntryForLines = (a: CsvEntry, b: CsvEntry): number => {
-  const aSplit = a.lines.split('|');
-  const bSplit = b.lines.split('|');
+  const aSplit = splitStringDefinition(a.lines);
+  const bSplit = splitStringDefinition(b.lines);
 
   aSplit.sort(sortLineSelections);
   bSplit.sort(sortLineSelections);

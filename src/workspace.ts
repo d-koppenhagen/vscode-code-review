@@ -11,12 +11,14 @@ import {
   FileSystemWatcher,
   TextEditor,
   TextEditorDecorationType,
+  DocumentFilter,
+  languages,
 } from 'vscode';
 import * as path from 'path';
 import * as fs from 'fs';
 import { CheckFlag, FileGenerator } from './file-generator';
 import { ReviewCommentService } from './review-comment';
-import { rangeFromStringDefinition } from './utils/workspace-util';
+import { rangesFromStringDefinition } from './utils/workspace-util';
 import { WebViewComponent } from './webview';
 import { ExportFactory } from './export-factory';
 import { CommentsProvider, CommentView } from './comment-view';
@@ -25,6 +27,7 @@ import { CsvEntry } from './model';
 import { CommentListEntry } from './comment-list-entry';
 import { ImportFactory, ConflictMode } from './import-factory';
 import { displayGutterIcon } from './utils/editor-utils';
+import { CommentLensProvider } from './comment-lens-provider';
 
 const checkForCodeReviewFile = (fileName: string) => {
   commands.executeCommand('setContext', 'codeReview:displayCodeReviewExplorer', fs.existsSync(fileName));
@@ -55,6 +58,7 @@ export class WorkspaceContext {
   private exportAsJiraImportableCsvRegistration!: Disposable;
   private exportAsJsonRegistration!: Disposable;
   private importFromJsonRegistration!: Disposable;
+  private commentCodeLensProviderregistration!: Disposable;
 
   constructor(private context: ExtensionContext, public workspaceRoot: string) {
     // create a new file if not already exist
@@ -195,8 +199,7 @@ export class WorkspaceContext {
           (doc) => {
             window.showTextDocument(doc, ViewColumn.One).then((textEditor) => {
               if (csvRef) {
-                const rangesStringArray = csvRef.lines.split('|');
-                const ranges: Range[] = rangesStringArray.map((range) => rangeFromStringDefinition(range));
+                const ranges: Range[] = rangesFromStringDefinition(csvRef.lines);
                 textEditor.revealRange(ranges[0]);
                 this.webview.editComment(this.commentService, ranges, csvRef);
               }
@@ -409,6 +412,15 @@ export class WorkspaceContext {
         });
     });
 
+    /**
+     * support code lens for comment annotations in files
+     */
+    const ALL_FILES: DocumentFilter = { language: '*', scheme: 'file' };
+    this.commentCodeLensProviderregistration = languages.registerCodeLensProvider(
+      ALL_FILES,
+      new CommentLensProvider(this.exportFactory),
+    );
+
     this.updateSubscriptions();
   }
 
@@ -431,6 +443,7 @@ export class WorkspaceContext {
       this.exportAsJiraImportableCsvRegistration,
       this.exportAsJsonRegistration,
       this.importFromJsonRegistration,
+      this.commentCodeLensProviderregistration,
     );
   }
 
@@ -452,6 +465,7 @@ export class WorkspaceContext {
     this.exportAsJiraImportableCsvRegistration.dispose();
     this.exportAsJsonRegistration.dispose();
     this.importFromJsonRegistration.dispose();
+    this.commentCodeLensProviderregistration.dispose();
     this.updateSubscriptions();
   }
 

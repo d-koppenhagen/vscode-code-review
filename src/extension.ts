@@ -1,7 +1,8 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 
-import { workspace, ExtensionContext, WorkspaceFolder, window } from 'vscode';
+import { workspace, ExtensionContext, WorkspaceFolder, window, languages, DocumentFilter } from 'vscode';
+import { CommentLensProvider } from './comment-lens-provider';
 import { getWorkspaceFolder } from './utils/workspace-util';
 import { WorkspaceContext } from './workspace';
 

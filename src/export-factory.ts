@@ -25,6 +25,7 @@ import {
   rangeFromStringDefinition,
   escapeEndOfLineForCsv,
   standardizeFilename,
+  splitStringDefinition,
 } from './utils/workspace-util';
 import { ReviewFileExportSection, GroupBy, ExportFormat, ExportMap, Group } from './interfaces';
 import { CsvEntry, CsvStructure } from './model';
@@ -411,7 +412,7 @@ export class ExportFactory {
       row.category = row.category || 'Other';
       // sort when multiple line selection are related to one comment
       // e.g. '23:4-45:2|12:3-15:6|18:1-19:40' becomes: '12:3-15:6|18:1-19:40|23:4-45:2'
-      row.lines = row.lines.split('|').sort(sortLineSelections).join('|');
+      row.lines = splitStringDefinition(row.lines).sort(sortLineSelections).join('|');
       const match = reviewExportData.find((fileRef) => fileRef.group === row[groupAttribute]);
       if (match) {
         match.lines.push(row);
@@ -433,7 +434,7 @@ export class ExportFactory {
       lines = '';
     }
     let result = '';
-    const lineRanges = lines.split('|'); // split: 2:2-12:2|8:0-18:5
+    const lineRanges = splitStringDefinition(lines); // split: 2:2-12:2|8:0-18:5
     const filePath = toAbsolutePath(this.workspaceRoot, filename);
     if (lineRanges) {
       lineRanges.forEach((rangeString: string) => {

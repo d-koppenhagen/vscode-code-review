@@ -1,7 +1,6 @@
 import {
   DecorationOptions,
   ExtensionContext,
-  MarkdownString,
   Position,
   Range,
   Selection,
@@ -13,8 +12,7 @@ import {
 } from 'vscode';
 import * as path from 'path';
 import { CsvEntry } from '../model';
-import { rangeFromStringDefinition } from './workspace-util';
-import { EOL } from 'os';
+import { rangesFromStringDefinition } from './workspace-util';
 
 /**
  * Reset the selection in an editor
@@ -137,22 +135,8 @@ export const displayGutterIcon = (
 
   // build decoration options for each comment block
   csvEntries.forEach((entry) => {
-    const additionalDescription = entry.additional
-      ? `${EOL}${EOL}**Additional Information:**${EOL}${EOL}${entry.additional}`
-      : '';
-    entry.lines.split('|').forEach((range: string) => {
-      decorationOptions.push({
-        range: rangeFromStringDefinition(range),
-        hoverMessage: new MarkdownString(`## ${entry.title}${EOL}${EOL}${EOL}${entry.comment}${additionalDescription}`),
-        renderOptions: {
-          after: {
-            contentText: '•',
-            color: themeColorForPriority(entry.priority),
-            margin: '5px',
-            fontWeight: 'bold',
-          },
-        },
-      });
+    rangesFromStringDefinition(entry.lines).forEach((range: Range) => {
+      decorationOptions.push({ range });
     });
   });
   editor.setDecorations(decoration, decorationOptions);
