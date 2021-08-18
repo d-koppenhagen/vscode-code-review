@@ -124,11 +124,21 @@ export const displayGutterIcon = (
   editor: TextEditor,
 ): TextEditorDecorationType => {
   const decoration = window.createTextEditorDecorationType({
-    gutterIconPath: context.asAbsolutePath(path.join('dist', 'speech-bubble-light.svg')),
-    dark: {
-      gutterIconPath: context.asAbsolutePath(path.join('dist', 'speech-bubble-dark.svg')),
+    isWholeLine: false,
+    opacity: '0.9',
+    borderWidth: '1px',
+    borderColor: '#0f0f0f',
+    borderStyle: 'none none dashed none',
+    after: {
+      contentIconPath: context.asAbsolutePath(path.join('dist', 'speech-bubble-light.svg')),
+      margin: '5px',
     },
-    isWholeLine: true,
+    dark: {
+      after: {
+        contentIconPath: context.asAbsolutePath(path.join('dist', 'speech-bubble-dark.svg')),
+      },
+      borderColor: '#F6F6F6',
+    },
   });
 
   const decorationOptions: DecorationOptions[] = [];
