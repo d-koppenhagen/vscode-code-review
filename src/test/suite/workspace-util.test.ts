@@ -1,5 +1,6 @@
 import * as assert from 'assert';
 import * as fs from 'fs';
+import path from 'path';
 import { EOL } from 'os';
 
 import { WorkspaceFolder, Uri, Range, Position, TextEdit, TextEditor } from 'vscode';
@@ -65,7 +66,7 @@ suite('Workspace Utils', () => {
         },
       ];
       const folders = workspaceFolders as WorkspaceFolder[];
-      assert.strictEqual(getWorkspaceFolder(folders), '/foo/bar/baz.js');
+      assert.strictEqual(getWorkspaceFolder(folders), path.normalize('/foo/bar/baz.js'));
     });
     test('should fallback to activeTextEditor when defined', () => {
       assert.strictEqual(getWorkspaceFolder([]), '');
@@ -81,34 +82,35 @@ suite('Workspace Utils', () => {
   suite('toAbsolutePath', () => {
     test('should generate a harmonized absolute path', () => {
       let input = toAbsolutePath('/foo/bar', 'baz.js');
-      assert.strictEqual(input, '/foo/bar/baz.js');
+      let reRemoveDrivePrefix = /^[A-Za-z]:/g; // remove the drive letter prefix for tests in CI (e.g. "D:")
+      assert.strictEqual(input.replace(reRemoveDrivePrefix, ''), path.normalize('/foo/bar/baz.js'));
 
       input = toAbsolutePath('/foo/bar/', 'baz.js');
-      assert.strictEqual(input, '/foo/bar/baz.js');
+      assert.strictEqual(input.replace(reRemoveDrivePrefix, ''), path.normalize('/foo/bar/baz.js'));
 
       input = toAbsolutePath('/foo/bar/', '/baz.js');
-      assert.strictEqual(input, '/foo/bar/baz.js');
+      assert.strictEqual(input.replace(reRemoveDrivePrefix, ''), path.normalize('/foo/bar/baz.js'));
 
       input = toAbsolutePath('/foo/bar/', 'baz.js');
-      assert.strictEqual(input, '/foo/bar/baz.js');
+      assert.strictEqual(input.replace(reRemoveDrivePrefix, ''), path.normalize('/foo/bar/baz.js'));
 
       input = toAbsolutePath('/foo/bar/', '/a/baz.js');
-      assert.strictEqual(input, '/foo/bar/a/baz.js');
+      assert.strictEqual(input.replace(reRemoveDrivePrefix, ''), path.normalize('/foo/bar/a/baz.js'));
 
       input = toAbsolutePath('/foo/bar/', 'a/baz.js');
-      assert.strictEqual(input, '/foo/bar/a/baz.js');
+      assert.strictEqual(input.replace(reRemoveDrivePrefix, ''), path.normalize('/foo/bar/a/baz.js'));
 
       input = toAbsolutePath('/foo/bar/', 'a\\baz.js');
-      assert.strictEqual(input, '/foo/bar/a/baz.js');
+      assert.strictEqual(input.replace(reRemoveDrivePrefix, ''), path.normalize('/foo/bar/a/baz.js'));
 
       input = toAbsolutePath('/foo/bar/', '\\a\\baz.js');
-      assert.strictEqual(input, '/foo/bar/a/baz.js');
+      assert.strictEqual(input.replace(reRemoveDrivePrefix, ''), path.normalize('/foo/bar/a/baz.js'));
 
       input = toAbsolutePath('/foo/bar/', '\\a\\baz/');
-      assert.strictEqual(input, '/foo/bar/a/baz');
+      assert.strictEqual(input.replace(reRemoveDrivePrefix, ''), path.normalize('/foo/bar/a/baz'));
 
       input = toAbsolutePath('/foo/bar/', '\\b/a\\baz/');
-      assert.strictEqual(input, '/foo/bar/b/a/baz');
+      assert.strictEqual(input.replace(reRemoveDrivePrefix, ''), path.normalize('/foo/bar/b/a/baz'));
     });
   });
 
