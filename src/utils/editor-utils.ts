@@ -8,9 +8,8 @@ import {
   TextEditorDecorationType,
   ThemeColor,
   window,
-  workspace,
 } from 'vscode';
-import * as path from 'path';
+import path from 'path';
 import { CsvEntry } from '../model';
 import { rangesFromStringDefinition } from './workspace-util';
 
@@ -61,7 +60,7 @@ export const getSelectionStringDefinition = (editor: TextEditor): string => {
  */
 export const getSelectionRanges = (editor: TextEditor): Range[] => {
   return editor.selections.map((el) => {
-    return new Range(new Position(el.start.line, el.start.character), new Position(el.end.line, el.end.character));
+    return new Range(el.start, el.end);
   });
 };
 
@@ -75,9 +74,7 @@ const backgroundColorDefault = new ThemeColor(backgroundColorDefaultID);
  * @param editor The editor to work on
  * @return TextEditorDecorationType
  */
-export const colorizeSelection = (selections: Range[], editor: TextEditor): TextEditorDecorationType => {
-  const color = workspace.getConfiguration().get('code-review.codeSelectionBackgroundColor') as string;
-
+export const colorizeSelection = (selections: Range[], editor: TextEditor, color: string): TextEditorDecorationType => {
   let backgroundColor: string | ThemeColor;
   if (color === backgroundColorDefaultID) {
     backgroundColor = backgroundColorDefault;
@@ -103,7 +100,7 @@ export const colorizeSelection = (selections: Range[], editor: TextEditor): Text
  */
 export const isValidColorDefinition = (text: string): boolean => {
   // Matches #FFFFFF and #FFFFFFFF
-  const regexHex = /^#([0-9a-fA-F]{6})([0-9a-fA-F]{2})?$/gm;
+  const regexHex = /^#[0-9a-fA-F]{8}$|#[0-9a-fA-F]{6}$|#[0-9a-fA-F]{4}$|#[0-9a-fA-F]{3}$/gm;
   // Matches rgba(111, 222, 333, 0.5)
   const regexRgba = /^rgba\((\d{1,3}),\s*(\d{1,3}),\s*(\d{1,3}),\s*(1|(0(.\d{1,2})?))\)$/gm;
 

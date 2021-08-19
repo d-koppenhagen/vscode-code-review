@@ -8,7 +8,10 @@ import { CommentListEntry } from './comment-list-entry';
 import { clearSelection, colorizeSelection, getSelectionRanges } from './utils/editor-utils';
 
 export class WebViewComponent {
+  /** Store all configured categories */
   private categories: string[] = [];
+  /** Store the color for background-highlighting */
+  private highlightDecorationColor: string = '';
   /** Panel used to add/edit a comment */
   private panel: WebviewPanel | null = null;
   /** Reference to the working editor during note edition */
@@ -31,6 +34,9 @@ export class WebViewComponent {
 
   constructor(public context: ExtensionContext) {
     this.categories = workspace.getConfiguration().get('code-review.categories') as string[];
+    this.highlightDecorationColor = workspace
+      .getConfiguration()
+      .get('code-review.codeSelectionBackgroundColor') as string;
   }
 
   /**
@@ -64,7 +70,7 @@ export class WebViewComponent {
     // (see `ReviewCommentService::getSelectedLines()`).
     clearSelection(editor);
     // highlight selection
-    const decoration = colorizeSelection(selections, editor);
+    const decoration = colorizeSelection(selections, editor, this.highlightDecorationColor);
 
     // initialize new web tab
     const panel = this.showPanel('Edit code review comment', editor.document.fileName);
@@ -113,7 +119,7 @@ export class WebViewComponent {
   addComment(commentService: ReviewCommentService) {
     // highlight selected lines
     const editor = this.getWorkingEditor();
-    const decoration = colorizeSelection(getSelectionRanges(editor), editor);
+    const decoration = colorizeSelection(getSelectionRanges(editor), editor, this.highlightDecorationColor);
 
     const panel = this.showPanel('Add code review comment', editor.document.fileName);
 
