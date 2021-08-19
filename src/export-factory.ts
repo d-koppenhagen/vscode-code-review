@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import stripIndent from 'strip-indent';
-const Handlebars = require('handlebars');
+import handlebars from 'handlebars';
 
 import {
   workspace,
@@ -85,9 +85,9 @@ export class ExportFactory {
           }
 
           // Helper that decodes the Base64 content to be displayed in the handlebar
-          Handlebars.registerHelper('codeBlock', (code: string) => decode(code));
+          handlebars.registerHelper('codeBlock', (code: string) => decode(code));
           // compile template after helper is registered
-          const templateCompiled = Handlebars.compile(templateData);
+          const templateCompiled = handlebars.compile(templateData);
           // inject date into the template
           const htmlOut = templateCompiled(reviewExportData);
           fs.writeFileSync(outputFile, htmlOut);

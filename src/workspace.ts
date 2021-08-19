@@ -284,6 +284,7 @@ export class WorkspaceContext {
             canSelectMany: false,
             openLabel: 'Use template',
             filters: {
+              // eslint-disable-next-line @typescript-eslint/naming-convention
               Template: ['hbs', 'html', 'htm', 'handlebars'],
             },
           })
@@ -344,6 +345,7 @@ export class WorkspaceContext {
           canSelectMany: false,
           openLabel: 'Select comments file to import',
           filters: {
+            // eslint-disable-next-line @typescript-eslint/naming-convention
             Template: ['json'],
           },
         })
