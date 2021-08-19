@@ -60,14 +60,12 @@ export const getCsvFileHeader = (pathToFile: string): string => {
 export function setCsvFileLines(pathToFile: string, rows: string[], overwrite: boolean = true): boolean {
   // The last line of the file must always be terminated with an EOL
   const content = cleanCsvStorage(rows).join(EOL) + EOL;
-
   try {
     if (overwrite) {
       fs.writeFileSync(pathToFile, content);
     } else {
       fs.appendFileSync(pathToFile, content);
     }
-
     return true;
   } catch (error) {
     console.log('Error writing content of file', pathToFile, error);
