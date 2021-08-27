@@ -59,11 +59,27 @@
       }
 
       .secondary {
-        color: var(--vscode-button-prominentForeground);
-        background-color: var(--vscode-button-prominentBackground);
+        color: var(--vscode-button-secondaryForeground);
+        background-color: var(--vscode-button-secondaryBackground);
       }
       .secondary:hover {
-        background-color: var(--vscode-button-prominentHoverBackground);
+        background-color: var(--vscode-button-secondaryHoverBackground);
+      }
+
+      /* button group with CTAs */
+      .actions {
+        padding-top: 1em;
+        display: flex;
+        justify-content: space-between;
+        gap: 1em;
+      }
+      .actions-left {
+        display: flex;
+        gap: 1em;
+      }
+
+      #delete-button {
+        visibility: hidden;
       }
 
       /* traffic light */
@@ -155,12 +171,32 @@
           />
         </div>
         <div class="col-right">
-          <label for="priority">Priority</label>
-
-          <div id="traffic-light">
-            <input type="radio" class="traffic-light-color" name="traffic-light-color" id="prio-3" value="3" />
-            <input type="radio" class="traffic-light-color" name="traffic-light-color" id="prio-2" value="2" />
-            <input type="radio" class="traffic-light-color" name="traffic-light-color" id="prio-1" value="1" />
+          <label id="priority">Priority</label>
+          <div id="traffic-light" role="radiogroup" aria-labelledby="priority" tabindex="0">
+            <input
+              type="radio"
+              class="traffic-light-color"
+              name="traffic-light-color"
+              id="prio-3"
+              value="3"
+              aria-label="Priority: high"
+            />
+            <input
+              type="radio"
+              class="traffic-light-color"
+              name="traffic-light-color"
+              id="prio-2"
+              value="2"
+              aria-label="Priority: middle"
+            />
+            <input
+              type="radio"
+              class="traffic-light-color"
+              name="traffic-light-color"
+              id="prio-1"
+              value="1"
+              aria-label="Priority: low"
+            />
           </div>
 
           <p>
@@ -174,26 +210,40 @@
           </p>
         </div>
       </div>
-      <button
-        class="action-btn primary"
-        tabindex="0"
-        id="add"
-        role="button"
-        onclick="addNote()"
-        title="Save comment (Ctrl+Return)"
-      >
-        Add Note
-      </button>
+      <div class="actions">
+        <div class="actions-left">
+          <button
+            class="action-btn primary"
+            tabindex="0"
+            id="add"
+            role="button"
+            onclick="addNote()"
+            title="Save comment (Ctrl+Return)"
+          >
+            Add Note
+          </button>
 
-      <button
-        class="action-btn secondary"
-        tabindex="0"
-        role="button"
-        onclick="cancel()"
-        title="Abort comment changes (Ctrl+Esc)"
-      >
-        Cancel
-      </button>
+          <button
+            class="action-btn secondary"
+            tabindex="0"
+            role="button"
+            onclick="cancel()"
+            title="Abort comment changes (Ctrl+Esc)"
+          >
+            Cancel
+          </button>
+        </div>
+        <button
+          class="action-btn secondary"
+          tabindex="0"
+          id="delete-button"
+          role="button"
+          onclick="deleteComment()"
+          title="Delete this comment (Ctrl+Delete)"
+        >
+          Delete
+        </button>
+      </div>
     </form>
   </body>
 
@@ -201,6 +251,7 @@
     const vscode = acquireVsCodeApi();
 
     window.addEventListener('message', (event) => {
+      document.getElementById('delete-button').style.visibility = 'visible';
       document.getElementById('add').innerHTML = 'Update';
       document.getElementById('add').disabled = false;
       document.getElementById('title').value = event.data.comment.title || '';
@@ -227,6 +278,7 @@
 
     const KEYCODE_ENTER = 13;
     const KEYCODE_ESC = 27;
+    const KEYCODE_DELETE = 46;
 
     // Intercept keystrokes
     document.addEventListener(
@@ -245,6 +297,11 @@
             case KEYCODE_ESC:
               // Ctrl+Esc: comment abort
               cancel();
+              break;
+
+            case KEYCODE_DELETE:
+              // Ctrl+Delete: delete comment
+              deleteComment();
               break;
           }
         }
@@ -288,6 +345,13 @@
       vscode.postMessage({
         command: 'cancel',
         text: 'cancel',
+      });
+    }
+
+    function deleteComment() {
+      vscode.postMessage({
+        command: 'delete',
+        text: 'delete',
       });
     }
   </script>

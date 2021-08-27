@@ -67,21 +67,17 @@ export class ReviewCommentService {
     setCsvFileLines(this.reviewFile, rows);
   }
 
-  async deleteComment(entry: CommentListEntry) {
-    if (entry.id === '') {
-      return;
-    }
-
+  async deleteComment(id: string, label: string) {
     this.checkFileExists();
 
     // Get old content
     const rows = getCsvFileLinesAsArray(this.reviewFile);
-    const updateRowIndex = rows.findIndex((row) => row.includes(entry.id!));
+    const updateRowIndex = rows.findIndex((row) => row.includes(id));
     if (updateRowIndex > -1) {
       rows.splice(updateRowIndex, 1);
       setCsvFileLines(this.reviewFile, rows);
     } else {
-      window.showErrorMessage(`Update failed. Cannot delete comment '${entry.label}' in '${this.reviewFile}'.`);
+      window.showErrorMessage(`Update failed. Cannot delete comment '${label}' in '${this.reviewFile}'.`);
     }
   }
 

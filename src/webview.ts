@@ -60,7 +60,7 @@ export class WebViewComponent {
   }
 
   deleteComment(commentService: ReviewCommentService, entry: CommentListEntry) {
-    commentService.deleteComment(entry);
+    commentService.deleteComment(entry.id, entry.description);
     this.panel?.dispose();
   }
 
@@ -102,6 +102,20 @@ export class WebViewComponent {
 
           case 'cancel':
             panel.dispose();
+            break;
+
+          case 'delete':
+            window
+              .showInformationMessage('Do you really want to delete this comment?', ...['Yes', 'No'])
+              .then((answer) => {
+                if (answer === 'Yes') {
+                  commentService.deleteComment(data.id, data.title);
+                  panel.dispose();
+                } else {
+                  // on cancel: load webview again
+                  this.editComment(commentService, selections, data);
+                }
+              });
             break;
         }
       },
