@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.29.1](https://github.com/d-koppenhagen/vscode-code-review/compare/v1.29.0...v1.29.1) (2021-08-31)
+
+
+### Bug Fixes
+
+* place comment icon at the end of the first comment-related line ([f321716](https://github.com/d-koppenhagen/vscode-code-review/commit/f321716e21d9047da9663dfd14b674c74e7a1b44)), closes [#113](https://github.com/d-koppenhagen/vscode-code-review/issues/113)
+
 ## [1.29.0](https://github.com/d-koppenhagen/vscode-code-review/compare/v1.28.0...v1.29.0) (2021-08-27)
 
 
