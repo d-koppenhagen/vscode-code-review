@@ -1,9 +1,8 @@
 import * as assert from 'assert';
 import { beforeEach, afterEach } from 'mocha';
-import { Position, Range, Selection, TextEditor, TextEditorDecorationType, ThemeColor } from 'vscode';
+import { Position, Selection, TextEditor, TextEditorDecorationType, ThemeColor } from 'vscode';
 import {
   clearSelection,
-  colorizeSelection,
   getSelectionRanges,
   getSelectionStringDefinition,
   hasSelection,
@@ -73,16 +72,6 @@ suite('Editor Utils', () => {
       assert.strictEqual(ranges[0].start.character, 1);
       assert.strictEqual(ranges[0].end.line, 2);
       assert.strictEqual(ranges[0].end.character, 6);
-    });
-  });
-
-  suite('colorizeSelection', () => {
-    test('should colorize the given selection with decoration', () => {
-      const selections = [new Range(new Position(2, 5), new Position(2, 5))];
-      const decoration = colorizeSelection(selections, editorStub, '#fdfdfd');
-      assert.ok(decoration);
-      assert.deepStrictEqual(lastSetDecorationConf, decoration);
-      assert.deepStrictEqual(lastSetDecorationSelection, selections);
     });
   });
 

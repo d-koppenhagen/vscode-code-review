@@ -5,7 +5,8 @@ import * as fs from 'fs';
 import { ReviewCommentService } from './review-comment';
 import { createCommentFromObject, CsvEntry, CsvStructure } from './model';
 import { CommentListEntry } from './comment-list-entry';
-import { clearSelection, colorizeSelection, getSelectionRanges } from './utils/editor-utils';
+import { clearSelection, getSelectionRanges } from './utils/editor-utils';
+import { colorizedBackgroundDecoration } from './utils/decoration-utils';
 
 export class WebViewComponent {
   /** Store all configured categories */
@@ -70,7 +71,7 @@ export class WebViewComponent {
     // (see `ReviewCommentService::getSelectedLines()`).
     clearSelection(editor);
     // highlight selection
-    const decoration = colorizeSelection(selections, editor, this.highlightDecorationColor);
+    const decoration = colorizedBackgroundDecoration(selections, editor, this.highlightDecorationColor);
 
     // initialize new web tab
     const panel = this.showPanel('Edit code review comment', editor.document.fileName);
@@ -133,7 +134,7 @@ export class WebViewComponent {
   addComment(commentService: ReviewCommentService) {
     // highlight selected lines
     const editor = this.getWorkingEditor();
-    const decoration = colorizeSelection(getSelectionRanges(editor), editor, this.highlightDecorationColor);
+    const decoration = colorizedBackgroundDecoration(getSelectionRanges(editor), editor, this.highlightDecorationColor);
 
     const panel = this.showPanel('Add code review comment', editor.document.fileName);
 

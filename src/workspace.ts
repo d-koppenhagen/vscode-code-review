@@ -26,7 +26,7 @@ import { ReviewFileExportSection } from './interfaces';
 import { CsvEntry } from './model';
 import { CommentListEntry } from './comment-list-entry';
 import { ImportFactory, ConflictMode } from './import-factory';
-import { displayGutterIcon } from './utils/editor-utils';
+import { gutterDecorations } from './utils/decoration-utils';
 import { CommentLensProvider } from './comment-lens-provider';
 
 const checkForCodeReviewFile = (fileName: string) => {
@@ -42,7 +42,7 @@ export class WorkspaceContext {
   private webview: WebViewComponent;
   private commentsProvider!: CommentsProvider;
   private fileWatcher!: FileSystemWatcher;
-  private gutterIconDecoration!: TextEditorDecorationType;
+  private gutterIconDecorations: TextEditorDecorationType[] = [];
 
   private openSelectionRegistration!: Disposable;
   private addNoteRegistration!: Disposable;
@@ -98,17 +98,18 @@ export class WorkspaceContext {
   }
 
   highlightCommentsInActiveEditor(editor: TextEditor) {
-    // clear previous gutter decoration
-    if (this.gutterIconDecoration) {
-      this.gutterIconDecoration.dispose();
-    }
+    // clear previous gutter decorations
+    this.gutterIconDecorations.forEach((decoration) => {
+      decoration.dispose();
+    });
+
     this.exportFactory.getFilesContainingComments().then((fileEntries) => {
       const matchingFile = fileEntries.find((file) => editor.document.fileName.endsWith(file.label));
       if (matchingFile) {
         // iterate over all comments associated with this file
         this.exportFactory.getComments(matchingFile).then((comments) => {
           // comments[0] as we only need a single comment related to a line to identify the place where to put it
-          this.gutterIconDecoration = displayGutterIcon(this.context, comments[0].data.lines, editor);
+          this.gutterIconDecorations = gutterDecorations(this.context, comments[0].data.lines, editor);
         });
       }
     });

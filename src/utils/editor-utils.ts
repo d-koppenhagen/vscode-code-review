@@ -1,17 +1,4 @@
-import {
-  DecorationOptions,
-  ExtensionContext,
-  Position,
-  Range,
-  Selection,
-  TextEditor,
-  TextEditorDecorationType,
-  ThemeColor,
-  window,
-} from 'vscode';
-import path from 'path';
-import { CsvEntry } from '../model';
-import { rangesFromStringDefinition } from './workspace-util';
+import { Position, Range, Selection, TextEditor, TextEditorDecorationType, ThemeColor, window } from 'vscode';
 
 /**
  * Reset the selection in an editor
@@ -64,35 +51,6 @@ export const getSelectionRanges = (editor: TextEditor): Range[] => {
   });
 };
 
-const backgroundColorDefaultID = 'codereview.code.selection.background';
-const backgroundColorDefault = new ThemeColor(backgroundColorDefaultID);
-
-/**
- * Highlight a selection in an editor
- *
- * @param selections The selection to highlight
- * @param editor The editor to work on
- * @return TextEditorDecorationType
- */
-export const colorizeSelection = (selections: Range[], editor: TextEditor, color: string): TextEditorDecorationType => {
-  let backgroundColor: string | ThemeColor;
-  if (color === backgroundColorDefaultID) {
-    backgroundColor = backgroundColorDefault;
-  } else if (isValidColorDefinition(color)) {
-    backgroundColor = color;
-  } else {
-    console.log(`Invalid background color definition: ${color}`);
-    backgroundColor = backgroundColorDefault;
-  }
-
-  const decoration = window.createTextEditorDecorationType({
-    backgroundColor: backgroundColor,
-  });
-  editor.setDecorations(decoration, selections);
-
-  return decoration;
-};
-
 /**
  * Check if a color definition is valid or not
  *
@@ -105,49 +63,6 @@ export const isValidColorDefinition = (text: string): boolean => {
   const regexRgba = /^rgba\((\d{1,3}),\s*(\d{1,3}),\s*(\d{1,3}),\s*(1|(0(.\d{1,2})?))\)$/gm;
 
   return regexHex.test(text) || regexRgba.test(text);
-};
-
-/**
- * Highlight a matching review comment
- *
- * @param context The extensions context
- * @param selections The selection to highlight
- * @param editor The editor to work on
- * @return TextEditorDecorationType
- */
-export const displayGutterIcon = (
-  context: ExtensionContext,
-  csvEntries: CsvEntry[],
-  editor: TextEditor,
-): TextEditorDecorationType => {
-  const decoration = window.createTextEditorDecorationType({
-    isWholeLine: false,
-    opacity: '0.9',
-    borderWidth: '1px',
-    borderColor: '#0f0f0f',
-    borderStyle: 'none none dashed none',
-    after: {
-      contentIconPath: context.asAbsolutePath(path.join('dist', 'speech-bubble-light.svg')),
-      margin: '5px',
-    },
-    dark: {
-      after: {
-        contentIconPath: context.asAbsolutePath(path.join('dist', 'speech-bubble-dark.svg')),
-      },
-      borderColor: '#F6F6F6',
-    },
-  });
-
-  const decorationOptions: DecorationOptions[] = [];
-
-  // build decoration options for each comment block
-  csvEntries.forEach((entry) => {
-    rangesFromStringDefinition(entry.lines).forEach((range: Range) => {
-      decorationOptions.push({ range });
-    });
-  });
-  editor.setDecorations(decoration, decorationOptions);
-  return decoration;
 };
 
 /**
