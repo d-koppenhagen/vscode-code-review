@@ -33,7 +33,8 @@
   "keywords": [
     "code review",
     "review",
-    "comments"
+    "comments",
+    "multi-root ready"
   ],
   "contributes": {
     "commands": [
