@@ -7,12 +7,12 @@ import {
   removeTrailingSlash,
   startLineNumberFromStringDefinition,
   endLineNumberFromStringDefinition,
-  standardizeFilename,
+  relativeToWorkspace,
 } from './utils/workspace-util';
-import { CommentListEntry } from './comment-list-entry';
 import { getSelectionStringDefinition, hasSelection } from './utils/editor-utils';
 import { getCsvFileLinesAsArray, setCsvFileLines } from './utils/storage-utils';
 import path from 'path';
+import { commitId } from './vcs-provider';
 
 export class ReviewCommentService {
   constructor(private reviewFile: string, private workspaceRoot: string) {}
@@ -29,9 +29,11 @@ export class ReviewCommentService {
       return;
     }
 
-    comment.filename = standardizeFilename(this.workspaceRoot, editor!.document.fileName);
+    comment.filename = relativeToWorkspace(this.workspaceRoot, editor!.document.fileName);
 
-    setCsvFileLines(this.reviewFile, [CsvStructure.formatAsCsvLine(this.finalizeComment(comment))], false);
+    this.finalizeComment(comment, this.workspaceRoot).then((entry: CsvEntry) => {
+      setCsvFileLines(this.reviewFile, [CsvStructure.formatAsCsvLine(entry)], false);
+    });
   }
 
   /**
@@ -63,8 +65,10 @@ export class ReviewCommentService {
       return;
     }
 
-    rows[updateRowIndex] = CsvStructure.formatAsCsvLine(this.finalizeComment(comment));
-    setCsvFileLines(this.reviewFile, rows);
+    this.finalizeComment(comment, this.workspaceRoot).then((entry: CsvEntry) => {
+      rows[updateRowIndex] = CsvStructure.formatAsCsvLine(entry);
+      setCsvFileLines(this.reviewFile, rows);
+    });
   }
 
   async deleteComment(id: string, label: string) {
@@ -117,22 +121,20 @@ export class ReviewCommentService {
    * @param comment The comment to finalize
    * @return The finalized comment
    */
-  private finalizeComment(comment: CsvEntry): CsvEntry {
+  private async finalizeComment(comment: CsvEntry, workspaceRoot: string): Promise<CsvEntry> {
     const copy = { ...comment };
 
-    const gitDirectory = workspace.getConfiguration().get('code-review.gitDirectory') as string;
-    const gitRepositoryPath = path.resolve(this.workspaceRoot, gitDirectory);
-
     try {
-      copy.sha = gitCommitId({ cwd: gitRepositoryPath });
+      copy.revision = await commitId(comment.filename, workspaceRoot);
     } catch (error) {
-      copy.sha = '';
-      console.log('Not in a git repository. Leaving SHA empty', error);
+      copy.revision = '';
+      window.showErrorMessage(`Repository not under version control as configured in the plugin's settings.
+      Leaving revision empty.\n\Details: ${error}`);
     }
 
     const startAnker = startLineNumberFromStringDefinition(copy.lines);
     const endAnker = endLineNumberFromStringDefinition(copy.lines);
-    copy.url = this.remoteUrl(copy.sha, copy.filename, startAnker, endAnker);
+    copy.url = this.remoteUrl(copy.revision, copy.filename, startAnker, endAnker);
 
     return copy;
   }

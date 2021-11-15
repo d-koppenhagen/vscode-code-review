@@ -274,7 +274,7 @@
             "high"
           ]
         },
-        "code-review.gitDirectory": {
+        "code-review.vcs.git.directory": {
           "type": "string",
           "title": "The folder containing the Git repository",
           "markdownDescription": "Use this setting when the Git repository is located in an other directory than the workspace one.\nThe path can be **relative** (prefixed with `.` or `..`) or **absolute** (prefixed with `/` on Linux/MacOS or `{drive}:\\` on Windows).\nExamples:\n- `./app`: for {workspace}/app (Linux/MacOS)\n- `../app`: for a folder at the same level as the workspace (Linux/MacOS)\n- `/path/to/my/app`: for an absolute path (Linux/MacOS)\n- `C:\\Path\\To\\My\\App`: for an absolute path (Windows)",
@@ -326,6 +326,15 @@
           "title": "Code selection background color.",
           "markdownDescription": "Background color used to highlight the code associated to a comment.\nMust be specified using a hexadecimal representation - with or without the alpha part (`#C8C832` or `#C8C83226`) - or a `rgba()` definition.",
           "default": "codereview.code.selection.background"
+        },
+        "code-review.vcs.provider": {
+          "enum": [
+            "git",
+            "svn"
+          ],
+          "default": "git",
+          "title": "Version Control",
+          "description": "Version control used in this project. Necessary to determine the commit id to be attached to comments."
         }
       }
     },

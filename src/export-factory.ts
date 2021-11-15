@@ -25,7 +25,7 @@ import {
   sortLineSelections,
   rangeFromStringDefinition,
   escapeEndOfLineForCsv,
-  standardizeFilename,
+  relativeToWorkspace,
   splitStringDefinition,
 } from './utils/workspace-util';
 import { ReviewFileExportSection, GroupBy, ExportFormat, ExportMap, Group } from './interfaces';
@@ -105,7 +105,7 @@ export class ExportFactory {
    */
   private isCommentEligible(entry: CsvEntry): boolean {
     return (
-      (this.currentCommitId === null || entry.sha === this.currentCommitId) &&
+      (this.currentCommitId === null || entry.revision === this.currentCommitId) &&
       (this.currentFilename === null || entry.filename === this.currentFilename)
     );
   }
@@ -168,7 +168,7 @@ export class ExportFactory {
           const title = row.title ? row.title.substring(0, 255) : descShort;
           const fileRow = row.url ? `- file: [${row.filename}](${row.url})${EOL}` : `${row.filename}${EOL}`;
           const linesRow = `- lines: ${row.lines}${EOL}`;
-          const shaRow = row.sha ? `- SHA: ${row.sha}${EOL}${EOL}` : '';
+          const shaRow = row.revision ? `- SHA: ${row.revision}${EOL}${EOL}` : '';
           const commentSection = `## Comment${EOL}${row.comment}${EOL}`;
           const additional = row.additional ? `## Additional information${EOL}${row.additional}${EOL}` : '';
           const priority = row.priority ? `## Priority${EOL}${this.priorityName(row.priority)}${EOL}${EOL}` : '';
@@ -202,7 +202,7 @@ export class ExportFactory {
 
           const fileRow = row.url ? `- file: [${row.filename}](${row.url})${EOL}` : `${row.filename}${EOL}`;
           const linesRow = `- lines: ${row.lines}${EOL}`;
-          const shaRow = row.sha ? `- SHA: ${row.sha}${EOL}${EOL}` : '';
+          const shaRow = row.revision ? `- SHA: ${row.revision}${EOL}${EOL}` : '';
           const commentSection = `## Comment${EOL}${row.comment}${EOL}`;
           const additional = row.additional ? `## Additional information${EOL}${row.additional}${EOL}` : '';
           const priority = row.priority ? `## Priority${EOL}${this.priorityName(row.priority)}${EOL}${EOL}` : '';
@@ -241,7 +241,7 @@ export class ExportFactory {
 
           const fileRow = row.url ? `* file: [${row.filename}|${row.url}]${EOL}` : `${row.filename}${EOL}`;
           const linesRow = `* lines: ${row.lines}${EOL}`;
-          const shaRow = row.sha ? `* SHA: ${row.sha}${EOL}${EOL}` : '';
+          const shaRow = row.revision ? `* SHA: ${row.revision}${EOL}${EOL}` : '';
           const categorySection = `h2. Category${EOL}${row.category}${EOL}${EOL}`;
           const commentSection = `h2. Comment${EOL}${row.comment}${EOL}`;
           const additional = row.additional ? `h2. Additional information${EOL}${row.additional}${EOL}` : '';
@@ -251,7 +251,7 @@ export class ExportFactory {
 
           fs.appendFileSync(
             outputFile,
-            `"[code review] ${title}","${description}","${this.priorityName(row.priority)}","${row.sha}","${
+            `"[code review] ${title}","${description}","${this.priorityName(row.priority)}","${row.revision}","${
               row.filename
             }","${row.url}","${row.lines}","${row.title}","${row.category}","${row.comment}","${row.additional}"${EOL}`,
           );
@@ -581,7 +581,7 @@ export class ExportFactory {
     if (this.filterByFilename) {
       let filename = window.activeTextEditor?.document.fileName;
       if (filename) {
-        filename = standardizeFilename(this.workspaceRoot, filename);
+        filename = relativeToWorkspace(this.workspaceRoot, filename);
         if (this.currentFilename !== filename) {
           changedFile = true;
           this.currentFilename = filename;
