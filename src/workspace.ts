@@ -260,9 +260,6 @@ export class WorkspaceContext {
       const file = window.activeTextEditor.document.uri;
       workspace.getConfiguration().update('code-review.filename', file.fsPath, null, undefined);
 
-      // this.updateGenerator();
-      // this.setupFileWatcher();
-
       this.setup();
 
       window.showInformationMessage(`Set code-review file to: ${file.fsPath}`);

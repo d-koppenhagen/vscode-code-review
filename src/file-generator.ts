@@ -17,7 +17,7 @@ export enum CheckFlag {
 }
 
 export class FileGenerator {
-  private readonly defaultFileExtension = '.csv';
+  private readonly defaultFileExtension = 'csv';
   private defaultFileName = 'code-review';
 
   constructor(private workspaceRoot: string) {
@@ -47,17 +47,17 @@ export class FileGenerator {
     if (ext === '.') {
       return `${file}${suffix}`;
     }
-    if (ext.toLowerCase() === suffix) {
+    if (ext.toLowerCase() === `.${suffix}`) {
       return file;
     }
 
-    return `${path.basename(file, ext)}${suffix}`;
+    return `${path.basename(file, ext)}.${suffix}`;
   }
 
   /**
    * Try to create the code review file if not already exist
    *
-   * @return boolean true if the file was succesfuly created, false otherwise
+   * @return boolean true if the file was successfully created, false otherwise
    */
   public create(): boolean {
     if (fs.existsSync(this.absoluteReviewFilePath)) {
@@ -67,9 +67,7 @@ export class FileGenerator {
     } else {
       try {
         fs.writeFileSync(this.absoluteReviewFilePath, `${CsvStructure.headerLine}${EOL}`);
-        window.showInformationMessage(
-          `Code review file: '${this.defaultFileName}${this.defaultFileExtension}' successfully created.`,
-        );
+        window.showInformationMessage(`Code review file: '${this.absoluteReviewFilePath}' successfully created.`);
       } catch (err) {
         window.showErrorMessage(
           `Error when trying to create code review file: '${this.absoluteReviewFilePath}': ${err}`,
@@ -85,7 +83,7 @@ export class FileGenerator {
    * Check the content of the code review file
    *
    * @param flags The verifications to perform
-   * @return boolean true if the content was successfuly checked (and migrated if requested), false otherwise
+   * @return boolean true if the content was successfully checked (and migrated if requested), false otherwise
    */
   public check(flags: CheckFlag = CheckFlag.format): boolean {
     if (!fs.existsSync(this.absoluteReviewFilePath)) {
