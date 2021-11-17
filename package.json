@@ -108,6 +108,10 @@
           "light": "images/icons/filter-filename-on-light.svg",
           "dark": "images/icons/filter-filename-on-dark.svg"
         }
+      },
+      {
+        "command": "codeReview.setReviewFileSelectedCsv",
+        "title": "Code Review: Set selected CSV as current code review file"
       }
     ],
     "menus": {
@@ -195,7 +199,7 @@
           "type": "string",
           "title": "The filename for the csv file",
           "description": "The name will be used for the file with the *.csv extension that contains the stored code review notes",
-          "default": "code-review"
+          "default": "code-review.csv"
         },
         "code-review.baseUrl": {
           "type": "string",

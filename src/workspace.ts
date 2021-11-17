@@ -50,6 +50,7 @@ export class WorkspaceContext {
   private filterByCommitDisableRegistration!: Disposable;
   private filterByFilenameEnableRegistration!: Disposable;
   private filterByFilenameDisableRegistration!: Disposable;
+  private setReviewFileSelectedCsvRegistration!: Disposable;
   private deleteNoteRegistration!: Disposable;
   private exportAsHtmlWithDefaultTemplateRegistration!: Disposable;
   private exportAsHtmlWithHandlebarsTemplateRegistration!: Disposable;
@@ -133,7 +134,7 @@ export class WorkspaceContext {
    * setup review file watcher
    */
   setupFileWatcher() {
-    this.fileWatcher = workspace.createFileSystemWatcher(`**/${this.generator.reviewFileName}`);
+    this.fileWatcher = workspace.createFileSystemWatcher(`**/${this.generator.reviewFilePath}`);
   }
 
   /**
@@ -141,17 +142,17 @@ export class WorkspaceContext {
    */
   watchForFileChanges() {
     // refresh comment view on manual changes in the review file
-    checkForCodeReviewFile(this.generator.reviewFilePath);
+    checkForCodeReviewFile(this.generator.absoluteReviewFilePath);
     this.fileWatcher.onDidChange(() => {
       this.commentsProvider.refresh();
     });
     this.fileWatcher.onDidCreate(() => {
       this.commentsProvider.refresh();
-      checkForCodeReviewFile(this.generator.reviewFilePath);
+      checkForCodeReviewFile(this.generator.absoluteReviewFilePath);
     });
     this.fileWatcher.onDidDelete(() => {
       this.commentsProvider.refresh();
-      checkForCodeReviewFile(this.generator.reviewFilePath);
+      checkForCodeReviewFile(this.generator.absoluteReviewFilePath);
     });
   }
 
@@ -177,7 +178,7 @@ export class WorkspaceContext {
   }
 
   updateReviewCommentService() {
-    this.commentService = new ReviewCommentService(this.generator.reviewFilePath, this.workspaceRoot);
+    this.commentService = new ReviewCommentService(this.generator.absoluteReviewFilePath, this.workspaceRoot);
   }
 
   updateCommentsProvider() {
@@ -248,6 +249,23 @@ export class WorkspaceContext {
 
     this.filterByFilenameDisableRegistration = commands.registerCommand('codeReview.filterByFilenameDisable', () => {
       this.setFilterByFilename(false);
+    });
+
+    this.setReviewFileSelectedCsvRegistration = commands.registerCommand('codeReview.setReviewFileSelectedCsv', () => {
+      if (!window.activeTextEditor) {
+        window.showErrorMessage(`No CSV selected. Open a code-review CSV and re-run the command.`);
+        return;
+      }
+
+      const file = window.activeTextEditor.document.uri;
+      workspace.getConfiguration().update('code-review.filename', file.fsPath, null, undefined);
+
+      // this.updateGenerator();
+      // this.setupFileWatcher();
+
+      this.setup();
+
+      window.showInformationMessage(`Set code-review file to: ${file.fsPath}`);
     });
 
     /**
@@ -439,6 +457,7 @@ export class WorkspaceContext {
       this.filterByCommitDisableRegistration,
       this.filterByFilenameEnableRegistration,
       this.filterByFilenameDisableRegistration,
+      this.setReviewFileSelectedCsvRegistration,
       this.exportAsHtmlWithDefaultTemplateRegistration,
       this.exportAsHtmlWithHandlebarsTemplateRegistration,
       this.exportAsGitLabImportableCsvRegistration,
@@ -461,6 +480,7 @@ export class WorkspaceContext {
     this.filterByCommitDisableRegistration.dispose();
     this.filterByFilenameEnableRegistration.dispose();
     this.filterByFilenameDisableRegistration.dispose();
+    this.setReviewFileSelectedCsvRegistration.dispose();
     this.exportAsHtmlWithDefaultTemplateRegistration.dispose();
     this.exportAsHtmlWithHandlebarsTemplateRegistration.dispose();
     this.exportAsGitLabImportableCsvRegistration.dispose();

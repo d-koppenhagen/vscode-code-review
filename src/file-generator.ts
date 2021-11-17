@@ -1,5 +1,6 @@
 import * as fs from 'fs';
 import { EOL } from 'os';
+import path from 'path';
 import { workspace, window } from 'vscode';
 import { CsvStructure } from './model';
 import { getCsvFileHeader, getCsvFileLinesAsIterable, setCsvFileContent } from './utils/storage-utils';
@@ -26,12 +27,31 @@ export class FileGenerator {
     }
   }
 
-  public get reviewFileName(): string {
-    return `${this.defaultFileName}${this.defaultFileExtension}`;
+  public get reviewFilePath(): string {
+    return FileGenerator.withSuffix(this.defaultFileName, this.defaultFileExtension);
   }
 
-  public get reviewFilePath(): string {
-    return toAbsolutePath(this.workspaceRoot, this.reviewFileName);
+  public get absoluteReviewFilePath(): string {
+    if (path.isAbsolute(this.reviewFilePath)) {
+      return this.reviewFilePath;
+    } else {
+      return toAbsolutePath(this.workspaceRoot, this.reviewFilePath);
+    }
+  }
+
+  public static withSuffix(file: string, suffix: string): string {
+    const ext = path.extname(file);
+    if (ext === '') {
+      return `${file}.${suffix}`;
+    }
+    if (ext === '.') {
+      return `${file}${suffix}`;
+    }
+    if (ext.toLowerCase() === suffix) {
+      return file;
+    }
+
+    return `${path.basename(file, ext)}${suffix}`;
   }
 
   /**
@@ -40,18 +60,20 @@ export class FileGenerator {
    * @return boolean true if the file was succesfuly created, false otherwise
    */
   public create(): boolean {
-    if (fs.existsSync(this.reviewFilePath)) {
+    if (fs.existsSync(this.absoluteReviewFilePath)) {
       if (!this.check()) {
         return false;
       }
     } else {
       try {
-        fs.writeFileSync(this.reviewFilePath, `${CsvStructure.headerLine}${EOL}`);
+        fs.writeFileSync(this.absoluteReviewFilePath, `${CsvStructure.headerLine}${EOL}`);
         window.showInformationMessage(
           `Code review file: '${this.defaultFileName}${this.defaultFileExtension}' successfully created.`,
         );
       } catch (err) {
-        window.showErrorMessage(`Error when trying to create code review file: '${this.reviewFilePath}': ${err}`);
+        window.showErrorMessage(
+          `Error when trying to create code review file: '${this.absoluteReviewFilePath}': ${err}`,
+        );
         return false;
       }
     }
@@ -66,7 +88,7 @@ export class FileGenerator {
    * @return boolean true if the content was successfuly checked (and migrated if requested), false otherwise
    */
   public check(flags: CheckFlag = CheckFlag.format): boolean {
-    if (!fs.existsSync(this.reviewFilePath)) {
+    if (!fs.existsSync(this.absoluteReviewFilePath)) {
       return true;
     }
 
@@ -84,7 +106,7 @@ export class FileGenerator {
   }
 
   private checkFormat(): boolean {
-    const currentHeader = getCsvFileHeader(this.reviewFilePath);
+    const currentHeader = getCsvFileHeader(this.absoluteReviewFilePath);
     return currentHeader === CsvStructure.headerLine;
   }
 
@@ -94,7 +116,7 @@ export class FileGenerator {
    * @return boolean true if the migration was successful, false otherwise
    */
   private migrate(): boolean {
-    const currentHeader = getCsvFileHeader(this.reviewFilePath);
+    const currentHeader = getCsvFileHeader(this.absoluteReviewFilePath);
     if (currentHeader === CsvStructure.headerLine) {
       return true;
     }
@@ -115,7 +137,7 @@ export class FileGenerator {
     let fileContent = '';
     let isHeader = true;
     // ...And append them to each row of the file...
-    for (const line of getCsvFileLinesAsIterable(this.reviewFilePath)) {
+    for (const line of getCsvFileLinesAsIterable(this.absoluteReviewFilePath)) {
       if (isHeader) {
         fileContent += line + CsvStructure.separator + missingHeaders.join(CsvStructure.separator);
         isHeader = false;
@@ -131,11 +153,11 @@ export class FileGenerator {
     }
 
     // Make a copy of the previous file
-    fs.renameSync(this.reviewFilePath, getBackupFilename(this.reviewFilePath));
+    fs.renameSync(this.absoluteReviewFilePath, getBackupFilename(this.absoluteReviewFilePath));
 
     // Persist the file with the new format
-    if (!setCsvFileContent(this.reviewFilePath, fileContent)) {
-      window.showErrorMessage(`Error in writing new content to the file "${this.reviewFilePath}".`);
+    if (!setCsvFileContent(this.absoluteReviewFilePath, fileContent)) {
+      window.showErrorMessage(`Error in writing new content to the file "${this.absoluteReviewFilePath}".`);
 
       return false;
     }
