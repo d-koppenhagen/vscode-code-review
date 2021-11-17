@@ -8,6 +8,7 @@ import path from 'path';
 export enum VcsKind {
   git = 'git',
   svn = 'svn',
+  gitsvn = 'git-svn',
 }
 
 /**
@@ -27,12 +28,31 @@ async function svnCommitId(file: string, workspace: string): Promise<number> {
       { cwd: workspace },
       (error: Error, stdout: string, stderr: string) => {
         if (error) {
-          throw new Error(`Could not retrieve SVN revision for file: ${file}. Error(s): ${stderr}`);
+          reject(`Could not retrieve SVN revision for file: ${file}. Error(s): ${stderr}`);
         }
 
         resolve(Number(stdout.trim()));
       },
     );
+  });
+}
+
+async function gitsvnCommitId(file: string, workspace: string): Promise<number> {
+  return new Promise<number>((resolve, reject) => {
+    exec(`git svn info ${file}`, { cwd: workspace }, (error: Error, stdout: string, stderr: string) => {
+      if (error) {
+        reject(`Could not retrieve SVN revision for file: ${file}. Error(s): ${stderr}`);
+      }
+
+      const revRegex = /^Last Changed Rev: (\d+)\s*$/gm;
+      const matcher = stdout.trim().match(revRegex);
+
+      if (matcher) {
+        resolve(Number(matcher[1]));
+      }
+
+      reject('Could not derive SVN revision from git-svn history.');
+    });
   });
 }
 
@@ -54,6 +74,12 @@ export async function commitId(file: string, workspace: string): Promise<string>
     case VcsKind.svn: {
       return new Promise<string>((resolve, reject) => {
         svnCommitId(file, workspace).then((revision: number) => resolve(`${revision}`));
+      });
+    }
+
+    case VcsKind.gitsvn: {
+      return new Promise<string>((resolve, reject) => {
+        gitsvnCommitId(file, workspace).then((revision: number) => resolve(`${revision}`));
       });
     }
 

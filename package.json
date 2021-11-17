@@ -330,7 +330,8 @@
         "code-review.vcs.provider": {
           "enum": [
             "git",
-            "svn"
+            "svn",
+            "git-svn"
           ],
           "default": "git",
           "title": "Version Control",
