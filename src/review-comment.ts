@@ -12,7 +12,7 @@ import {
 import { getSelectionStringDefinition, hasSelection } from './utils/editor-utils';
 import { getCsvFileLinesAsArray, setCsvFileLines } from './utils/storage-utils';
 import path from 'path';
-import { commitId } from './vcs-provider';
+import { revision } from './vcs-provider';
 
 export class ReviewCommentService {
   constructor(private reviewFile: string, private workspaceRoot: string) {}
@@ -125,7 +125,7 @@ export class ReviewCommentService {
     const copy = { ...comment };
 
     try {
-      copy.revision = await commitId(comment.filename, workspaceRoot);
+      copy.revision = await revision(comment.filename, workspaceRoot);
     } catch (error) {
       copy.revision = '';
       window.showErrorMessage(`Repository not under version control as configured in the plugin's settings.

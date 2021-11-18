@@ -1,8 +1,6 @@
-import { PathLike } from 'fs';
 import { workspace } from 'vscode';
 const gitCommitId = require('git-commit-id');
 const { exec } = require('child_process');
-import * as vscode from 'vscode';
 import path from 'path';
 
 export enum VcsKind {
@@ -21,23 +19,37 @@ export enum VcsKind {
  * @returns SVN revision of `file`.
  * @throws Error message if SVN command-line client is not installed or SVN revision for file could not be retrieved.
  */
-async function svnCommitId(file: string, workspace: string): Promise<number> {
+export async function svnRevision(file: string, workspace: string): Promise<number> {
   return new Promise<number>((resolve, reject) => {
     exec(
       `svn info --show-item last-changed-revision ${file}`,
       { cwd: workspace },
-      (error: Error, stdout: string, stderr: string) => {
+      (error: Error | null, stdout: string, stderr: string) => {
         if (error) {
           reject(`Could not retrieve SVN revision for file: ${file}. Error(s): ${stderr}`);
         }
 
-        resolve(Number(stdout.trim()));
+        const maybeRevision = Number(stdout.trim());
+        if (isNaN(maybeRevision)) {
+          reject(`Unexpected command output: ${stdout}`);
+        }
+        resolve(maybeRevision);
       },
     );
   });
 }
 
-async function gitsvnCommitId(file: string, workspace: string): Promise<number> {
+/**
+ * Gets the svn revision for the given `file` from the underlying git-svn repository.
+ *
+ * @remark Requires git command-line client to be installed and in the user path.
+ *
+ * @param file Path to file to get the SVN revision for.
+ *
+ * @returns SVN revision of `file`.
+ * @throws Error message if git command-line client is not installed or SVN revision for file could not be retrieved.
+ */
+export async function gitsvnRevision(file: string, workspace: string): Promise<number> {
   return new Promise<number>((resolve, reject) => {
     exec(`git svn info ${file}`, { cwd: workspace }, (error: Error, stdout: string, stderr: string) => {
       if (error) {
@@ -45,10 +57,14 @@ async function gitsvnCommitId(file: string, workspace: string): Promise<number> 
       }
 
       const revRegex = /^Last Changed Rev: (\d+)\s*$/gm;
-      const matcher = stdout.trim().match(revRegex);
+      const matches = [...stdout.trim().matchAll(revRegex)];
 
-      if (matcher) {
-        resolve(Number(matcher[1]));
+      if (matches.length) {
+        const maybeRevision = Number(matches[0][1]);
+        if (isNaN(maybeRevision)) {
+          reject(`Unexpected command output: ${matches[0][1]}`);
+        }
+        resolve(maybeRevision);
       }
 
       reject('Could not derive SVN revision from git-svn history.');
@@ -61,7 +77,7 @@ async function gitsvnCommitId(file: string, workspace: string): Promise<number> 
  * @param file
  * @returns
  */
-export async function commitId(file: string, workspace: string): Promise<string> {
+export async function revision(file: string, workspace: string): Promise<string> {
   switch (vcsKind()) {
     case VcsKind.git: {
       // const gitDirectory = workspace.getConfiguration().get('code-review.gitDirectory') as string;
@@ -73,13 +89,13 @@ export async function commitId(file: string, workspace: string): Promise<string>
 
     case VcsKind.svn: {
       return new Promise<string>((resolve, reject) => {
-        svnCommitId(file, workspace).then((revision: number) => resolve(`${revision}`));
+        svnRevision(file, workspace).then((revision: number) => resolve(`${revision}`));
       });
     }
 
     case VcsKind.gitsvn: {
       return new Promise<string>((resolve, reject) => {
-        gitsvnCommitId(file, workspace).then((revision: number) => resolve(`${revision}`));
+        gitsvnRevision(file, workspace).then((revision: number) => resolve(`${revision}`));
       });
     }
 
