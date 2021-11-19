@@ -26,6 +26,7 @@ import {
   rangesFromStringDefinition,
   splitStringDefinition,
   getBackupFilename,
+  isProperSubpathOf,
 } from '../../utils/workspace-util';
 import { createCommentFromObject, CsvEntry, CsvStructure } from '../../model';
 import { cleanCsvStorage, getCsvFileHeader } from '../../utils/storage-utils';
@@ -50,6 +51,21 @@ suite('Workspace Utils', () => {
     test('should remove a trailing slash from a string', () => {
       assert.strictEqual(removeLeadingAndTrailingSlash('/foo/bar/'), 'foo/bar');
       assert.strictEqual(removeLeadingAndTrailingSlash('\\foo/bar\\'), 'foo/bar');
+    });
+  });
+
+  suite('isProperSubpathOf', () => {
+    test('should be true for proper subpaths', () => {
+      assert.strictEqual(isProperSubpathOf('/home/user/workspace/file', '/home/user/workspace'), true);
+      assert.strictEqual(isProperSubpathOf('/home/user/workspace/file', '/'), true);
+    });
+
+    test('should be false for improper subpaths', () => {
+      assert.strictEqual(isProperSubpathOf('/home/user/workspace/file', '/home/user/workspace/file'), false);
+    });
+
+    test('should be false for non-subpaths', () => {
+      assert.strictEqual(isProperSubpathOf('/home/user/workspace', '/home/user/workspace/file'), false);
     });
   });
 

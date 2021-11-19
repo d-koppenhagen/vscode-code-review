@@ -2,7 +2,7 @@
 // Import the module and reference it with the alias vscode in your code below
 
 import { workspace, ExtensionContext, WorkspaceFolder, window } from 'vscode';
-import { getWorkspaceFolder } from './utils/workspace-util';
+import { getWorkspaceFolder, isProperSubpathOf } from './utils/workspace-util';
 import { WorkspaceContext } from './workspace';
 
 // this method is called when your extension is activated
@@ -24,11 +24,20 @@ export function activate(context: ExtensionContext) {
         [workspace.getWorkspaceFolder(editor.document.uri)] as WorkspaceFolder[],
         window.activeTextEditor,
       );
-      // prevent refresh everything when workspace stays the same as before
-      if (workspaceContext.workspaceRoot !== newWorkspaceRoot) {
-        workspaceContext.workspaceRoot = newWorkspaceRoot;
-        workspaceContext.refreshCommands();
+
+      if (workspaceContext.workspaceRoot === newWorkspaceRoot) {
+        // Prevent refresh everything when workspace stays the same as before
+        return;
       }
+
+      if (isProperSubpathOf(newWorkspaceRoot, workspaceContext.workspaceRoot)) {
+        // Prevents workspace refresh when commenting on a file in a diff view which, apparently, points to a
+        // (temporary?) workspace inside the current one.
+        return;
+      }
+
+      workspaceContext.workspaceRoot = newWorkspaceRoot;
+      workspaceContext.refreshCommands();
     }
   });
 

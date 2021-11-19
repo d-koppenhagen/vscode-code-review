@@ -23,6 +23,17 @@ export const removeLeadingSlash = (s: string): string => s.replace(/^\/|^\\/, ''
 export const removeLeadingAndTrailingSlash = (s: string): string => removeLeadingSlash(removeTrailingSlash(s));
 
 /**
+ * Check is `dir` is a proper subpath of `base`.
+ * @param dir Directory to check if being a subpath of `base`.
+ * @param base Base directory.
+ * @returns Whether `dir` is a proper subpath of `base`.
+ */
+export const isProperSubpathOf = (dir: string, base: string): boolean => {
+  const relative = path.relative(base, dir);
+  return !!relative && !relative.startsWith('..') && !path.isAbsolute(relative);
+};
+
+/**
  * Get the path name of the workspace
  * workspace root, assumed to be the first item in the array
  * @param folders the workspace folder object from vscode (via: `vscode.workspace.workspaceFolders`)
