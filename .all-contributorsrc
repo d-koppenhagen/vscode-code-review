@@ -52,6 +52,15 @@
         "doc",
         "bug"
       ]
+    },
+    {
+      "login": "croesnick",
+      "name": "Carsten Rösnick-Neugebauer",
+      "avatar_url": "https://avatars.githubusercontent.com/u/307585?v=4",
+      "profile": "http://www.caero.de",
+      "contributions": [
+        "bug"
+      ]
     }
   ],
   "contributorsPerLine": 7,
