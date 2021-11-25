@@ -1,6 +1,3 @@
-import * as assert from 'assert';
-import * as process from 'child_process';
-import * as sinon from 'sinon';
 import * as chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import { stripIndents } from 'common-tags';
