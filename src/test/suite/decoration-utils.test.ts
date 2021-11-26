@@ -10,11 +10,7 @@ import {
   TextEditorDecorationType,
 } from 'vscode';
 import { CsvEntry } from '../../model';
-import {
-  colorizedBackgroundDecoration,
-  commentIconDecoration,
-  underlineDecoration,
-} from '../../utils/decoration-utils';
+import { colorizedBackgroundDecoration, Decorations } from '../../utils/decoration-utils';
 
 suite('Decoration Utils', () => {
   let editorStub: TextEditor;
@@ -37,12 +33,17 @@ suite('Decoration Utils', () => {
 
   suite('underlineDecoration', () => {
     test('should underline comments', () => {
+      const contextStub = {
+        asAbsolutePath: (p) => p,
+      } as ExtensionContext;
+      const deco = new Decorations(contextStub);
+
       const csvEntries = [{ lines: '1:0-3:4|9:0-11:3' } as CsvEntry, { lines: '17:3-19:2' } as CsvEntry];
-      const decoration = underlineDecoration(csvEntries, editorStub);
+      const decoration = deco.underlineDecoration(csvEntries, editorStub);
       const decorationOptions = lastSetDecorationSelection as DecorationOptions[];
 
-      assert.ok(decoration);
-      assert.deepStrictEqual(lastSetDecorationConf, decoration);
+      assert.ok(deco);
+      assert.deepStrictEqual(lastSetDecorationConf, deco.decorationDeclarationType);
 
       assert.strictEqual(decorationOptions[0].range.start.line, 0);
       assert.strictEqual(decorationOptions[0].range.start.character, 0);
@@ -66,12 +67,14 @@ suite('Decoration Utils', () => {
       const contextStub = {
         asAbsolutePath: (p) => p,
       } as ExtensionContext;
+      const deco = new Decorations(contextStub);
+
       const csvEntries = [{ lines: '1:0-3:4|9:0-11:3' } as CsvEntry, { lines: '17:3-19:2' } as CsvEntry];
-      const decoration = commentIconDecoration(contextStub, csvEntries, editorStub);
+      const decoration = deco.commentIconDecoration(csvEntries, editorStub);
       const decorationOptions = lastSetDecorationSelection as DecorationOptions[];
 
-      assert.ok(decoration);
-      assert.deepStrictEqual(lastSetDecorationConf, decoration);
+      assert.ok(deco);
+      assert.deepStrictEqual(lastSetDecorationConf, deco.commentDecorationType);
 
       assert.strictEqual(decorationOptions[0].range.start.line, 0);
       assert.strictEqual(decorationOptions[0].range.start.character, 1024);

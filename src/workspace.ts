@@ -26,7 +26,7 @@ import { ReviewFileExportSection } from './interfaces';
 import { CsvEntry } from './model';
 import { CommentListEntry } from './comment-list-entry';
 import { ImportFactory, ConflictMode } from './import-factory';
-import { gutterDecorations } from './utils/decoration-utils';
+import { Decorations } from './utils/decoration-utils';
 import { CommentLensProvider } from './comment-lens-provider';
 
 const checkForCodeReviewFile = (fileName: string) => {
@@ -42,7 +42,6 @@ export class WorkspaceContext {
   private webview: WebViewComponent;
   private commentsProvider!: CommentsProvider;
   private fileWatcher!: FileSystemWatcher;
-  private gutterIconDecorations: TextEditorDecorationType[] = [];
 
   private openSelectionRegistration!: Disposable;
   private addNoteRegistration!: Disposable;
@@ -60,6 +59,7 @@ export class WorkspaceContext {
   private exportAsJsonRegistration!: Disposable;
   private importFromJsonRegistration!: Disposable;
   private commentCodeLensProviderregistration!: Disposable;
+  private decorations: Decorations;
 
   constructor(private context: ExtensionContext, public workspaceRoot: string) {
     // create a new file if not already exist
@@ -71,6 +71,7 @@ export class WorkspaceContext {
       ? Uri.file(defaultConfigurationTemplatePath)
       : Uri.parse(context.asAbsolutePath(path.join('dist', 'template.default.hbs')));
 
+    this.decorations = new Decorations(context);
     this.setup();
   }
 
@@ -81,11 +82,20 @@ export class WorkspaceContext {
     this.updateReviewCommentService();
     this.updateCommentsProvider();
     this.setupFileWatcher();
+    this.watchConfiguration();
     this.watchGitSwitch();
     this.watchActiveEditor();
     this.watchForFileChanges();
     new CommentView(this.commentsProvider);
     this.updateDecorations();
+  }
+
+  watchConfiguration() {
+    workspace.onDidChangeConfiguration((event) => {
+      if (event.affectsConfiguration('code-review.filename')) {
+        this.refreshCommands();
+      }
+    });
   }
 
   watchActiveEditor() {
@@ -98,11 +108,14 @@ export class WorkspaceContext {
     });
   }
 
-  highlightCommentsInActiveEditor(editor: TextEditor) {
-    // clear previous gutter decorations
-    this.gutterIconDecorations.forEach((decoration) => {
-      decoration.dispose();
+  clearVisibleDecorations() {
+    window.visibleTextEditors.forEach((editor: TextEditor) => {
+      this.decorations.clear(editor);
     });
+  }
+
+  highlightCommentsInActiveEditor(editor: TextEditor) {
+    this.decorations.clear(editor);
 
     this.exportFactory.getFilesContainingComments().then((fileEntries) => {
       const matchingFile = fileEntries.find((file) => editor.document.fileName.endsWith(file.label));
@@ -110,7 +123,8 @@ export class WorkspaceContext {
         // iterate over all comments associated with this file
         this.exportFactory.getComments(matchingFile).then((comments) => {
           // comments[0] as we only need a single comment related to a line to identify the place where to put it
-          this.gutterIconDecorations = gutterDecorations(this.context, comments[0].data.lines, editor);
+          this.decorations.underlineDecoration(comments[0].data.lines, editor);
+          this.decorations.commentIconDecoration(comments[0].data.lines, editor);
         });
       }
     });
@@ -259,8 +273,6 @@ export class WorkspaceContext {
 
       const file = window.activeTextEditor.document.uri;
       workspace.getConfiguration().update('code-review.filename', file.fsPath, null, undefined);
-
-      this.setup();
 
       window.showInformationMessage(`Set code-review file to: ${file.fsPath}`);
     });
@@ -490,6 +502,7 @@ export class WorkspaceContext {
   }
 
   refreshCommands() {
+    this.clearVisibleDecorations();
     this.unregisterCommands();
     this.setup();
     this.registerCommands();
