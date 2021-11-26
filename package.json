@@ -130,12 +130,12 @@
         },
         {
           "command": "codeReview.exportAsGitLabImportableCsv",
-          "when": "view == code-review.list",
+          "when": "view == code-review.list && config.code-review.vcs.provider == git",
           "group": "export_source_control@1"
         },
         {
           "command": "codeReview.exportAsGitHubImportableCsv",
-          "when": "view == code-review.list",
+          "when": "view == code-review.list && config.code-review.vcs.provider == git",
           "group": "export_source_control@0"
         },
         {
@@ -160,12 +160,12 @@
         },
         {
           "command": "codeReview.filterByCommitEnable",
-          "when": "view == code-review.list && !isFilteredByCommit",
+          "when": "view == code-review.list && !isFilteredByCommit && config.code-review.vcs.provider == git",
           "group": "navigation@1"
         },
         {
           "command": "codeReview.filterByCommitDisable",
-          "when": "view == code-review.list && isFilteredByCommit",
+          "when": "view == code-review.list && isFilteredByCommit && config.code-review.vcs.provider == git",
           "group": "navigation@1"
         },
         {

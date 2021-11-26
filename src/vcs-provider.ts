@@ -1,7 +1,7 @@
-import { workspace } from 'vscode';
+import * as vscode from 'vscode';
 const gitCommitId = require('git-commit-id');
-const { exec } = require('child_process');
-import path from 'path';
+import { exec, ExecException } from 'child_process';
+import * as path from 'path';
 
 export enum VcsKind {
   git = 'git',
@@ -51,7 +51,7 @@ export async function svnRevision(file: string, workspace: string): Promise<numb
  */
 export async function gitsvnRevision(file: string, workspace: string): Promise<number> {
   return new Promise<number>((resolve, reject) => {
-    exec(`git svn info ${file}`, { cwd: workspace }, (error: Error, stdout: string, stderr: string) => {
+    exec(`git svn info ${file}`, { cwd: workspace }, (error, stdout: string, stderr: string) => {
       if (error) {
         reject(`Could not retrieve SVN revision for file: ${file}. Error(s): ${stderr}`);
       }
@@ -72,6 +72,17 @@ export async function gitsvnRevision(file: string, workspace: string): Promise<n
   });
 }
 
+export async function gitRevision(_file: string, workspace: string): Promise<string> {
+  const gitDirectory = (vscode.workspace.getConfiguration().get('code-review.vcs.git.directory') as string) ?? '.';
+  const gitRepositoryPath = path.resolve(workspace, gitDirectory);
+
+  try {
+    return Promise.resolve(gitCommitId({ cwd: gitRepositoryPath }));
+  } catch (error) {
+    return Promise.reject(error);
+  }
+}
+
 /**
  *
  * @param file
@@ -80,11 +91,7 @@ export async function gitsvnRevision(file: string, workspace: string): Promise<n
 export async function revision(file: string, workspace: string): Promise<string> {
   switch (vcsKind()) {
     case VcsKind.git: {
-      // const gitDirectory = workspace.getConfiguration().get('code-review.gitDirectory') as string;
-      // const gitRepositoryPath = path.resolve(this.workspaceRoot, gitDirectory);
-
-      const fileUri = path.parse(file.toString());
-      return Promise.resolve(gitCommitId({ cwd: workspace }));
+      return gitRevision(file, workspace);
     }
 
     case VcsKind.svn: {
@@ -110,7 +117,7 @@ export async function revision(file: string, workspace: string): Promise<string>
  * @returns
  */
 export function vcsKind(): VcsKind {
-  const provider = workspace.getConfiguration().get<string>('code-review.vcs.provider');
+  const provider = vscode.workspace.getConfiguration().get<string>('code-review.vcs.provider');
 
   switch (provider) {
     case 'git':

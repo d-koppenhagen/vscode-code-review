@@ -11,7 +11,6 @@ import {
 } from './utils/workspace-util';
 import { getSelectionStringDefinition, hasSelection } from './utils/editor-utils';
 import { getCsvFileLinesAsArray, setCsvFileLines } from './utils/storage-utils';
-import path from 'path';
 import { revision } from './vcs-provider';
 
 export class ReviewCommentService {
