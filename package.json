@@ -200,13 +200,13 @@
         "code-review.baseUrl": {
           "type": "string",
           "title": "The base URL for a referenced file without the SHA",
-          "description": "The base URL is used to build a full link to the file (e.g. \"https://github.com/foo/bar/blob/b0b4...0175/src/file.txt#L12-L19\"). It will be appended with the GIT SHA if available followed by the relative path of the file and the selected lines as an anker. This setting is skipped when the setting `code-review.customUrl` is defined.",
+          "description": "The base URL is used to build a full link to the file (e.g. \"https://github.com/foo/bar/blob/b0b4...0175/src/file.txt#L12-L19\"). It will be appended with the GIT SHA if available followed by the relative path of the file and the selected lines as an anchor. This setting is skipped when the setting `code-review.customUrl` is defined.",
           "default": ""
         },
         "code-review.customUrl": {
           "type": "string",
           "title": "The URL mask with placeholders for a referenced file without the SHA",
-          "description": "The custom URL is used to build a full link to the file.\nThe following placeholders are available:\n - {sha}: insert the SHA ref for the file\n - {file}: insert the file name/path\n - {start}: insert the start of the lines selection as an anker\n - {end}: insert the end of the lines selection as an anker\ne.g. \"https://gitlab.com/foo/bar/baz/-/blob/{sha}/src/{file}#L{start}-{end}\" becomes this in the end: \"https://gitlab.com/foo/bar/baz/-/blob/b0b4...0175/src/file.txt#L12-19\"",
+          "description": "The custom URL is used to build a full link to the file.\nThe following placeholders are available:\n - {sha}: insert the SHA ref for the file\n - {file}: insert the file name/path\n - {start}: insert the start of the lines selection as an anchor\n - {end}: insert the end of the lines selection as an anchor\ne.g. \"https://gitlab.com/foo/bar/baz/-/blob/{sha}/src/{file}#L{start}-{end}\" becomes this in the end: \"https://gitlab.com/foo/bar/baz/-/blob/b0b4...0175/src/file.txt#L12-19\"",
           "default": ""
         },
         "code-review.categories": {

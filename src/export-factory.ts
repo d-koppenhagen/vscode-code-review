@@ -169,13 +169,13 @@ export class ExportFactory {
           const title = row.title ? row.title.substring(0, 255) : descShort;
           const fileRow = row.url ? `- file: [${row.filename}](${row.url})${EOL}` : `${row.filename}${EOL}`;
           const linesRow = `- lines: ${row.lines}${EOL}`;
-          const shaRow = row.revision ? `- SHA: ${row.revision}${EOL}${EOL}` : '';
+          const revRow = row.revision ? `- SHA: ${row.revision}${EOL}${EOL}` : '';
           const commentSection = `## Comment${EOL}${row.comment}${EOL}`;
           const additional = row.additional ? `## Additional information${EOL}${row.additional}${EOL}` : '';
           const priority = row.priority ? `## Priority${EOL}${this.priorityName(row.priority)}${EOL}${EOL}` : '';
           const category = row.category ? `## Category${EOL}${row.category}${EOL}${EOL}` : '';
           const code = row.code ? `${EOL}## Source Code${EOL}${EOL}\`\`\`${EOL}${row.code}\`\`\`${EOL}` : '';
-          const description = `${priority}${category}## Affected${EOL}${fileRow}${linesRow}${shaRow}${commentSection}${EOL}${additional}${code}`;
+          const description = `${priority}${category}## Affected${EOL}${fileRow}${linesRow}${revRow}${commentSection}${EOL}${additional}${code}`;
           fs.appendFileSync(outputFile, `"[code review] ${title}","${description}"${EOL}`);
           return row;
         },
@@ -203,14 +203,14 @@ export class ExportFactory {
 
           const fileRow = row.url ? `- file: [${row.filename}](${row.url})${EOL}` : `${row.filename}${EOL}`;
           const linesRow = `- lines: ${row.lines}${EOL}`;
-          const shaRow = row.revision ? `- SHA: ${row.revision}${EOL}${EOL}` : '';
+          const revRow = row.revision ? `- SHA: ${row.revision}${EOL}${EOL}` : '';
           const commentSection = `## Comment${EOL}${row.comment}${EOL}`;
           const additional = row.additional ? `## Additional information${EOL}${row.additional}${EOL}` : '';
           const priority = row.priority ? `## Priority${EOL}${this.priorityName(row.priority)}${EOL}${EOL}` : '';
           const category = row.category ? `## Category${EOL}${row.category}${EOL}${EOL}` : '';
           const code = row.code ? `${EOL}## Source Code${EOL}${EOL}\`\`\`${EOL}${row.code}\`\`\`${EOL}` : '';
 
-          const description = `${priority}${category}## Affected${EOL}${fileRow}${linesRow}${shaRow}${commentSection}${EOL}${additional}${code}`;
+          const description = `${priority}${category}## Affected${EOL}${fileRow}${linesRow}${revRow}${commentSection}${EOL}${additional}${code}`;
 
           fs.appendFileSync(outputFile, `"[code review] ${title}","${description}","code-review","open",""${EOL}`);
           return row;
@@ -228,7 +228,7 @@ export class ExportFactory {
         writeFileHeader: (outputFile: string) => {
           fs.writeFileSync(
             outputFile,
-            `Summary,Description,Priority,sha,filename,url,lines,title,category,comment,additional${EOL}`,
+            `Summary,Description,Priority,revision,filename,url,lines,title,category,comment,additional${EOL}`,
           );
         },
         handleData: (outputFile: string, row: CsvEntry): CsvEntry => {
@@ -242,13 +242,13 @@ export class ExportFactory {
 
           const fileRow = row.url ? `* file: [${row.filename}|${row.url}]${EOL}` : `${row.filename}${EOL}`;
           const linesRow = `* lines: ${row.lines}${EOL}`;
-          const shaRow = row.revision ? `* SHA: ${row.revision}${EOL}${EOL}` : '';
+          const revRow = row.revision ? `* SHA: ${row.revision}${EOL}${EOL}` : '';
           const categorySection = `h2. Category${EOL}${row.category}${EOL}${EOL}`;
           const commentSection = `h2. Comment${EOL}${row.comment}${EOL}`;
           const additional = row.additional ? `h2. Additional information${EOL}${row.additional}${EOL}` : '';
           const code = row.code ? `${EOL}h2. Source Code${EOL}${EOL}{code}${EOL}${row.code}{code}${EOL}` : '';
 
-          const description = `h2. Affected${EOL}${fileRow}${linesRow}${shaRow}${categorySection}${commentSection}${EOL}${additional}${code}`;
+          const description = `h2. Affected${EOL}${fileRow}${linesRow}${revRow}${categorySection}${commentSection}${EOL}${additional}${code}`;
 
           fs.appendFileSync(
             outputFile,

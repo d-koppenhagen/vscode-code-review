@@ -131,21 +131,21 @@ export class ReviewCommentService {
       Leaving revision empty.\n\Details: ${error}`);
     }
 
-    const startAnker = startLineNumberFromStringDefinition(copy.lines);
-    const endAnker = endLineNumberFromStringDefinition(copy.lines);
-    copy.url = this.remoteUrl(copy.revision, copy.filename, startAnker, endAnker);
+    const startAnchor = startLineNumberFromStringDefinition(copy.lines);
+    const endAnchor = endLineNumberFromStringDefinition(copy.lines);
+    copy.url = this.remoteUrl(copy.revision, copy.filename, startAnchor, endAnchor);
 
     return copy;
   }
 
   /**
    * Build the remote URL
-   * @param sha a git SHA that's included in the URL
+   * @param revision a git revision that's included in the URL
    * @param filePath the relative file path
    * @param start the first line from the first selection
    * @param end the last line from the first selection
    */
-  private remoteUrl(sha: string, filePath: string, start?: number, end?: number) {
+  private remoteUrl(revision: string, filePath: string, start?: number, end?: number) {
     const customUrl = workspace.getConfiguration().get('code-review.customUrl') as string;
     const baseUrl = workspace.getConfiguration().get('code-review.baseUrl') as string;
 
@@ -155,15 +155,15 @@ export class ReviewCommentService {
       return '';
     } else if (customUrl) {
       return customUrl
-        .replace('{sha}', sha)
+        .replace('{revision}', revision)
         .replace('{file}', filePathWithoutLeadingAndTrailingSlash)
         .replace('{start}', start ? start.toString() : '0')
         .replace('{end}', end ? end.toString() : '0');
     } else {
       const baseUrlWithoutTrailingSlash = removeTrailingSlash(baseUrl);
-      const shaPart = sha ? `${sha}/` : '';
-      const ankerPart = start && end ? `#L${start}-L${end}` : '';
-      return `${baseUrlWithoutTrailingSlash}/${shaPart}${filePathWithoutLeadingAndTrailingSlash}${ankerPart}`;
+      const revPart = revision ? `${revision}/` : '';
+      const anchorPart = start && end ? `#L${start}-L${end}` : '';
+      return `${baseUrlWithoutTrailingSlash}/${revPart}${filePathWithoutLeadingAndTrailingSlash}${anchorPart}`;
     }
   }
 

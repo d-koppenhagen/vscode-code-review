@@ -35,7 +35,8 @@ This extension allows you to create a code review file you can hand over to a cu
   - [`code-review.privateCommentIcon`](#code-reviewprivatecommenticon)
   - [`code-review.defaultTemplatePath`](#code-reviewdefaulttemplatepath)
   - [`code-review.priorities`](#code-reviewpriorities)
-  - [`code-review.gitDirectory`](#code-reviewgitdirectory)
+  - [`code-review.vcs.git.provider`](#code-reviewvcsgitprovider)
+  - [`code-review.vcs.git.directory`](#code-reviewvcsgitdirectory)
   - [`code-review.filterCommentsByCommit`](#code-reviewfiltercommentsbycommit)
   - [`code-review.filterCommentsByFilename`](#code-reviewfiltercommentsbyfilename)
   - [`code-review.importBackup`](#code-reviewimportbackup)
@@ -64,7 +65,7 @@ A file `code-review.csv` will be created containing your comments and the file a
 The result will look like this:
 
 ```csv
-sha,filename,url,lines,title,comment,priority,additional
+revision,filename,url,lines,title,comment,priority,additional
 "b45d2822d6c87770af520d7e2acc49155f0b4362","/test/a.txt","https://github.com/d-koppenhagen/vscode-code-review/tree/b45d2822d6c87770af520d7e2acc49155f0b4362/test/a.txt","1:2-4:3","foo","this should be refactored","Complexity",1,"see http://foo.bar"
 "b45d2822d6c87770af520d7e2acc49155f0b4362","/test/b.txt","https://github.com/d-koppenhagen/vscode-code-review/tree/b45d2822d6c87770af520d7e2acc49155f0b4362/test/b.txt","1:0-1:4|4:0-4:3","bar","wrong format","Best Practices",1,""
 ```
@@ -166,7 +167,7 @@ By default `"code-review"` is used.
 ### `code-review.baseUrl`
 
 The base-URL is used to build a full link to the file.
-It will be appended with the git SHA if available followed by the relative path of the file and the selected lines as an anker.
+It will be appended with the revision if available followed by the relative path of the file and the selected lines as an anchor.
 This setting is skipped when the setting `code-review.customUrl` is defined which is more configurable.
 
 ```json
@@ -182,14 +183,14 @@ This setting would lead into something like this: `https://github.com/foo/bar/bl
 The custom URL is used to build a full link to the file.
 The following placeholders are available:
 
-- `{sha}`: insert the SHA ref for the file
+- `{revision}`: insert the file's revision
 - `{file}`: insert the file name/path
-- `{start}`: insert the start of the lines selection as an anker
-- `{end}`: insert the end of the lines selection as an anker
+- `{start}`: insert the start of the lines selection as an anchor
+- `{end}`: insert the end of the lines selection as an anchor
 
 ```json
 {
-  "code-review.customUrl": "https://gitlab.com/foo/bar/baz/-/blob/{sha}/src/{file}#L{start}-{end}"
+  "code-review.customUrl": "https://gitlab.com/foo/bar/baz/-/blob/{revision}/src/{file}#L{start}-{end}"
 }
 ```
 
@@ -305,7 +306,17 @@ The defaults are listed below:
 }
 ```
 
-### `code-review.gitDirectory`
+### `code-review.vcs.git.provider`
+
+Permits selecting the version control system (VCS) used by your repositories.
+The default is git, but svn and git-svn are also supported.
+
+Note on git-svn: This provider is kind of a hybrid. It extracts the svn file revision through the git-svn-cloned repository.
+Use case for this provider is an only temporarily available svn repository (e.g., only accessible from a certain
+physical location, like an offline-in-house network) that has been locally cloned with git-svn. The interesting revision
+number then is not the git sha as it this is only local information, but the underlying svn revision information. 
+
+### `code-review.vcs.git.directory`
 
 Use this setting when the Git repository is located in an other directory than the workspace one.
 The path can be **relative** (prefixed with `.` or `..`) or **absolute** (prefixed with `/` on Linux/MacOS or `{drive}:\` on Windows).
@@ -316,7 +327,7 @@ Examples:
 
   ```json
   {
-    "code-review.gitDirectory": "./app"
+    "code-review.vcs.git.directory": "./app"
   }
   ```
 
@@ -324,7 +335,7 @@ Examples:
 
   ```json
   {
-    "code-review.gitDirectory": "../app"
+    "code-review.vcs.git.directory": "../app"
   }
   ```
 
@@ -332,7 +343,7 @@ Examples:
 
   ```json
   {
-    "code-review.gitDirectory": "/path/to/my/app"
+    "code-review.vcs.git.directory": "/path/to/my/app"
   }
   ```
 
@@ -340,7 +351,7 @@ Examples:
 
   ```json
   {
-    "code-review.gitDirectory": "C:\\Path\\To\\My\\App"
+    "code-review.vcs.git.directory": "C:\\Path\\To\\My\\App"
   }
   ```
 
@@ -446,7 +457,7 @@ To create a code review with a report you should install this extension and go o
 - Download / clone the customer code and checkout the correct branch
 - Open the project in vscode
 - [Configure the `baseURL` option](#extension-settings) with the remote URL
-  - this will cause that the link in the report is generate with the correct target including SHA, file and line reference
+  - this will cause that the link in the report is generate with the correct target including revision, file and line reference
 - [Start creating your review notes](#create-review-notes).
 - [Export the report](#export-created-notes-as-html).
   - [Probably create an own template first](#custom-handlebars-template)
