@@ -124,6 +124,8 @@ export function vcsKind(): VcsKind {
       return VcsKind.git;
     case 'svn':
       return VcsKind.svn;
+    case 'git-svn':
+      return VcsKind.gitsvn;
     default:
       throw new Error(`Unsupported VCS provider: ${provider}`);
   }
