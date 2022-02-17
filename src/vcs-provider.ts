@@ -54,6 +54,7 @@ export async function gitsvnRevision(file: string, workspace: string): Promise<n
     exec(`git svn info ${file}`, { cwd: workspace }, (error, stdout: string, stderr: string) => {
       if (error) {
         reject(`Could not retrieve SVN revision for file: ${file}. Error(s): ${stderr}`);
+        return;
       }
 
       const revRegex = /^Last Changed Rev: (\d+)\s*$/gm;
@@ -63,11 +64,14 @@ export async function gitsvnRevision(file: string, workspace: string): Promise<n
         const maybeRevision = Number(matches[0][1]);
         if (isNaN(maybeRevision)) {
           reject(`Unexpected command output: ${matches[0][1]}`);
+        } else {
+          resolve(maybeRevision);
         }
-        resolve(maybeRevision);
+      } else {
+        reject('Could not derive SVN revision from git-svn history.');
       }
 
-      reject('Could not derive SVN revision from git-svn history.');
+      return;
     });
   });
 }
@@ -95,15 +99,13 @@ export async function revision(file: string, workspace: string): Promise<string>
     }
 
     case VcsKind.svn: {
-      return new Promise<string>((resolve, reject) => {
-        svnRevision(file, workspace).then((revision: number) => resolve(`${revision}`));
-      });
+      let revision = await svnRevision(file, workspace);
+      return `${revision}`;
     }
 
     case VcsKind.gitsvn: {
-      return new Promise<string>((resolve, reject) => {
-        gitsvnRevision(file, workspace).then((revision: number) => resolve(`${revision}`));
-      });
+      let revision = await gitsvnRevision(file, workspace);
+      return `${revision}`;
     }
 
     default:
