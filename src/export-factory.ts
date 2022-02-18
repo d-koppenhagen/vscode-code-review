@@ -1,6 +1,6 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import stripIndent from 'strip-indent';
+import { stripIndent } from 'common-tags';
 import handlebars from 'handlebars';
 
 import {
@@ -13,7 +13,8 @@ import {
   ThemeIcon,
   commands,
 } from 'vscode';
-const parseFile = require('@fast-csv/parse').parseFile;
+
+import { parseFile } from '@fast-csv/parse';
 import { EOL } from 'os';
 import { encode, decode } from 'js-base64';
 
@@ -31,8 +32,61 @@ import { ReviewFileExportSection, GroupBy, ExportFormat, ExportMap, Group } from
 import { CsvEntry, CsvStructure } from './model';
 import { CommentListEntry } from './comment-list-entry';
 import { FileGenerator } from './file-generator';
-import { themeColorForPriority } from './utils/editor-utils';
+import { Location, parseLocation, themeColorForPriority } from './utils/editor-utils';
 const gitCommitId = require('git-commit-id');
+
+type SortT = -1 | 0 | 1;
+
+// TODO GH-123 Switch from CsvEntry as main data model to an internal one an map over that here.
+//             Rationale: Why should the explorer view care about a CsvEntry format?
+interface Model extends CsvEntry {
+  location?: Location;
+}
+
+/**
+ * Compares two models regarding their location information. If neither of both has location information, then both
+ * are treated as equal. Models with location information come before models without.
+ * If both models have location information, than the following holds:
+ *
+ *    lhs < rhs :<=> (lhs.lineStart, lhs.columStart) < (rhs.lineStart, rhs.columStart)
+ *
+ * i.e., they are compared lexicographically.
+ *
+ * @param lhs Left-hand side of the comparison
+ * @param rhs Right-hand side of the comparison
+ *
+ * @returns -1 if lhs < rhs; 1 if lhs > rhs; 0 otherwise.
+ */
+export const compareLocation = (lhs?: Location, rhs?: Location): SortT => {
+  if (lhs === undefined && rhs === undefined) {
+    return 0;
+  }
+  if (lhs === undefined) {
+    return 1;
+  }
+  if (rhs === undefined) {
+    return -1;
+  }
+
+  if (lhs.lineStart < rhs.lineStart) {
+    return -1;
+  } else if (lhs.lineStart > rhs.lineStart) {
+    return 1;
+  }
+
+  // Now: lhs.location.lineStart === rhs.location.lineStart
+  if (lhs.columnStart < rhs.columnStart) {
+    return -1;
+  } else if (lhs.columnStart > rhs.columnStart) {
+    return 1;
+  }
+
+  return 0;
+};
+
+export const compare = (lhs: Model, rhs: Model): SortT => {
+  return compareLocation(lhs.location, rhs.location);
+};
 
 export class ExportFactory {
   private defaultFileName = 'code-review';
@@ -294,31 +348,37 @@ export class ExportFactory {
    * get the comments as CommentListEntry for VSCode view
    */
   getComments(commentGroupedInFile: CommentListEntry): Thenable<CommentListEntry[]> {
-    const result = commentGroupedInFile.data.lines
+    let entries = commentGroupedInFile.data.lines
       .filter((entry: CsvEntry) => this.isCommentEligible(entry))
       .map((entry: CsvEntry) => {
         entry = CsvStructure.finalizeParse(entry);
+        (entry as Model).location = parseLocation(entry.lines);
 
-        const item = new CommentListEntry(
-          entry.id,
-          entry.title,
-          entry.comment,
-          entry.comment,
-          TreeItemCollapsibleState.None,
-          commentGroupedInFile.data,
-          entry.priority,
-          entry.private,
-        );
-        item.contextValue = 'comment';
-        item.command = {
-          command: 'codeReview.openSelection',
-          title: 'Open comment',
-          arguments: [commentGroupedInFile.data, entry],
-        };
-        item.iconPath = this.getIcon(entry.priority, entry.private);
-
-        return item;
+        return entry;
       });
+
+    entries.sort(compare);
+    const result = entries.map((entry: Model) => {
+      const item = new CommentListEntry(
+        entry.id,
+        entry.title,
+        entry.comment,
+        entry.comment,
+        TreeItemCollapsibleState.None,
+        commentGroupedInFile.data,
+        entry.priority,
+        entry.private,
+      );
+      item.contextValue = 'comment';
+      item.command = {
+        command: 'codeReview.openSelection',
+        title: 'Open comment',
+        arguments: [commentGroupedInFile.data, entry],
+      };
+      item.iconPath = this.getIcon(entry.priority, entry.private);
+
+      return item;
+    });
 
     return Promise.resolve(result);
   }

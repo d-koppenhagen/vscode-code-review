@@ -39,6 +39,32 @@ export const getSelectionStringDefinition = (editor: TextEditor): string => {
   }, '');
 };
 
+export interface Location {
+  lineStart: number;
+  lineEnd: number;
+  columnStart: number;
+  columnEnd: number;
+}
+
+/**
+ * Extracts the parts of a selected location (lines and columns) squashed together via `getSelectionStringDefinition`
+ * back into a handy structure.
+ */
+export const parseLocation = (line: string): Location | undefined => {
+  let match = line.match(/(\d+):(\d+)-(\d+):(\d+)/);
+
+  if (!match) {
+    return undefined;
+  }
+
+  return {
+    lineStart: Number(match[1]),
+    lineEnd: Number(match[2]),
+    columnStart: Number(match[3]),
+    columnEnd: Number(match[4]),
+  };
+};
+
 /**
  * Get the selected lines in an editor
  *
