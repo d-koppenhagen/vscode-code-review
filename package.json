@@ -130,12 +130,12 @@
         },
         {
           "command": "codeReview.exportAsGitLabImportableCsv",
-          "when": "view == code-review.list",
+          "when": "view == code-review.list && config.code-review.vcs.provider == git",
           "group": "export_source_control@1"
         },
         {
           "command": "codeReview.exportAsGitHubImportableCsv",
-          "when": "view == code-review.list",
+          "when": "view == code-review.list && config.code-review.vcs.provider == git",
           "group": "export_source_control@0"
         },
         {
@@ -160,12 +160,12 @@
         },
         {
           "command": "codeReview.filterByCommitEnable",
-          "when": "view == code-review.list && !isFilteredByCommit",
+          "when": "view == code-review.list && !isFilteredByCommit && config.code-review.vcs.provider == git",
           "group": "navigation@1"
         },
         {
           "command": "codeReview.filterByCommitDisable",
-          "when": "view == code-review.list && isFilteredByCommit",
+          "when": "view == code-review.list && isFilteredByCommit && config.code-review.vcs.provider == git",
           "group": "navigation@1"
         },
         {
@@ -200,13 +200,13 @@
         "code-review.baseUrl": {
           "type": "string",
           "title": "The base URL for a referenced file without the SHA",
-          "description": "The base URL is used to build a full link to the file (e.g. \"https://github.com/foo/bar/blob/b0b4...0175/src/file.txt#L12-L19\"). It will be appended with the GIT SHA if available followed by the relative path of the file and the selected lines as an anker. This setting is skipped when the setting `code-review.customUrl` is defined.",
+          "description": "The base URL is used to build a full link to the file (e.g. \"https://github.com/foo/bar/blob/b0b4...0175/src/file.txt#L12-L19\"). It will be appended with the GIT SHA if available followed by the relative path of the file and the selected lines as an anchor. This setting is skipped when the setting `code-review.customUrl` is defined.",
           "default": ""
         },
         "code-review.customUrl": {
           "type": "string",
           "title": "The URL mask with placeholders for a referenced file without the SHA",
-          "description": "The custom URL is used to build a full link to the file.\nThe following placeholders are available:\n - {sha}: insert the SHA ref for the file\n - {file}: insert the file name/path\n - {start}: insert the start of the lines selection as an anker\n - {end}: insert the end of the lines selection as an anker\ne.g. \"https://gitlab.com/foo/bar/baz/-/blob/{sha}/src/{file}#L{start}-{end}\" becomes this in the end: \"https://gitlab.com/foo/bar/baz/-/blob/b0b4...0175/src/file.txt#L12-19\"",
+          "description": "The custom URL is used to build a full link to the file.\nThe following placeholders are available:\n - {sha}: insert the SHA ref for the file\n - {file}: insert the file name/path\n - {start}: insert the start of the lines selection as an anchor\n - {end}: insert the end of the lines selection as an anchor\ne.g. \"https://gitlab.com/foo/bar/baz/-/blob/{sha}/src/{file}#L{start}-{end}\" becomes this in the end: \"https://gitlab.com/foo/bar/baz/-/blob/b0b4...0175/src/file.txt#L12-19\"",
           "default": ""
         },
         "code-review.categories": {
@@ -274,7 +274,7 @@
             "high"
           ]
         },
-        "code-review.gitDirectory": {
+        "code-review.vcs.git.directory": {
           "type": "string",
           "title": "The folder containing the Git repository",
           "markdownDescription": "Use this setting when the Git repository is located in an other directory than the workspace one.\nThe path can be **relative** (prefixed with `.` or `..`) or **absolute** (prefixed with `/` on Linux/MacOS or `{drive}:\\` on Windows).\nExamples:\n- `./app`: for {workspace}/app (Linux/MacOS)\n- `../app`: for a folder at the same level as the workspace (Linux/MacOS)\n- `/path/to/my/app`: for an absolute path (Linux/MacOS)\n- `C:\\Path\\To\\My\\App`: for an absolute path (Windows)",
@@ -326,6 +326,16 @@
           "title": "Code selection background color.",
           "markdownDescription": "Background color used to highlight the code associated to a comment.\nMust be specified using a hexadecimal representation - with or without the alpha part (`#C8C832` or `#C8C83226`) - or a `rgba()` definition.",
           "default": "codereview.code.selection.background"
+        },
+        "code-review.vcs.provider": {
+          "enum": [
+            "git",
+            "svn",
+            "git-svn"
+          ],
+          "default": "git",
+          "title": "Version Control",
+          "description": "Version control used in this project. Necessary to determine the commit id to be attached to comments."
         }
       }
     },
@@ -418,16 +428,22 @@
   "devDependencies": {
     "@commitlint/cli": "^11.0.0",
     "@commitlint/config-conventional": "^11.0.0",
+    "@types/chai": "^4.2.22",
+    "@types/chai-as-promised": "^7.1.4",
     "@types/common-tags": "^1.8.1",
     "@types/glob": "^7.1.3",
     "@types/handlebars": "^4.1.0",
     "@types/js-base64": "^3.0.0",
     "@types/mocha": "^8.2.2",
     "@types/node": "14.x",
+    "@types/sinon": "^10.0.6",
     "@types/vscode": "^1.59.0",
     "@typescript-eslint/eslint-plugin": "^4.26.0",
     "@typescript-eslint/parser": "^4.26.0",
+    "chai": "^4.3.4",
+    "chai-as-promised": "^7.1.1",
     "commitizen": "^4.2.4",
+    "common-tags": "^1.8.2",
     "copy-webpack-plugin": "^6.2.1",
     "cz-conventional-changelog": "^3.3.0",
     "eslint": "^7.27.0",
@@ -437,9 +453,11 @@
     "mocha": "^8.4.0",
     "prettier": "^2.1.2",
     "pretty-quick": "^3.1.0",
+    "sinon": "^12.0.1",
     "standard-version": "^9.3.1",
+    "stub-spawn-once": "^2.3.0",
     "ts-loader": "^9.2.2",
-    "typescript": "^4.3.2",
+    "typescript": "^4.5.2",
     "vsce": "^1.96.1",
     "vscode-extension-tester": "^4.1.2",
     "vscode-test": "^1.5.2",

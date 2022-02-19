@@ -16,7 +16,7 @@ const { v4: uuidv4, validate: uuidValidate } = require('uuid');
  * 4. Update createCommentFromObject() (optional).
  */
 export interface CsvEntry {
-  sha: string;
+  revision: string;
   filename: string;
   url: string;
   lines: string;
@@ -66,7 +66,7 @@ export class CsvStructure {
    * - A deprecated stored property can't be removed from the array.
    */
   private static readonly headers: string[] = [
-    'sha',
+    'revision',
     'filename',
     'url',
     'lines',

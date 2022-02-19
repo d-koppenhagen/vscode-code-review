@@ -12,7 +12,7 @@ All the steps will be operated in the file `model.ts`.
 
     ```diff
     export interface CsvEntry {
-        sha: string;
+        revision: string;
         filename: string;
         url: string;
         lines: string;
@@ -33,7 +33,7 @@ All the steps will be operated in the file `model.ts`.
 
     ```diff
     private static readonly headers: string[] = [
-        'sha',
+        'revision',
         'filename',
         'url',
         'lines',
@@ -105,7 +105,7 @@ A sample way to deprecate a property is to add a comment above it in the **inter
 
 ```diff
 export interface CsvEntry {
-    sha: string;
+    revision: string;
     filename: string;
 +   /** @deprecated */
     url: string;

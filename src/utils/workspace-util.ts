@@ -218,6 +218,6 @@ export const getBackupFilename = (reviewFilePath: string): string => {
  * @param workspaceRoot The root path of the workspace
  * @param filename The name of the file
  */
-export const standardizeFilename = (workspaceRoot: string, filename: string): string => {
-  return filename.replace(workspaceRoot, '');
+export const relativeToWorkspace = (workspaceRoot: string, filename: string): string => {
+  return path.relative(workspaceRoot, filename);
 };

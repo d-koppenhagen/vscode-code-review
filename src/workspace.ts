@@ -28,6 +28,7 @@ import { CommentListEntry } from './comment-list-entry';
 import { ImportFactory, ConflictMode } from './import-factory';
 import { gutterDecorations } from './utils/decoration-utils';
 import { CommentLensProvider } from './comment-lens-provider';
+import { vcsKind, VcsKind } from './vcs-provider';
 
 const checkForCodeReviewFile = (fileName: string) => {
   commands.executeCommand('setContext', 'codeReview:displayCodeReviewExplorer', fs.existsSync(fileName));
@@ -80,11 +81,14 @@ export class WorkspaceContext {
     this.updateReviewCommentService();
     this.updateCommentsProvider();
     this.setupFileWatcher();
-    this.watchGitSwitch();
     this.watchActiveEditor();
     this.watchForFileChanges();
     new CommentView(this.commentsProvider);
     this.updateDecorations();
+
+    if (vcsKind() === VcsKind.git) {
+      this.watchGitSwitch();
+    }
   }
 
   watchActiveEditor() {
@@ -119,7 +123,7 @@ export class WorkspaceContext {
    * Refresh comment view on git switch
    */
   watchGitSwitch() {
-    const gitDirectory = (workspace.getConfiguration().get('code-review.gitDirectory') as string) ?? '.';
+    const gitDirectory = (workspace.getConfiguration().get('code-review.vcs.git.directory') as string) ?? '.';
     const gitHeadPath = path.resolve(gitDirectory, '.git/HEAD');
     const gitWatcher = workspace.createFileSystemWatcher(`**${gitHeadPath}`);
     gitWatcher.onDidChange(() => {
@@ -435,19 +439,24 @@ export class WorkspaceContext {
       this.openSelectionRegistration,
       this.addNoteRegistration,
       this.deleteNoteRegistration,
-      this.filterByCommitEnableRegistration,
-      this.filterByCommitDisableRegistration,
       this.filterByFilenameEnableRegistration,
       this.filterByFilenameDisableRegistration,
       this.exportAsHtmlWithDefaultTemplateRegistration,
       this.exportAsHtmlWithHandlebarsTemplateRegistration,
-      this.exportAsGitLabImportableCsvRegistration,
-      this.exportAsGitHubImportableCsvRegistration,
       this.exportAsJiraImportableCsvRegistration,
       this.exportAsJsonRegistration,
       this.importFromJsonRegistration,
       this.commentCodeLensProviderregistration,
     );
+
+    if (vcsKind() === VcsKind.git) {
+      this.context.subscriptions.push(
+        this.filterByCommitEnableRegistration,
+        this.filterByCommitDisableRegistration,
+        this.exportAsGitLabImportableCsvRegistration,
+        this.exportAsGitHubImportableCsvRegistration,
+      );
+    }
   }
 
   /**
@@ -457,18 +466,24 @@ export class WorkspaceContext {
     this.openSelectionRegistration.dispose();
     this.addNoteRegistration.dispose();
     this.deleteNoteRegistration.dispose();
-    this.filterByCommitEnableRegistration.dispose();
-    this.filterByCommitDisableRegistration.dispose();
+
     this.filterByFilenameEnableRegistration.dispose();
     this.filterByFilenameDisableRegistration.dispose();
     this.exportAsHtmlWithDefaultTemplateRegistration.dispose();
     this.exportAsHtmlWithHandlebarsTemplateRegistration.dispose();
-    this.exportAsGitLabImportableCsvRegistration.dispose();
-    this.exportAsGitHubImportableCsvRegistration.dispose();
+
     this.exportAsJiraImportableCsvRegistration.dispose();
     this.exportAsJsonRegistration.dispose();
     this.importFromJsonRegistration.dispose();
     this.commentCodeLensProviderregistration.dispose();
+
+    if (vcsKind() === VcsKind.git) {
+      this.filterByCommitEnableRegistration.dispose();
+      this.filterByCommitDisableRegistration.dispose();
+      this.exportAsGitLabImportableCsvRegistration.dispose();
+      this.exportAsGitHubImportableCsvRegistration.dispose();
+    }
+
     this.updateSubscriptions();
   }
 

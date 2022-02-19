@@ -3,7 +3,7 @@
     "group": "Best Practices",
     "lines": [
       {
-        "sha": "b45d2822d6c87770af520d7e2acc49155f0b4362",
+        "revision": "b45d2822d6c87770af520d7e2acc49155f0b4362",
         "filename": "/src/environments/environment.ts",
         "url": "https://gitlab.com/foo/bar/baz/-/blob/b45d2822d6c87770af520d7e2acc49155f0b4362/src/src/environments/environment.ts#L5-12",
         "lines": "5:0-12:2",
@@ -15,7 +15,7 @@
         "code": "ZXhwb3J0IGNvbnN0IGVudmlyb25tZW50ID0gewogIHByb2R1Y3Rpb246IGZhbHNlCn07CgovKgogKiBGb3IgZWFzaWVyIGRlYnVnZ2luZyBpbiBkZXZlbG9wbWVudCBtb2RlLCB5b3UgY2FuIGltcG9ydCB0aGUgZm9sbG93aW5nIGZpbGUKICogdG8gaWdub3JlIHpvbmUgcmVsYXRlZCBlcnJvciBzdGFjayBmcmFtZXMgc3VjaCBhcyBgem9uZS5ydW5gLCBgem9uZURlbGVnYXRlLmludm9rZVRhc2tgLgogKgogKiBUaGlzIGltcG9ydCBzaG91bGQgYmUgY29tbWVudGVkIG91dCBpbiBwcm9kdWN0aW9uIG1vZGUgYmVjYXVzZSBpdCB3aWxsIGhhdmUgYSBuZWdhdGl2ZSBpbXBhY3Q="
       },
       {
-        "sha": "b45d2822d6c87770af520d7e2acc49155f0b4362",
+        "revision": "b45d2822d6c87770af520d7e2acc49155f0b4362",
         "filename": "/src/app/app-routing.module.ts",
         "url": "https://gitlab.com/foo/bar/baz/-/blob/b45d2822d6c87770af520d7e2acc49155f0b4362/src/src/app/app-routing.module.ts#L8-10",
         "lines": "8:5-10:2",
@@ -32,7 +32,7 @@
     "group": "Code-Style",
     "lines": [
       {
-        "sha": "b45d2822d6c87770af520d7e2acc49155f0b4362",
+        "revision": "b45d2822d6c87770af520d7e2acc49155f0b4362",
         "filename": "/src/app/app.component.html",
         "url": "https://gitlab.com/foo/bar/baz/-/blob/b45d2822d6c87770af520d7e2acc49155f0b4362/src/src/app/app.component.html#L12-14",
         "lines": "12:12-14:16",
@@ -44,7 +44,7 @@
         "code": "Zm9udC1mYW1pbHk6IC1hcHBsZS1zeXN0ZW0sIEJsaW5rTWFjU3lzdGVtRm9udCwgIlNlZ29lIFVJIiwgUm9ib3RvLCBIZWx2ZXRpY2EsIEFyaWFsLCBzYW5zLXNlcmlmLCAiQXBwbGUgQ29sb3IgRW1vamkiLCAiU2Vnb2UgVUkgRW1vamkiLCAiU2Vnb2UgVUkgU3ltYm9sIjsKZm9udC1zaXplOiAxNHB4Owpjb2xvcjogIzMzMzsKYm94LXNpemluZzogYm9yZGVyLWJveDs="
       },
       {
-        "sha": "b45d2822d6c87770af520d7e2acc49155f0b4362",
+        "revision": "b45d2822d6c87770af520d7e2acc49155f0b4362",
         "filename": "/src/app/app.component.spec.ts",
         "url": "https://gitlab.com/foo/bar/baz/-/blob/b45d2822d6c87770af520d7e2acc49155f0b4362/src/src/app/app.component.spec.ts#L10-14",
         "lines": "10:8-14:19",

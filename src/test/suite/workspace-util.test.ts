@@ -22,7 +22,7 @@ import {
   escapeEndOfLineForCsv,
   unescapeEndOfLineFromCsv,
   rangeFromStringDefinition,
-  standardizeFilename,
+  relativeToWorkspace,
   rangesFromStringDefinition,
   splitStringDefinition,
   getBackupFilename,
@@ -290,7 +290,7 @@ suite('Workspace Utils', () => {
 
   suite('sortCsvEntryForLines', () => {
     const dummyEntry = {
-      sha: 'string',
+      revision: 'string',
       filename: 'string',
       url: 'string',
       title: 'string',
@@ -369,11 +369,18 @@ suite('Workspace Utils', () => {
     });
   });
 
-  suite('standardizeFilename', () => {
-    test('should return a refined filename', () => {
+  suite('relativeToWorkspace', () => {
+    test('should return filename', () => {
       const workspaceRoot = '/path/to/my/workspace';
-      const filename = '/my/file';
-      const refined = standardizeFilename(workspaceRoot, workspaceRoot + filename);
+      const filename = 'file';
+      const refined = relativeToWorkspace(workspaceRoot, path.join(workspaceRoot, filename));
+      assert.strictEqual(refined, filename);
+    });
+
+    test('should return filename with relative folder', () => {
+      const workspaceRoot = '/path/to/my/workspace';
+      const filename = 'and/my/file';
+      const refined = relativeToWorkspace(workspaceRoot, path.join(workspaceRoot, filename));
       assert.strictEqual(refined, filename);
     });
   });
@@ -546,12 +553,6 @@ suite('Workspace Utils', () => {
       assert.ok(getBackupFilename('test-csv').includes(`${year.toString()}-`));
       assert.ok(getBackupFilename('test-csv').includes(`${month.toString()}-`));
       assert.ok(getBackupFilename('test-csv').endsWith('Z.bak'));
-    });
-  });
-
-  suite('standardizeFilename', () => {
-    test('should remove the workspace-part from the filename', () => {
-      assert.strictEqual(standardizeFilename('/foo/bar', '/foo/bar/baz.txt'), '/baz.txt');
     });
   });
 });
