@@ -188,7 +188,7 @@ export class WorkspaceContext {
     this.exportFactory = new ExportFactory(this.context, this.workspaceRoot, this.generator);
   }
   updateImportFactory() {
-    this.importFactory = new ImportFactory(this.workspaceRoot, this.exportFactory.inputFile, this.generator);
+    this.importFactory = new ImportFactory(this.workspaceRoot, this.exportFactory.absoluteFilePath, this.generator);
   }
 
   updateReviewCommentService() {
