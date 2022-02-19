@@ -27,11 +27,13 @@ export async function svnRevision(file: string, workspace: string): Promise<numb
       (error: Error | null, stdout: string, stderr: string) => {
         if (error) {
           reject(`Could not retrieve SVN revision for file: ${file}. Error(s): ${stderr}`);
+          return;
         }
 
         const maybeRevision = Number(stdout.trim());
         if (isNaN(maybeRevision)) {
           reject(`Unexpected command output: ${stdout}`);
+          return;
         }
         resolve(maybeRevision);
       },
