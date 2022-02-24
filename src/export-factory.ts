@@ -89,7 +89,6 @@ export const compare = (lhs: Model, rhs: Model): SortT => {
 };
 
 export class ExportFactory {
-  private defaultFileName = 'code-review';
   private groupBy: GroupBy;
   private includeCodeSelection = false;
   private includePrivateComments = false;
@@ -286,10 +285,6 @@ export class ExportFactory {
    * for trying out: https://stackblitz.com/edit/code-review-template
    */
   constructor(private context: ExtensionContext, private workspaceRoot: string, private generator: FileGenerator) {
-    const configFileName = workspace.getConfiguration().get('code-review.filename') as string;
-    if (configFileName) {
-      this.defaultFileName = configFileName;
-    }
     let groupByConfig = workspace.getConfiguration().get('code-review.groupBy') as string;
     if (!groupByConfig || groupByConfig === '-') {
       groupByConfig = Group.filename;
@@ -306,12 +301,8 @@ export class ExportFactory {
     this.setFilterByFilename(this.filterByFilename, true);
   }
 
-  get basePath(): string {
-    return toAbsolutePath(this.workspaceRoot, this.defaultFileName);
-  }
-
-  get inputFile(): string {
-    return `${this.basePath}.csv`;
+  get absoluteFilePath(): string {
+    return this.generator.absoluteReviewFilePath;
   }
 
   /**
@@ -320,11 +311,11 @@ export class ExportFactory {
    */
   exportForFormat(format: ExportFormat, template?: Uri) {
     const exporter = this.exportHandlerMap.get(format);
-    const outputFile = `${this.basePath}.${exporter?.fileExtension}`;
+    const outputFile = `${this.absoluteFilePath}.${exporter?.fileExtension}`;
     exporter?.writeFileHeader(outputFile);
 
     const data: CsvEntry[] = [];
-    parseFile(this.inputFile, { delimiter: ',', ignoreEmpty: true, headers: true })
+    parseFile(this.absoluteFilePath, { delimiter: ',', ignoreEmpty: true, headers: true })
       .on('error', this.handleError)
       .on('data', (comment: CsvEntry) => {
         comment = CsvStructure.finalizeParse(comment);
@@ -414,14 +405,14 @@ export class ExportFactory {
   }
 
   public getFilesContainingComments(): Thenable<CommentListEntry[]> {
-    if (!fs.existsSync(this.inputFile) || !this.generator.check()) {
+    if (!fs.existsSync(this.absoluteFilePath) || !this.generator.check()) {
       return Promise.resolve([]);
     }
 
     const entries: CsvEntry[] = [];
 
     return new Promise((resolve) => {
-      parseFile(this.inputFile, { delimiter: ',', ignoreEmpty: true, headers: true })
+      parseFile(this.absoluteFilePath, { delimiter: ',', ignoreEmpty: true, headers: true })
         .on('error', () => this.handleError)
         .on('data', (row: CsvEntry) => {
           if (this.isCommentEligible(row)) {
