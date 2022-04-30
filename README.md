@@ -278,7 +278,7 @@ A search engine can be found at <https://microsoft.github.io/vscode-codicons/dis
 ### `code-review.defaultTemplatePath`
 
 The path to a default Handlebars template to be used for HTML default export.
-The template is used by default when choosing [_'Export as HTML with default template'_](#export-created notes-as-html) extension command.
+The template is used by default when choosing [_'Export as HTML with default template'_](#export-created-notes-as-html) extension command.
 If not set, the out-of-the-box template provided by this extension is used.
 The configured value must be the full path to the Handlebars template file.
 
