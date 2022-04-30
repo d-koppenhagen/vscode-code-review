@@ -124,9 +124,12 @@ export class ExportFactory {
         },
         handleEnd: (outputFile: string, rows: CsvEntry[], template: Uri) => {
           // check template
-          const templateData = fs.readFileSync(template.fsPath, 'utf8');
-          if (!templateData) {
+          let templateData;
+          try {
+            templateData = fs.readFileSync(template.fsPath, 'utf8');
+          } catch (error: any) {
             window.showErrorMessage(`Error when reading the template file: '${template.fsPath}'`);
+            throw error;
           }
           // check if grouping should be applied
           let reviewExportData: ReviewFileExportSection[] = [];
