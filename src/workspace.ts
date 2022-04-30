@@ -35,6 +35,7 @@ const checkForCodeReviewFile = (fileName: string) => {
 
 export class WorkspaceContext {
   private defaultTemplate!: Uri;
+  private defaultMarkdownTemplate!: Uri;
   private generator!: FileGenerator;
   private exportFactory!: ExportFactory;
   private importFactory!: ImportFactory;
@@ -53,6 +54,7 @@ export class WorkspaceContext {
   private deleteNoteRegistration!: Disposable;
   private exportAsHtmlWithDefaultTemplateRegistration!: Disposable;
   private exportAsHtmlWithHandlebarsTemplateRegistration!: Disposable;
+  private exportAsMarkdownWithDefaultTemplateRegistration!: Disposable;
   private exportAsGitLabImportableCsvRegistration!: Disposable;
   private exportAsGitHubImportableCsvRegistration!: Disposable;
   private exportAsJiraImportableCsvRegistration!: Disposable;
@@ -70,6 +72,13 @@ export class WorkspaceContext {
     this.defaultTemplate = defaultConfigurationTemplatePath
       ? Uri.file(defaultConfigurationTemplatePath)
       : Uri.parse(context.asAbsolutePath(path.join('dist', 'template.default.hbs')));
+
+    const defaultMarkdownTemplatePath = workspace
+      .getConfiguration()
+      .get('code-review.defaultMarkdownTemplatePath') as string;
+    this.defaultMarkdownTemplate = defaultMarkdownTemplatePath
+      ? Uri.file(defaultMarkdownTemplatePath)
+      : Uri.parse(context.asAbsolutePath(path.join('dist', 'template-markdown.default.hbs')));
 
     this.decorations = new Decorations(context);
     this.setup();
@@ -324,6 +333,16 @@ export class WorkspaceContext {
     );
 
     /**
+     * allow users to export the report as Markdown using the default output
+     */
+    this.exportAsMarkdownWithDefaultTemplateRegistration = commands.registerCommand(
+      'codeReview.exportAsMarkdownWithDefaultTemplate',
+      () => {
+        this.exportFactory.exportForFormat('markdown', this.defaultMarkdownTemplate);
+      },
+    );
+
+    /**
      * allow users to export the report as GitLab importable CSV file
      */
     this.exportAsGitLabImportableCsvRegistration = commands.registerCommand(
@@ -469,6 +488,7 @@ export class WorkspaceContext {
       this.setReviewFileSelectedCsvRegistration,
       this.exportAsHtmlWithDefaultTemplateRegistration,
       this.exportAsHtmlWithHandlebarsTemplateRegistration,
+      this.exportAsMarkdownWithDefaultTemplateRegistration,
       this.exportAsGitLabImportableCsvRegistration,
       this.exportAsGitHubImportableCsvRegistration,
       this.exportAsJiraImportableCsvRegistration,
@@ -492,6 +512,7 @@ export class WorkspaceContext {
     this.setReviewFileSelectedCsvRegistration.dispose();
     this.exportAsHtmlWithDefaultTemplateRegistration.dispose();
     this.exportAsHtmlWithHandlebarsTemplateRegistration.dispose();
+    this.exportAsMarkdownWithDefaultTemplateRegistration.dispose();
     this.exportAsGitLabImportableCsvRegistration.dispose();
     this.exportAsGitHubImportableCsvRegistration.dispose();
     this.exportAsJiraImportableCsvRegistration.dispose();
