@@ -12,6 +12,7 @@ import {
   ExtensionContext,
   ThemeIcon,
   commands,
+  TextDocument,
 } from 'vscode';
 
 import { parseFile } from '@fast-csv/parse';
@@ -191,6 +192,7 @@ export class ExportFactory {
           const markdownOut = templateCompiled(reviewExportData);
           fs.writeFileSync(outputFile, markdownOut);
           window.showInformationMessage(`Code review file: '${outputFile}' successfully created.`);
+          this.openFile(outputFile);
         },
       },
     ],
@@ -558,6 +560,13 @@ export class ExportFactory {
       enableScripts: true,
     });
     panel.webview.html = fs.readFileSync(outputFile, 'utf8');
+  }
+
+  private openFile(outputFile: string) {
+    const document: Uri = Uri.parse(outputFile);
+    workspace.openTextDocument(document).then((openedDocument: TextDocument) => {
+      window.showTextDocument(openedDocument, { viewColumn: ViewColumn.Beside });
+    });
   }
 
   /**
