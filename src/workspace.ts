@@ -66,20 +66,6 @@ export class WorkspaceContext {
   constructor(private context: ExtensionContext, public workspaceRoot: string) {
     // create a new file if not already exist
     this.webview = new WebViewComponent(context);
-    const defaultConfigurationTemplatePath = workspace
-      .getConfiguration()
-      .get('code-review.defaultTemplatePath') as string;
-    this.defaultTemplate = defaultConfigurationTemplatePath
-      ? Uri.file(defaultConfigurationTemplatePath)
-      : Uri.parse(context.asAbsolutePath(path.join('dist', 'template.default.hbs')));
-
-    const defaultMarkdownTemplatePath = workspace
-      .getConfiguration()
-      .get('code-review.defaultMarkdownTemplatePath') as string;
-    this.defaultMarkdownTemplate = defaultMarkdownTemplatePath
-      ? Uri.file(defaultMarkdownTemplatePath)
-      : Uri.parse(context.asAbsolutePath(path.join('dist', 'template-markdown.default.hbs')));
-
     this.decorations = new Decorations(context);
     this.setup();
   }
@@ -211,6 +197,24 @@ export class WorkspaceContext {
     this.commentsProvider = new CommentsProvider(this.context, this.exportFactory);
   }
 
+  getDefaultTemplate(): Uri {
+    const defaultConfigurationTemplatePath = workspace
+      .getConfiguration()
+      .get('code-review.defaultTemplatePath') as string;
+    return defaultConfigurationTemplatePath
+      ? Uri.file(defaultConfigurationTemplatePath)
+      : Uri.parse(this.context.asAbsolutePath(path.join('dist', 'template.default.hbs')));
+  }
+
+  getDefaultMarkdownTemplate(): Uri {
+    const defaultMarkdownTemplatePath = workspace
+      .getConfiguration()
+      .get('code-review.defaultMarkdownTemplatePath') as string;
+    return defaultMarkdownTemplatePath
+      ? Uri.file(defaultMarkdownTemplatePath)
+      : Uri.parse(this.context.asAbsolutePath(path.join('dist', 'template-markdown.default.hbs')));
+  }
+
   registerCommands() {
     this.openSelectionRegistration = commands.registerCommand(
       'codeReview.openSelection',
@@ -304,7 +308,7 @@ export class WorkspaceContext {
     this.exportAsHtmlWithDefaultTemplateRegistration = commands.registerCommand(
       'codeReview.exportAsHtmlWithDefaultTemplate',
       () => {
-        this.exportFactory.exportForFormat('html', this.defaultTemplate);
+        this.exportFactory.exportForFormat('html', this.getDefaultTemplate());
       },
     );
 
@@ -327,7 +331,7 @@ export class WorkspaceContext {
           })
           .then((files) => {
             const template = files?.length ? files[0] : undefined;
-            this.exportFactory.exportForFormat('html', template ?? this.defaultTemplate);
+            this.exportFactory.exportForFormat('html', template ?? this.getDefaultTemplate());
           });
       },
     );
@@ -338,7 +342,7 @@ export class WorkspaceContext {
     this.exportAsMarkdownWithDefaultTemplateRegistration = commands.registerCommand(
       'codeReview.exportAsMarkdownWithDefaultTemplate',
       () => {
-        this.exportFactory.exportForFormat('markdown', this.defaultMarkdownTemplate);
+        this.exportFactory.exportForFormat('markdown', this.getDefaultMarkdownTemplate());
       },
     );
 
