@@ -1,6 +1,6 @@
 # vscode-code-review
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-6-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-7-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 <a href="https://www.buymeacoffee.com/dkoppenhagen" target="_blank"><img src="https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png" alt="Buy Me A Coffee" style="height: 41px !important;width: 174px !important;box-shadow: 0px 3px 2px 0px rgba(190, 190, 190, 0.5) !important;-webkit-box-shadow: 0px 3px 2px 0px rgba(190, 190, 190, 0.5) !important;" ></a>
@@ -493,6 +493,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
     <td align="center"><a href="http://k9n.dev"><img src="https://avatars0.githubusercontent.com/u/4279702?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Danny Koppenhagen</b></sub></a><br /><a href="https://github.com/d-koppenhagen/vscode-code-review/commits?author=d-koppenhagen" title="Code">💻</a> <a href="https://github.com/d-koppenhagen/vscode-code-review/commits?author=d-koppenhagen" title="Tests">⚠️</a> <a href="https://github.com/d-koppenhagen/vscode-code-review/pulls?q=is%3Apr+reviewed-by%3Ad-koppenhagen" title="Reviewed Pull Requests">👀</a> <a href="#maintenance-d-koppenhagen" title="Maintenance">🚧</a> <a href="#ideas-d-koppenhagen" title="Ideas, Planning, & Feedback">🤔</a> <a href="#example-d-koppenhagen" title="Examples">💡</a> <a href="https://github.com/d-koppenhagen/vscode-code-review/commits?author=d-koppenhagen" title="Documentation">📖</a> <a href="https://github.com/d-koppenhagen/vscode-code-review/issues?q=author%3Ad-koppenhagen" title="Bug reports">🐛</a></td>
     <td align="center"><a href="http://www.caero.de"><img src="https://avatars.githubusercontent.com/u/307585?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Carsten Rösnick-Neugebauer</b></sub></a><br /><a href="https://github.com/d-koppenhagen/vscode-code-review/issues?q=author%3Acroesnick" title="Bug reports">🐛</a></td>
     <td align="center"><a href="https://github.com/brandonchupp"><img src="https://avatars.githubusercontent.com/u/15858979?v=4?s=100" width="100px;" alt=""/><br /><sub><b>brandonchupp</b></sub></a><br /><a href="https://github.com/d-koppenhagen/vscode-code-review/commits?author=brandonchupp" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/inconspicuous-username"><img src="https://avatars.githubusercontent.com/u/33715078?v=4?s=100" width="100px;" alt=""/><br /><sub><b>inconspicuous-username</b></sub></a><br /><a href="#ideas-inconspicuous-username" title="Ideas, Planning, & Feedback">🤔</a></td>
   </tr>
 </table>
 
