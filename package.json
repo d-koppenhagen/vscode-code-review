@@ -61,6 +61,10 @@
         "title": "Code Review: Export as Markdown with default template"
       },
       {
+        "command": "codeReview.exportAsMarkdownWithHandlebarsTemplate",
+        "title": "Code Review: Export as Markdown with Handlebars template"
+      },
+      {
         "command": "codeReview.exportAsGitLabImportableCsv",
         "title": "Code Review: Export as GitLab importable CSV file"
       },
@@ -143,6 +147,11 @@
           "command": "codeReview.exportAsMarkdownWithDefaultTemplate",
           "when": "view == code-review.list",
           "group": "export_markdown@0"
+        },
+        {
+          "command": "codeReview.exportAsMarkdownWithHandlebarsTemplate",
+          "when": "view == code-review.list",
+          "group": "export_markdown@1"
         },
         {
           "command": "codeReview.exportAsGitLabImportableCsv",

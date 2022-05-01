@@ -18,9 +18,11 @@ This extension allows you to create a code review file you can hand over to a cu
   - [create review notes](#create-review-notes)
   - [Code Review Comment Explorer - update, view and delete comments](#code-review-comment-explorer---update-view-and-delete-comments)
   - [export created notes as HTML](#export-created-notes-as-html)
-    - [Default template](#default-template)
-    - [Custom handlebars template](#custom-handlebars-template)
+    - [Default HTML template](#default-html-template)
+    - [Custom HTML handlebars template](#custom-html-handlebars-template)
   - [Export created notes as Markdown](#export-created-notes-as-markdown)
+    - [Default Markdown template](#default-markdown-template)
+    - [Custom Markdown handlebars template](#custom-markdown-handlebars-template)
   - [Export for Issue Tracking System](#export-for-issue-tracking-system)
     - [export created notes as GitLab importable CSV file](#export-created-notes-as-gitlab-importable-csv-file)
     - [export created notes as GitHub importable CSV file](#export-created-notes-as-github-importable-csv-file)
@@ -60,7 +62,7 @@ This extension allows you to create a code review file you can hand over to a cu
 ### create review notes
 
 Simply right click somewhere in the opened file and choose the option "Code Review: Add Note".
-You will be prompted for your note you wanna add.
+You will be prompted for your note you want to add.
 A file `code-review.csv` will be created containing your comments and the file and line references.
 
 The result will look like this:
@@ -85,7 +87,7 @@ You can also explore and edit/view all comments in the comment explorer (see bel
 Once you created your first code review comment and the plugin can find the associated review file (by default `code-review.csv`), a new button will appear in the sidebar.
 Clicking on this button will open the **Code Review Comment Explorer**.
 This explorer shows you all made comments to the related code base.
-Selecting an entry will open the comment in the webview form so you can edit and update it.
+Selecting an entry will open the comment in the webview form, so you can edit and update it.
 Performing a right-click on an item, will let you delete a comment.
 
 ![Demo: Code Review Comment Explorer](./images/code-review-explorer.gif)
@@ -97,7 +99,7 @@ Therefore open the [VSCode Command Palette](https://code.visualstudio.com/docs/g
 
 ![Code Review: Export as HTML](./images/export.png)
 
-#### Default template
+#### Default HTML template
 
 When you choose to generate the report using the default template, it will look like this in the end:
 
@@ -106,26 +108,36 @@ When you choose to generate the report using the default template, it will look 
 > You can define a path to a custom template that's used by default when running this command.
 > Check out the [Extension Setting 'defaultTemplatePath'](#extension-settings) for further information.
 
-#### Custom handlebars template
+#### Custom HTML handlebars template
 
 You can also choose to export the HTML report by using a custom [Handlebars](https://handlebarsjs.com/) template.
-One you choose this option you cot prompted to choose the template file (file extension must be either `*.hbs`, `*.handlebars`, `*.html` or `*.htm`)
+Once you choose this option, you got prompted to choose the template file (file extension must be either `*.hbs`, `*.handlebars`, `*.html` or `*.htm`)
 
 ![Code Review HTML Export: Use a custom Handlebars template](./images/template.png)
 
-The used structure to fill the template placholders is an array of [`ReviewFileExportSection`](https://github.com/d-koppenhagen/vscode-code-review/blob/master/src/interfaces.ts#L31-L44).
+The used structure to fill the template placeholders is an array of [`ReviewFileExportSection`](https://github.com/d-koppenhagen/vscode-code-review/blob/master/src/interfaces.ts#L31-L44).
 
 Check out the example default template file
 [`template.default.hbs`](https://github.com/d-koppenhagen/vscode-code-review/blob/master/src/template.default.hbs), to see how your template should basically look like.
 
 ### Export created notes as Markdown
 
-In addition to exporting your notes as HTML, you may also export them as Markdown. Simply open up the VSCode Command Palette and run the `Export As Markdown With Default Template` command.
-
+In addition to exporting your notes as HTML, you may also export them as Markdown.
 Just like with the HTML export, you may use the default Markdown template provided or choose your own.
+
+#### Default Markdown template
+
+Simply open up the VSCode Command Palette and run the `Export As Markdown With Default Template` command.
 
 > You can define a path to a custom template that's used by default when running this command.
 > Check out the [Extension Setting 'defaultMarkdownTemplatePath'](#extension-settings) for further information.
+#### Custom Markdown handlebars template
+
+You can also choose to export the Markdown report by using a custom [Handlebars](https://handlebarsjs.com/) template.
+Once you choose this option, you got prompted to choose the template file (file extension must be either `*.hbs`, `*.handlebars`, `*.md`, `*.mds` or `*.markdown`)
+
+Check out the example default template file
+[`template-markdown.default.hbs`](https://github.com/d-koppenhagen/vscode-code-review/blob/master/src/template-markdown.default.hbs), to see how your template should basically look like.
 
 ### Export for Issue Tracking System
 
@@ -141,7 +153,7 @@ Once exported, you can import the file in the GitLab project
 
 #### export created notes as GitHub importable CSV file
 
-You can export the code review results to a formatted csv file that's [importable into GitHub by using `github-csv-tools`](https://github.com/gavinr/github-csv-tools).
+You can export the code review results to a formatted CSV file that's [importable into GitHub by using `github-csv-tools`](https://github.com/gavinr/github-csv-tools).
 
 ![Code Review GitLab importable CSV export](./images/export-github.png)
 
@@ -166,7 +178,7 @@ The listing below shows the default configuration:
 ### `code-review.filename`
 
 The filename for the `*.csv` file that stores all comments.
-By default `"code-review"` is used.
+By default, `"code-review"` is used.
 
 ```json
 {
@@ -195,8 +207,8 @@ The following placeholders are available:
 
 - `{sha}`: insert the SHA ref for the file
 - `{file}`: insert the file name/path
-- `{start}`: insert the start of the lines selection as an anker
-- `{end}`: insert the end of the lines selection as an anker
+- `{start}`: insert the start of the line selection as an anker
+- `{end}`: insert the end of the line selection as an anker
 
 ```json
 {
@@ -304,7 +316,8 @@ The configured value must be the full path to the Handlebars template file.
 The path to a default Handlebars template to be used for Markdown default export.
 The template is used by default when choosing [_'Export as Markdown with default template'_](#export-created-notes-as-markdown) extension command.
 
-If not set, the out-of-the-box template provided by this extension is used. The configured value must be the full path to the Handlebars template file.
+If not set, the out-of-the-box template provided by this extension is used.
+The configured value must be the full path to the Handlebars template file.
 
 ```json
 {
@@ -331,7 +344,7 @@ The defaults are listed below:
 
 ### `code-review.gitDirectory`
 
-Use this setting when the Git repository is located in an other directory than the workspace one.
+Use this setting when the Git repository is located in another directory than the workspace one.
 The path can be **relative** (prefixed with `.` or `..`) or **absolute** (prefixed with `/` on Linux/MacOS or `{drive}:\` on Windows).
 
 Examples:
@@ -390,7 +403,7 @@ Define whether to view only the comments from the current file or not.
 
 ### `code-review.importBackup`
 
-Define whether to backup the existing comments before importing new ones or not
+Define whether to backup, the existing comments before importing new ones or not
 
 ```json
 {
@@ -470,7 +483,7 @@ To create a code review with a report you should install this extension and go o
 - Download / clone the customer code and checkout the correct branch
 - Open the project in vscode
 - [Configure the `baseURL` option](#extension-settings) with the remote URL
-  - this will cause that the link in the report is generate with the correct target including SHA, file and line reference
+  - this will cause that the link in the report is generated with the correct target including SHA, file and line reference
 - [Start creating your review notes](#create-review-notes).
 - [Export the report](#export-created-notes-as-html).
   - [Probably create an own template first](#custom-handlebars-template)

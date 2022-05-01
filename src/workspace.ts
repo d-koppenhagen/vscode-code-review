@@ -10,7 +10,6 @@ import {
   Disposable,
   FileSystemWatcher,
   TextEditor,
-  TextEditorDecorationType,
   DocumentFilter,
   languages,
 } from 'vscode';
@@ -55,6 +54,7 @@ export class WorkspaceContext {
   private exportAsHtmlWithDefaultTemplateRegistration!: Disposable;
   private exportAsHtmlWithHandlebarsTemplateRegistration!: Disposable;
   private exportAsMarkdownWithDefaultTemplateRegistration!: Disposable;
+  private exportAsMarkdownWithHandlebarsTemplateRegistration!: Disposable;
   private exportAsGitLabImportableCsvRegistration!: Disposable;
   private exportAsGitHubImportableCsvRegistration!: Disposable;
   private exportAsJiraImportableCsvRegistration!: Disposable;
@@ -343,6 +343,30 @@ export class WorkspaceContext {
     );
 
     /**
+     * allow users to export the report as HTML using a specific handlebars template
+     */
+    this.exportAsMarkdownWithHandlebarsTemplateRegistration = commands.registerCommand(
+      'codeReview.exportAsMarkdownWithHandlebarsTemplate',
+      () => {
+        window
+          .showOpenDialog({
+            canSelectFolders: false,
+            canSelectFiles: true,
+            canSelectMany: false,
+            openLabel: 'Use template',
+            filters: {
+              // eslint-disable-next-line @typescript-eslint/naming-convention
+              Template: ['hbs', 'md', 'markdown', 'mdx', 'handlebars'],
+            },
+          })
+          .then((files) => {
+            const template = files?.length ? files[0] : undefined;
+            this.exportFactory.exportForFormat('markdown', template ?? this.defaultTemplate);
+          });
+      },
+    );
+
+    /**
      * allow users to export the report as GitLab importable CSV file
      */
     this.exportAsGitLabImportableCsvRegistration = commands.registerCommand(
@@ -489,6 +513,7 @@ export class WorkspaceContext {
       this.exportAsHtmlWithDefaultTemplateRegistration,
       this.exportAsHtmlWithHandlebarsTemplateRegistration,
       this.exportAsMarkdownWithDefaultTemplateRegistration,
+      this.exportAsMarkdownWithHandlebarsTemplateRegistration,
       this.exportAsGitLabImportableCsvRegistration,
       this.exportAsGitHubImportableCsvRegistration,
       this.exportAsJiraImportableCsvRegistration,
@@ -513,6 +538,7 @@ export class WorkspaceContext {
     this.exportAsHtmlWithDefaultTemplateRegistration.dispose();
     this.exportAsHtmlWithHandlebarsTemplateRegistration.dispose();
     this.exportAsMarkdownWithDefaultTemplateRegistration.dispose();
+    this.exportAsMarkdownWithHandlebarsTemplateRegistration.dispose();
     this.exportAsGitLabImportableCsvRegistration.dispose();
     this.exportAsGitHubImportableCsvRegistration.dispose();
     this.exportAsJiraImportableCsvRegistration.dispose();
