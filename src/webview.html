@@ -1,9 +1,13 @@
 <!DOCTYPE html>
+
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
     <title>Add code review note</title>
+
     <style>
       /* Style inputs */
       input,
@@ -141,20 +145,25 @@
 
   <body>
     <h2>FILENAME</h2>
+
     <!--<h3>LINES</h3>-->
+
     <form class="note-form">
       <div class="form-container">
         <div class="col-left">
           <label for="title">Title</label>
+
           <input id="title" name="title" type="text" placeholder="A short description (e.g. 'Method too complex')" />
 
           <label for="category">Category</label>
+
           <select id="category" name="category">
             <option value=""></option>
             SELECT_LIST_STRING
           </select>
 
-          <label for="comment">Description *</label>
+          <label for="comment">Description</label>
+
           <textarea
             id="comment"
             name="comment"
@@ -163,6 +172,7 @@
           ></textarea>
 
           <label for="additional">Additional Info</label>
+
           <input
             id="additional"
             name="additional"
@@ -170,8 +180,10 @@
             placeholder="An additional info or link (e.g. 'http://example.com')"
           />
         </div>
+
         <div class="col-right">
           <label id="priority">Priority</label>
+
           <div id="traffic-light" role="radiogroup" aria-labelledby="priority" tabindex="0">
             <input
               type="radio"
@@ -181,6 +193,7 @@
               value="3"
               aria-label="Priority: high"
             />
+
             <input
               type="radio"
               class="traffic-light-color"
@@ -189,6 +202,7 @@
               value="2"
               aria-label="Priority: middle"
             />
+
             <input
               type="radio"
               class="traffic-light-color"
@@ -201,6 +215,7 @@
 
           <p>
             <label for="private">Private</label>
+
             <input
               id="private"
               name="private"
@@ -210,6 +225,7 @@
           </p>
         </div>
       </div>
+
       <div class="actions">
         <div class="actions-left">
           <button
@@ -233,6 +249,7 @@
             Cancel
           </button>
         </div>
+
         <button
           class="action-btn secondary"
           tabindex="0"
@@ -262,17 +279,6 @@
 
       if (event.data.comment.priority) {
         document.getElementById('prio-' + event.data.comment.priority).checked = true;
-      }
-    });
-
-    document.getElementById('add').disabled = true;
-
-    const commentEl = document.getElementById('comment');
-    commentEl.addEventListener('input', () => {
-      if (commentEl.value) {
-        document.getElementById('add').disabled = false;
-      } else {
-        document.getElementById('add').disabled = true;
       }
     });
 

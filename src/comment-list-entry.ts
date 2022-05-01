@@ -22,6 +22,6 @@ export class CommentListEntry extends TreeItem {
   }
 
   get description(): string {
-    return this.text;
+    return this.text || '';
   }
 }

@@ -281,7 +281,7 @@ export class ExportFactory {
 
           this.includeCodeSelection ? (row.code = this.getCodeForFile(row.filename, row.lines)) : delete row.code;
           // cut the description (100 chars max) along with '...' at the end
-          const descShort = row.comment.length > 100 ? `${row.comment.substring(0, 100)}...` : row.comment;
+          const descShort = row.comment?.length > 100 ? `${row.comment.substring(0, 100)}...` : row.comment;
           // use the title when provided but max 255 characters (as GitLab supports this length for titles), otherwise use the shortened description
           const title = row.title ? row.title.substring(0, 255) : descShort;
 
