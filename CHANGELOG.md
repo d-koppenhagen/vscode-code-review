@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.31.0](https://github.com/d-koppenhagen/vscode-code-review/compare/v1.29.1...v1.31.0) (2022-05-01)
+
+
+### Features
+
+* export as markdown ([#133](https://github.com/d-koppenhagen/vscode-code-review/issues/133)) ([733b856](https://github.com/d-koppenhagen/vscode-code-review/commit/733b85625e1f1f0edcd13aed069df6095052b806))
+* make comment/description optional ([c3e5c3d](https://github.com/d-koppenhagen/vscode-code-review/commit/c3e5c3de1514d46f926afb60d84221b205631521)), closes [#129](https://github.com/d-koppenhagen/vscode-code-review/issues/129)
+* sort comments in explorer by selected location ([#124](https://github.com/d-koppenhagen/vscode-code-review/issues/124)) ([739f706](https://github.com/d-koppenhagen/vscode-code-review/commit/739f70618f0b105c492f22c342851c6dec3a63b7))
+
+
+### Bug Fixes
+
+* prevent workspace refreshes for subpath workspaces ([#120](https://github.com/d-koppenhagen/vscode-code-review/issues/120)) ([79cc2db](https://github.com/d-koppenhagen/vscode-code-review/commit/79cc2db1073a16949aadc8a8f015090b9a327ad8))
+
 ## [1.30.0](https://github.com/d-koppenhagen/vscode-code-review/compare/v1.29.1...v1.30.0) (2022-05-01)
 
 
