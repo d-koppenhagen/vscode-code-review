@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.32.0](https://github.com/d-koppenhagen/vscode-code-review/compare/v1.31.0...v1.32.0) (2022-05-01)
+
+
+### Features
+
+* add markdown export with custom template ([25d348e](https://github.com/d-koppenhagen/vscode-code-review/commit/25d348e87f882875d09e1b5500cf70bb9bf02692)), closes [#133](https://github.com/d-koppenhagen/vscode-code-review/issues/133)
+
+
+### Bug Fixes
+
+* add missing markdown export registration in comment view explorer ([76a929e](https://github.com/d-koppenhagen/vscode-code-review/commit/76a929e892fc9b5112109da73ff0d108819a572a)), closes [#133](https://github.com/d-koppenhagen/vscode-code-review/issues/133)
+
 ## [1.31.0](https://github.com/d-koppenhagen/vscode-code-review/compare/v1.29.1...v1.31.0) (2022-05-01)
 
 
