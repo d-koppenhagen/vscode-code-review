@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.32.1](https://github.com/d-koppenhagen/vscode-code-review/compare/v1.32.0...v1.32.1) (2022-05-01)
+
+
+### Bug Fixes
+
+* check default template values at command execute time ([#137](https://github.com/d-koppenhagen/vscode-code-review/issues/137)) ([0977c71](https://github.com/d-koppenhagen/vscode-code-review/commit/0977c71f0365a0ab7309d0cd05c2c7f8c6508bfe))
+
 ## [1.32.0](https://github.com/d-koppenhagen/vscode-code-review/compare/v1.31.0...v1.32.0) (2022-05-01)
 
 
