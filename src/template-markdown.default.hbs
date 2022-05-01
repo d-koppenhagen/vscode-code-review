@@ -1,0 +1,30 @@
+# Code Review Results
+
+{{#each this as |item|}}
+## `{{item.group}}`
+{{#each item.lines as |line|}}
+### Position: `{{line.lines}}`
+* Priority: `{{line.priority}}`
+{{#if line.title}}
+* Title: `{{line.title}}`
+{{/if}}
+{{#if line.category}}
+* Category: `{{line.category}}`
+{{/if}}
+{{#if line.comment}}
+* Description: `{{line.comment}}`
+{{/if}}
+{{#if line.additional}}
+* Additional Info: `{{line.additional}}`
+{{/if}}
+{{#if line.sha}}
+* SHA: `{{line.sha}}`
+{{/if}}
+{{#if line.code}}
+* Code:
+```
+{{{codeBlock line.code}}}
+```
+{{/if}}
+{{/each}}
+{{/each}}
