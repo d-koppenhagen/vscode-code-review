@@ -428,7 +428,8 @@
     "release": "standard-version",
     "package": "webpack --mode production --devtool hidden-source-map",
     "publish": "vsce package && vsce publish",
-    "publish:ovsx": "npx ovsx publish"
+    "publish:ovsx": "npx ovsx publish",
+    "prepare": "husky install"
   },
   "devDependencies": {
     "@commitlint/cli": "^11.0.0",
@@ -448,7 +449,7 @@
     "eslint": "^7.27.0",
     "eslint-config-prettier": "^6.12.0",
     "glob": "^7.1.7",
-    "husky": "^4.3.0",
+    "husky": "^7.0.0",
     "mocha": "^8.4.0",
     "prettier": "^2.1.2",
     "pretty-quick": "^3.1.0",
@@ -460,12 +461,6 @@
     "vscode-test": "^1.5.2",
     "webpack": "^5.38.1",
     "webpack-cli": "^4.7.0"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "pretty-quick --staged",
-      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
-    }
   },
   "config": {
     "commitizen": {
