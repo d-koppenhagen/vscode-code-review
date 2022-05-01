@@ -140,6 +140,11 @@
           "group": "export_html@1"
         },
         {
+          "command": "codeReview.exportAsMarkdownWithDefaultTemplate",
+          "when": "view == code-review.list",
+          "group": "export_markdown@0"
+        },
+        {
           "command": "codeReview.exportAsGitLabImportableCsv",
           "when": "view == code-review.list",
           "group": "export_source_control@1"
