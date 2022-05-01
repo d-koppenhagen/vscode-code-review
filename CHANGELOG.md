@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.30.0](https://github.com/d-koppenhagen/vscode-code-review/compare/v1.29.1...v1.30.0) (2022-05-01)
+
+
+### Features
+
+* sort comments in explorer by selected location ([#124](https://github.com/d-koppenhagen/vscode-code-review/issues/124)) ([739f706](https://github.com/d-koppenhagen/vscode-code-review/commit/739f70618f0b105c492f22c342851c6dec3a63b7))
+
+
+### Bug Fixes
+
+* prevent workspace refreshes for subpath workspaces ([#120](https://github.com/d-koppenhagen/vscode-code-review/issues/120)) ([79cc2db](https://github.com/d-koppenhagen/vscode-code-review/commit/79cc2db1073a16949aadc8a8f015090b9a327ad8))
+
 ### [1.29.1](https://github.com/d-koppenhagen/vscode-code-review/compare/v1.29.0...v1.29.1) (2021-08-31)
 
 
