@@ -47,4 +47,4 @@ export interface ExportMap {
   handleEnd(outputFile: string, rows: CsvEntry[], template?: Uri): void;
 }
 
-export type ExportFormat = 'html' | 'gitlab' | 'github' | 'jira' | 'json';
+export type ExportFormat = 'html' | 'markdown' | 'gitlab' | 'github' | 'jira' | 'json';

@@ -12,6 +12,7 @@ import {
   ExtensionContext,
   ThemeIcon,
   commands,
+  TextDocument,
 } from 'vscode';
 
 import { parseFile } from '@fast-csv/parse';
@@ -124,9 +125,12 @@ export class ExportFactory {
         },
         handleEnd: (outputFile: string, rows: CsvEntry[], template: Uri) => {
           // check template
-          const templateData = fs.readFileSync(template.fsPath, 'utf8');
-          if (!templateData) {
+          let templateData;
+          try {
+            templateData = fs.readFileSync(template.fsPath, 'utf8');
+          } catch (error: any) {
             window.showErrorMessage(`Error when reading the template file: '${template.fsPath}'`);
+            throw error;
           }
           // check if grouping should be applied
           let reviewExportData: ReviewFileExportSection[] = [];
@@ -146,6 +150,49 @@ export class ExportFactory {
           fs.writeFileSync(outputFile, htmlOut);
           window.showInformationMessage(`Code review file: '${outputFile}' successfully created.`);
           this.showPreview(outputFile);
+        },
+      },
+    ],
+    [
+      'markdown',
+      {
+        fileExtension: 'md',
+        storeOutside: true,
+        writeFileHeader: (_outputFile: string) => {
+          return;
+        },
+        handleData: (_outputFile: string, row: CsvEntry): CsvEntry => {
+          row.code = this.includeCodeSelection ? this.getCodeForFile(row.filename, row.lines) : '';
+          return row;
+        },
+        handleEnd: (outputFile: string, rows: CsvEntry[], template: Uri) => {
+          // check template
+          let templateData;
+          try {
+            templateData = fs.readFileSync(template.fsPath, 'utf8');
+          } catch (error: any) {
+            window.showErrorMessage(`Error when reading the template file: '${template.fsPath}'`);
+            throw error;
+          }
+
+          // check if grouping should be applied
+          let reviewExportData: ReviewFileExportSection[] = [];
+          reviewExportData = this.groupResults(rows, this.groupBy);
+          if (this.groupBy === Group.filename) {
+            reviewExportData.forEach((group) => {
+              group.lines.sort(sortCsvEntryForLines);
+            });
+          }
+
+          // Helper that decodes the Base64 content to be displayed in the handlebar
+          handlebars.registerHelper('codeBlock', (code: string) => decode(code));
+          // compile template after helper is registered
+          const templateCompiled = handlebars.compile(templateData);
+          // inject data into the template
+          const markdownOut = templateCompiled(reviewExportData);
+          fs.writeFileSync(outputFile, markdownOut);
+          window.showInformationMessage(`Code review file: '${outputFile}' successfully created.`);
+          this.openFile(outputFile);
         },
       },
     ],
@@ -513,6 +560,13 @@ export class ExportFactory {
       enableScripts: true,
     });
     panel.webview.html = fs.readFileSync(outputFile, 'utf8');
+  }
+
+  private openFile(outputFile: string) {
+    const document: Uri = Uri.parse(outputFile);
+    workspace.openTextDocument(document).then((openedDocument: TextDocument) => {
+      window.showTextDocument(openedDocument, { viewColumn: ViewColumn.Beside });
+    });
   }
 
   /**

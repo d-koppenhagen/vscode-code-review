@@ -20,6 +20,7 @@ This extension allows you to create a code review file you can hand over to a cu
   - [export created notes as HTML](#export-created-notes-as-html)
     - [Default template](#default-template)
     - [Custom handlebars template](#custom-handlebars-template)
+  - [Export created notes as Markdown](#export-created-notes-as-markdown)
   - [Export for Issue Tracking System](#export-for-issue-tracking-system)
     - [export created notes as GitLab importable CSV file](#export-created-notes-as-gitlab-importable-csv-file)
     - [export created notes as GitHub importable CSV file](#export-created-notes-as-github-importable-csv-file)
@@ -34,6 +35,7 @@ This extension allows you to create a code review file you can hand over to a cu
   - [`code-review.reportWithPrivateComments`](#code-reviewreportwithprivatecomments)
   - [`code-review.privateCommentIcon`](#code-reviewprivatecommenticon)
   - [`code-review.defaultTemplatePath`](#code-reviewdefaulttemplatepath)
+  - [`code-review.defaultMarkdownTemplatePath`](#code-reviewdefaultmarkdowntemplatepath)
   - [`code-review.priorities`](#code-reviewpriorities)
   - [`code-review.gitDirectory`](#code-reviewgitdirectory)
   - [`code-review.filterCommentsByCommit`](#code-reviewfiltercommentsbycommit)
@@ -115,6 +117,15 @@ The used structure to fill the template placholders is an array of [`ReviewFileE
 
 Check out the example default template file
 [`template.default.hbs`](https://github.com/d-koppenhagen/vscode-code-review/blob/master/src/template.default.hbs), to see how your template should basically look like.
+
+### Export created notes as Markdown
+
+In addition to exporting your notes as HTML, you may also export them as Markdown. Simply open up the VSCode Command Palette and run the `Export As Markdown With Default Template` command.
+
+Just like with the HTML export, you may use the default Markdown template provided or choose your own.
+
+> You can define a path to a custom template that's used by default when running this command.
+> Check out the [Extension Setting 'defaultMarkdownTemplatePath'](#extension-settings) for further information.
 
 ### Export for Issue Tracking System
 
@@ -278,13 +289,26 @@ A search engine can be found at <https://microsoft.github.io/vscode-codicons/dis
 ### `code-review.defaultTemplatePath`
 
 The path to a default Handlebars template to be used for HTML default export.
-The template is used by default when choosing [_'Export as HTML with default template'_](#export-created notes-as-html) extension command.
+The template is used by default when choosing [_'Export as HTML with default template'_](#export-created-notes-as-html) extension command.
 If not set, the out-of-the-box template provided by this extension is used.
 The configured value must be the full path to the Handlebars template file.
 
 ```json
 {
   "code-review.defaultTemplatePath": "/Users/my-user/my-code-review-template.hbs"
+}
+```
+
+### `code-review.defaultMarkdownTemplatePath`
+
+The path to a default Handlebars template to be used for Markdown default export.
+The template is used by default when choosing [_'Export as Markdown with default template'_](#export-created-notes-as-markdown) extension command.
+
+If not set, the out-of-the-box template provided by this extension is used. The configured value must be the full path to the Handlebars template file.
+
+```json
+{
+  "code-review.defaultMarkdownTemplatePath": "/Users/my-user/my-code-review-template.hbs"
 }
 ```
 
