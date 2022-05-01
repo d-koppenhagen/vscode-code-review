@@ -70,6 +70,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "inconspicuous-username",
+      "name": "inconspicuous-username",
+      "avatar_url": "https://avatars.githubusercontent.com/u/33715078?v=4",
+      "profile": "https://github.com/inconspicuous-username",
+      "contributions": [
+        "ideas"
+      ]
     }
   ],
   "contributorsPerLine": 7,
