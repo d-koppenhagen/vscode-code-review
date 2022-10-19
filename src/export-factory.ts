@@ -511,7 +511,7 @@ export class ExportFactory {
       // sort when multiple line selection are related to one comment
       // e.g. '23:4-45:2|12:3-15:6|18:1-19:40' becomes: '12:3-15:6|18:1-19:40|23:4-45:2'
       row.lines = splitStringDefinition(row.lines).sort(sortLineSelections).join('|');
-      const match = reviewExportData.find((fileRef) => fileRef.group === row[groupAttribute]);
+      const match = reviewExportData.find((fileRef) => fileRef.group === row[groupAttribute].toString());
       if (match) {
         match.lines.push(row);
       } else {
