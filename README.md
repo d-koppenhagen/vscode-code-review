@@ -220,7 +220,7 @@ This setting would lead into something like this: `https://gitlab.com/foo/bar/ba
 
 ### `code-review.groupBy`
 
-This setting is used when [generating a report](#export-created-notes-as-html).
+This setting is used when [generating a report](#export-created-notes-as-html) as HTML or Markdown.
 The comments will be grouped by either:
 
 - `filename`: default, group by filename
