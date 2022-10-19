@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.32.2](https://github.com/d-koppenhagen/vscode-code-review/compare/v1.32.0...v1.32.2) (2022-10-19)
+
+
+### Bug Fixes
+
+* check default template values at command execute time ([#137](https://github.com/d-koppenhagen/vscode-code-review/issues/137)) ([0977c71](https://github.com/d-koppenhagen/vscode-code-review/commit/0977c71f0365a0ab7309d0cd05c2c7f8c6508bfe))
+* handle description line breaks in comment list ([4cf4caf](https://github.com/d-koppenhagen/vscode-code-review/commit/4cf4cafb756bc373884a545c9f6666f9b7e9ed1b)), closes [#142](https://github.com/d-koppenhagen/vscode-code-review/issues/142) [#143](https://github.com/d-koppenhagen/vscode-code-review/issues/143)
+* use string in groupBy for comparison ([d3f3ea3](https://github.com/d-koppenhagen/vscode-code-review/commit/d3f3ea334332deec18b9e939882991f0b9f744e5)), closes [#141](https://github.com/d-koppenhagen/vscode-code-review/issues/141)
+
 ### [1.32.1](https://github.com/d-koppenhagen/vscode-code-review/compare/v1.32.0...v1.32.1) (2022-05-01)
 
 
