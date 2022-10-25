@@ -139,6 +139,14 @@ export class ExportFactory {
             reviewExportData.forEach((group) => {
               group.lines.sort(sortCsvEntryForLines);
             });
+          } else if (this.groupBy === Group.priority) {
+            reviewExportData
+              .sort((a: ReviewFileExportSection, b: ReviewFileExportSection) => {
+                return parseInt(b.group) - parseInt(a.group);
+              })
+              .forEach((el: ReviewFileExportSection) => {
+                el.group = this.priorityName(parseInt(el.group));
+              });
           }
 
           // Helper that decodes the Base64 content to be displayed in the handlebar
