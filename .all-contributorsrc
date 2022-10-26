@@ -79,6 +79,15 @@
       "contributions": [
         "ideas"
       ]
+    },
+    {
+      "login": "avernan",
+      "name": "Stefano Guazzotti",
+      "avatar_url": "https://avatars.githubusercontent.com/u/9851882?v=4",
+      "profile": "https://github.com/avernan",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
@@ -86,5 +95,6 @@
   "projectOwner": "d-koppenhagen",
   "repoType": "github",
   "repoHost": "https://github.com",
-  "skipCi": true
+  "skipCi": true,
+  "commitConvention": "angular"
 }
