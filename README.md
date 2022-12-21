@@ -42,6 +42,7 @@ This extension allows you to create a code review file you can hand over to a cu
   - [`code-review.gitDirectory`](#code-reviewgitdirectory)
   - [`code-review.filterCommentsByCommit`](#code-reviewfiltercommentsbycommit)
   - [`code-review.filterCommentsByFilename`](#code-reviewfiltercommentsbyfilename)
+  - [`code-review.filterCommentsByPriority`](#code-reviewfiltercommentsbypriority)
   - [`code-review.importBackup`](#code-reviewimportbackup)
   - [`code-review.importConflictMode`](#code-reviewimportconflictmode)
   - [`code-review.importCloneSuffix`](#code-reviewimportclonesuffix)
@@ -398,6 +399,16 @@ Define whether to view only the comments from the current file or not.
 ```json
 {
   "code-review.filterCommentsByFilename": true
+}
+```
+
+### `code-review.filterCommentsByPriority`
+
+Define whether to hide the comments that have green priority.
+
+```json
+{
+  "code-review.filterCommentsByPriority": true
 }
 ```
 
