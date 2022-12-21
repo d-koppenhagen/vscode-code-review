@@ -98,6 +98,7 @@ export class ExportFactory {
   private currentCommitId: string | null = null;
   private filterByFilename: boolean = false;
   private currentFilename: string | null = null;
+  private filterByPriority: boolean = false;
 
   /**
    * Get comment eligibility
@@ -106,7 +107,8 @@ export class ExportFactory {
   private isCommentEligible(entry: CsvEntry): boolean {
     return (
       (this.currentCommitId === null || entry.sha === this.currentCommitId) &&
-      (this.currentFilename === null || entry.filename === this.currentFilename)
+      (this.currentFilename === null || entry.filename === this.currentFilename) &&
+      (!this.filterByPriority || entry.priority != 1) // prio value 1 = green traffic light
     );
   }
 
@@ -354,6 +356,9 @@ export class ExportFactory {
 
     this.filterByFilename = workspace.getConfiguration().get('code-review.filterCommentsByFilename') as boolean;
     this.setFilterByFilename(this.filterByFilename, true);
+
+    this.filterByPriority = workspace.getConfiguration().get('code-review.filterCommentsByPriority') as boolean;
+    this.setFilterByPriority(this.filterByPriority, true);
   }
 
   get absoluteFilePath(): string {
@@ -649,5 +654,30 @@ export class ExportFactory {
     }
 
     return changedState || changedFile;
+  }
+
+  /**
+   * Refresh comments filtering state
+   * @returns True if the state changed, False otherwise
+   */
+  public refreshFilterByPriority(): boolean {
+    return this.setFilterByPriority(this.filterByPriority);
+  }
+
+  /**
+   * Enable/Disable filtering comments by priority
+   * @param state The state of the filter
+   * @param force Force the state change, even if it was already correctly set
+   * @returns True if the state changed, False otherwise
+   */
+  public setFilterByPriority(state: boolean, force: boolean = false): boolean {
+    let changedState = this.filterByPriority !== state || force;
+    this.filterByPriority = state;
+
+    if (changedState) {
+      commands.executeCommand('setContext', 'isFilteredByPriority', this.filterByPriority);
+    }
+
+    return changedState;
   }
 }

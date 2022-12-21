@@ -49,6 +49,8 @@ export class WorkspaceContext {
   private filterByCommitDisableRegistration!: Disposable;
   private filterByFilenameEnableRegistration!: Disposable;
   private filterByFilenameDisableRegistration!: Disposable;
+  private filterByPriorityEnableRegistration!: Disposable;
+  private filterByPriorityDisableRegistration!: Disposable;
   private setReviewFileSelectedCsvRegistration!: Disposable;
   private deleteNoteRegistration!: Disposable;
   private exportAsHtmlWithDefaultTemplateRegistration!: Disposable;
@@ -276,6 +278,14 @@ export class WorkspaceContext {
 
     this.filterByFilenameDisableRegistration = commands.registerCommand('codeReview.filterByFilenameDisable', () => {
       this.setFilterByFilename(false);
+    });
+
+    this.filterByPriorityEnableRegistration = commands.registerCommand('codeReview.filterByPriorityEnable', () => {
+      this.setFilterByPriority(true);
+    });
+
+    this.filterByPriorityDisableRegistration = commands.registerCommand('codeReview.filterByPriorityDisable', () => {
+      this.setFilterByPriority(false);
     });
 
     this.setReviewFileSelectedCsvRegistration = commands.registerCommand('codeReview.setReviewFileSelectedCsv', () => {
@@ -513,6 +523,8 @@ export class WorkspaceContext {
       this.filterByCommitDisableRegistration,
       this.filterByFilenameEnableRegistration,
       this.filterByFilenameDisableRegistration,
+      this.filterByPriorityEnableRegistration,
+      this.filterByPriorityDisableRegistration,
       this.setReviewFileSelectedCsvRegistration,
       this.exportAsHtmlWithDefaultTemplateRegistration,
       this.exportAsHtmlWithHandlebarsTemplateRegistration,
@@ -538,6 +550,8 @@ export class WorkspaceContext {
     this.filterByCommitDisableRegistration.dispose();
     this.filterByFilenameEnableRegistration.dispose();
     this.filterByFilenameDisableRegistration.dispose();
+    this.filterByPriorityEnableRegistration.dispose();
+    this.filterByPriorityDisableRegistration.dispose();
     this.setReviewFileSelectedCsvRegistration.dispose();
     this.exportAsHtmlWithDefaultTemplateRegistration.dispose();
     this.exportAsHtmlWithHandlebarsTemplateRegistration.dispose();
@@ -566,6 +580,11 @@ export class WorkspaceContext {
 
   private setFilterByCommit(state: boolean) {
     this.exportFactory.setFilterByCommit(state);
+    this.commentsProvider.refresh();
+  }
+
+  private setFilterByPriority(state: boolean) {
+    this.exportFactory.setFilterByPriority(state);
     this.commentsProvider.refresh();
   }
 }

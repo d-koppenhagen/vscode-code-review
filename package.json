@@ -121,6 +121,22 @@
         }
       },
       {
+        "command": "codeReview.filterByPriorityEnable",
+        "title": "Code Review: Hide comments with green traffic light priority",
+        "icon": {
+          "light": "images/icons/filter-off-light.svg",
+          "dark": "images/icons/filter-off-dark.svg"
+        }
+      },
+      {
+        "command": "codeReview.filterByPriorityDisable",
+        "title": "Code Review: View comments with all priorities",
+        "icon": {
+          "light": "images/icons/filter-on-light.svg",
+          "dark": "images/icons/filter-on-dark.svg"
+        }
+      },
+      {
         "command": "codeReview.setReviewFileSelectedCsv",
         "title": "Code Review: Set selected CSV as current code review file"
       }
@@ -202,6 +218,16 @@
           "command": "codeReview.filterByFilenameDisable",
           "when": "view == code-review.list && isFilteredByFilename",
           "group": "navigation@2"
+        },
+        {
+          "command": "codeReview.filterByPriorityEnable",
+          "when": "view == code-review.list && !isFilteredByPriority",
+          "group": "navigation@3"
+        },
+        {
+          "command": "codeReview.filterByPriorityDisable",
+          "when": "view == code-review.list && isFilteredByPriority",
+          "group": "navigation@3"
         }
       ],
       "view/item/context": [
@@ -327,6 +353,12 @@
           "type": "boolean",
           "title": "Only view comments from the current file",
           "description": "Define whether to view only the comments from the current file or not.",
+          "default": false
+        },
+        "code-review.filterCommentsByPriority": {
+          "type": "boolean",
+          "title": "Hide comments with green traffic light priority",
+          "description": "Define whether to hide the comments that have green priority.",
           "default": false
         },
         "code-review.importBackup": {
