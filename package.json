@@ -124,16 +124,16 @@
         "command": "codeReview.filterByPriorityEnable",
         "title": "Code Review: Hide comments with green traffic light priority",
         "icon": {
-          "light": "images/icons/filter-off-light.svg",
-          "dark": "images/icons/filter-off-dark.svg"
+          "light": "images/icons/filter-priority-off-light.svg",
+          "dark": "images/icons/filter-priority-off-dark.svg"
         }
       },
       {
         "command": "codeReview.filterByPriorityDisable",
         "title": "Code Review: View comments with all priorities",
         "icon": {
-          "light": "images/icons/filter-on-light.svg",
-          "dark": "images/icons/filter-on-dark.svg"
+          "light": "images/icons/filter-priority-on-light.svg",
+          "dark": "images/icons/filter-priority-on-dark.svg"
         }
       },
       {
