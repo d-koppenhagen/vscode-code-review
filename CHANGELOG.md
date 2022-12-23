@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.33.1](https://github.com/d-koppenhagen/vscode-code-review/compare/v1.33.0...v1.33.1) (2022-12-23)
+
+
+### Bug Fixes
+
+* **deploy:** use whitelisted shield url supported by VSCode publish ([e7ee428](https://github.com/d-koppenhagen/vscode-code-review/commit/e7ee428f2572d7a835e305ebb12128480552725d))
+
 ## [1.33.0](https://github.com/d-koppenhagen/vscode-code-review/compare/v1.32.2...v1.33.0) (2022-12-23)
 
 
