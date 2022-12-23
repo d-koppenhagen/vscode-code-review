@@ -88,6 +88,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "putsi",
+      "name": "Jarmo Puttonen",
+      "avatar_url": "https://avatars.githubusercontent.com/u/5388424?v=4",
+      "profile": "https://put.si",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
