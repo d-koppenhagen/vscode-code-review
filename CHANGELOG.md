@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.33.0](https://github.com/d-koppenhagen/vscode-code-review/compare/v1.32.2...v1.33.0) (2022-12-23)
+
+
+### Features
+
+* add new icons to priority filter ([b84ff99](https://github.com/d-koppenhagen/vscode-code-review/commit/b84ff999c69b4a8db517c02adba0802c57ebba86))
+* filter by priority (hide green priority level) ([9915764](https://github.com/d-koppenhagen/vscode-code-review/commit/991576418e9a654634fac0806134bab2c98e9eb4))
+* group by priority name instead of number ([ceae91b](https://github.com/d-koppenhagen/vscode-code-review/commit/ceae91bcb80fb22cde651f8589dcd754552d8cae))
+
 ### [1.32.2](https://github.com/d-koppenhagen/vscode-code-review/compare/v1.32.0...v1.32.2) (2022-10-19)
 
 
