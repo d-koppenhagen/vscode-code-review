@@ -1,6 +1,6 @@
 # vscode-code-review
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-8-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-9-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 <a href="https://www.buymeacoffee.com/dkoppenhagen" target="_blank"><img src="https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png" alt="Buy Me A Coffee" style="height: 41px !important;width: 174px !important;box-shadow: 0px 3px 2px 0px rgba(190, 190, 190, 0.5) !important;-webkit-box-shadow: 0px 3px 2px 0px rgba(190, 190, 190, 0.5) !important;" ></a>
@@ -522,6 +522,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
     </tr>
     <tr>
       <td align="center"><a href="https://github.com/avernan"><img src="https://avatars.githubusercontent.com/u/9851882?v=4?s=100" width="100px;" alt="Stefano Guazzotti"/><br /><sub><b>Stefano Guazzotti</b></sub></a><br /><a href="https://github.com/d-koppenhagen/vscode-code-review/commits?author=avernan" title="Code">💻</a></td>
+      <td align="center"><a href="https://put.si"><img src="https://avatars.githubusercontent.com/u/5388424?v=4?s=100" width="100px;" alt="Jarmo Puttonen"/><br /><sub><b>Jarmo Puttonen</b></sub></a><br /><a href="https://github.com/d-koppenhagen/vscode-code-review/commits?author=putsi" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
