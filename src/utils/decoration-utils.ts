@@ -30,10 +30,10 @@ export class Decorations {
   });
 
   readonly commentDecorationType = window.createTextEditorDecorationType({
-    isWholeLine: true,
+    isWholeLine: false,
     after: {
       contentIconPath: this.context.asAbsolutePath(path.join('dist', 'speech-bubble-light.svg')),
-      margin: '5px',
+      margin: '0 0 0 2px',
     },
     dark: {
       after: {
@@ -73,15 +73,10 @@ export class Decorations {
   commentIconDecoration(csvEntries: CsvEntry[], editor: TextEditor): void {
     const decorationOptions: DecorationOptions[] = [];
 
-    // build decoration options for each comment block
     csvEntries.forEach((entry) => {
-      // iterate over multi-selections
       rangesFromStringDefinition(entry.lines).forEach((range: Range) => {
         decorationOptions.push({
-          range: new Range(
-            new Position(range.start.line, EDITOR_MAX_LETTER),
-            new Position(range.start.line, EDITOR_MAX_LETTER),
-          ),
+          range: new Range(range.end, range.end),
         });
       });
     });

@@ -485,9 +485,10 @@ export class ExportFactory {
 
     entries.sort(compare);
     const result = entries.map((entry: Model) => {
+      const resolvedLabel = entry.resolved ? '✅ ' : '';
       const item = new CommentListEntry(
         entry.id,
-        entry.title,
+        resolvedLabel + entry.title,
         entry.comment,
         entry.comment,
         TreeItemCollapsibleState.None,
@@ -495,13 +496,15 @@ export class ExportFactory {
         entry.priority,
         entry.private,
       );
-      item.contextValue = 'comment';
+      item.contextValue = entry.resolved ? 'comment-resolved' : 'comment';
       item.command = {
         command: 'codeReview.openSelection',
         title: 'Open comment',
         arguments: [commentGroupedInFile.data, entry],
       };
-      item.iconPath = this.getIcon(entry.priority, entry.private);
+      item.iconPath = entry.resolved
+        ? new ThemeIcon('check', themeColorForPriority(entry.priority) ?? undefined)
+        : this.getIcon(entry.priority, entry.private);
 
       return item;
     });
@@ -536,6 +539,22 @@ export class ExportFactory {
       case 1: {
         return new ThemeIcon(this.privateCommentIcon, themeColorForPriority(prio));
       }
+    }
+  }
+
+  /**
+   * Quick check: does the CSV contain any comments for the given file?
+   * Scans the file as a raw string to avoid full parsing.
+   */
+  public csvContainsFile(filePath: string): boolean {
+    if (!fs.existsSync(this.absoluteFilePath)) return false;
+    try {
+      const stdName = standardizeFilename(this.workspaceRoot, filePath);
+      // Scan CSV line by line, checking for the filename in column 2
+      const content = fs.readFileSync(this.absoluteFilePath, 'utf8');
+      return content.includes(`"${stdName}"`);
+    } catch {
+      return false;
     }
   }
 
@@ -690,6 +709,100 @@ export class ExportFactory {
     commands.executeCommand('setContext', 'isFilteredByCommit', this.filterByCommit);
 
     return this.filterByCommit;
+  }
+
+  /**
+   * Get all unique commit SHAs from the CSV with commit messages and counts
+   */
+  public getAvailableCommits(): Thenable<{ sha: string; label: string; count: number }[]> {
+    if (!fs.existsSync(this.absoluteFilePath)) return Promise.resolve([]);
+
+    const shaMap = new Map<string, number>();
+    let unknownCount = 0;
+
+    return new Promise((resolve) => {
+      parseFile(this.absoluteFilePath, {
+        delimiter: ',',
+        ignoreEmpty: true,
+        headers: true,
+      })
+        .on('error', () => resolve([]))
+        .on('data', (row: CsvEntry) => {
+          const sha = (row.sha || '').trim();
+          if (sha) {
+            shaMap.set(sha, (shaMap.get(sha) || 0) + 1);
+          } else {
+            unknownCount++;
+          }
+        })
+        .on('end', () => {
+          const result: { sha: string; label: string; count: number }[] = [];
+
+          // Unknown commit (no SHA)
+          if (unknownCount > 0) {
+            result.push({
+              sha: '',
+              label: `$(question) Unknown commit (${unknownCount} comment${unknownCount > 1 ? 's' : ''})`,
+              count: unknownCount,
+            });
+          }
+
+          // Build commit message map from git log
+          const buildEntries = () => {
+            const shaToMsg = this.getCommitMessages(Array.from(shaMap.keys()));
+            for (const [sha, count] of shaMap.entries()) {
+              const msg = shaToMsg.get(sha) || sha.substring(0, 7);
+              result.push({
+                sha,
+                label: `${sha.substring(0, 7)} ${msg} (${count})`,
+                count,
+              });
+            }
+            resolve(result);
+          };
+
+          if (shaMap.size === 0) {
+            resolve(result);
+          } else {
+            buildEntries();
+          }
+        });
+    });
+  }
+
+  /**
+   * Get commit messages for given SHAs using git log
+   */
+  private getCommitMessages(shas: string[]): Map<string, string> {
+    const result = new Map<string, string>();
+    try {
+      const { execSync } = require('child_process');
+      const gitDirectory = workspace.getConfiguration().get('code-review.gitDirectory') as string;
+      const gitRepoPath = path.resolve(this.workspaceRoot, gitDirectory);
+      const output = execSync(`git log --format="%H %s" --no-merges -${shas.length}`, {
+        cwd: gitRepoPath,
+        encoding: 'utf8',
+        timeout: 5000,
+      }) as string;
+      for (const line of output.split('\n')) {
+        const match = line.match(/^([0-9a-f]{40})\s(.+)$/);
+        if (match) {
+          result.set(match[1], match[2].substring(0, 60));
+        }
+      }
+    } catch {
+      // not a git repo or git failed, fall through
+    }
+    return result;
+  }
+
+  /**
+   * Set the filter to a specific commit SHA (empty string = unknown)
+   */
+  public setFilterBySpecificCommit(sha: string): void {
+    this.filterByCommit = true;
+    this.currentCommitId = sha; // '' for unknown, otherwise full SHA
+    commands.executeCommand('setContext', 'isFilteredByCommit', true);
   }
 
   /**

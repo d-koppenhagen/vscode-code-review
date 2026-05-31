@@ -232,6 +232,7 @@
             class="action-btn primary"
             tabindex="0"
             id="add"
+            type="button"
             role="button"
             onclick="addNote()"
             title="Save comment (Ctrl+Return)"
@@ -243,6 +244,7 @@
             class="action-btn secondary"
             tabindex="0"
             role="button"
+            type="button"
             onclick="cancel()"
             title="Abort comment changes (Ctrl+Esc)"
           >
@@ -254,6 +256,7 @@
           class="action-btn secondary"
           tabindex="0"
           id="delete-button"
+          type="button"
           role="button"
           onclick="deleteComment()"
           title="Delete this comment (Ctrl+Delete)"
@@ -268,6 +271,20 @@
     const vscode = acquireVsCodeApi();
 
     window.addEventListener('message', (event) => {
+      if (event.data.command === 'reset') {
+        document.getElementById('delete-button').style.visibility = 'hidden';
+        document.getElementById('add').innerHTML = 'Add Note';
+
+        document.getElementById('title').value = '';
+        document.getElementById('comment').value = '';
+        document.getElementById('additional').value = '';
+        document.getElementById('category').value = '';
+        document.getElementById('private').checked = false;
+        document.querySelectorAll('input[name=traffic-light-color]').forEach((r) => (r.checked = false));
+        document.getElementById('comment').focus();
+        return;
+      }
+
       document.getElementById('delete-button').style.visibility = 'visible';
       document.getElementById('add').innerHTML = 'Update';
       document.getElementById('add').disabled = false;
@@ -276,6 +293,11 @@
       document.getElementById('additional').value = event.data.comment.additional || '';
       document.getElementById('category').value = event.data.comment.category;
       document.getElementById('private').checked = Number(event.data.comment.private) !== 0;
+
+      // Update the H2 filename header when switching between comments
+      if (event.data.filename) {
+        document.querySelector('h2').textContent = event.data.filename;
+      }
 
       if (event.data.comment.priority) {
         document.getElementById('prio-' + event.data.comment.priority).checked = true;
@@ -319,6 +341,10 @@
     document.getElementById('comment').focus();
 
     function addNote() {
+      // Disable the button immediately for visual feedback
+      var btn = document.getElementById('add');
+      btn.disabled = true;
+
       const title = document.getElementById('title').value;
       const comment = document.getElementById('comment').value;
       const trafficLightEl = document.querySelector('input[name=traffic-light-color]:checked');

@@ -17,13 +17,13 @@ suite('Decoration Utils', () => {
   let lastSetDecorationConf: TextEditorDecorationType | undefined;
   let lastSetDecorationSelection!: Selection[] | DecorationOptions[] | undefined;
   beforeEach(() => {
-    editorStub = ({
+    editorStub = {
       selections: [new Selection(new Position(0, 1), new Position(2, 6))],
       setDecorations: (conf: TextEditorDecorationType, selection: Selection[]) => {
         lastSetDecorationConf = conf;
         lastSetDecorationSelection = selection;
       },
-    } as unknown) as TextEditor;
+    } as unknown as TextEditor;
   });
 
   afterEach(() => {
@@ -76,20 +76,24 @@ suite('Decoration Utils', () => {
       assert.ok(deco);
       assert.deepStrictEqual(lastSetDecorationConf, deco.commentDecorationType);
 
-      assert.strictEqual(decorationOptions[0].range.start.line, 0);
-      assert.strictEqual(decorationOptions[0].range.start.character, 1024);
-      assert.strictEqual(decorationOptions[0].range.end.line, 0);
-      assert.strictEqual(decorationOptions[0].range.end.character, 1024);
+      // Icon placed at range.end (cfedd5f changed from EDITOR_MAX_LETTER).
+      // 1:0-3:4 → range.end = Position(2,4)
+      assert.strictEqual(decorationOptions[0].range.start.line, 2);
+      assert.strictEqual(decorationOptions[0].range.start.character, 4);
+      assert.strictEqual(decorationOptions[0].range.end.line, 2);
+      assert.strictEqual(decorationOptions[0].range.end.character, 4);
 
-      assert.strictEqual(decorationOptions[1].range.start.line, 8);
-      assert.strictEqual(decorationOptions[1].range.start.character, 1024);
-      assert.strictEqual(decorationOptions[1].range.end.line, 8);
-      assert.strictEqual(decorationOptions[1].range.end.character, 1024);
+      // 9:0-11:3 → range.end = Position(10,3)
+      assert.strictEqual(decorationOptions[1].range.start.line, 10);
+      assert.strictEqual(decorationOptions[1].range.start.character, 3);
+      assert.strictEqual(decorationOptions[1].range.end.line, 10);
+      assert.strictEqual(decorationOptions[1].range.end.character, 3);
 
-      assert.strictEqual(decorationOptions[2].range.start.line, 16);
-      assert.strictEqual(decorationOptions[2].range.start.character, 1024);
-      assert.strictEqual(decorationOptions[2].range.end.line, 16);
-      assert.strictEqual(decorationOptions[2].range.end.character, 1024);
+      // 17:3-19:2 → range.end = Position(18,2)
+      assert.strictEqual(decorationOptions[2].range.start.line, 18);
+      assert.strictEqual(decorationOptions[2].range.start.character, 2);
+      assert.strictEqual(decorationOptions[2].range.end.line, 18);
+      assert.strictEqual(decorationOptions[2].range.end.character, 2);
     });
   });
 

@@ -41,6 +41,10 @@
   "contributes": {
     "commands": [
       {
+        "command": "annote.toggleMode",
+        "title": "Annote: Toggle Annotation Mode"
+      },
+      {
         "command": "codeReview.addNote",
         "title": "Code Review: Add Note",
         "icon": {
@@ -93,6 +97,11 @@
         "title": "Code Review: Import from JSON file"
       },
       {
+        "command": "codeReview.toggleResolved",
+        "title": "Toggle Resolved",
+        "icon": "$(check)"
+      },
+      {
         "command": "codeReview.deleteNote",
         "title": "Delete"
       },
@@ -135,6 +144,11 @@
           "light": "images/icons/filter-priority-off-light.svg",
           "dark": "images/icons/filter-priority-off-dark.svg"
         }
+      },
+      {
+        "command": "codeReview.filterBySpecificCommit",
+        "title": "Code Review: Filter by commit...",
+        "icon": "$(git-commit)"
       },
       {
         "command": "codeReview.filterByPriorityDisable",
@@ -228,6 +242,11 @@
           "group": "navigation@1"
         },
         {
+          "command": "codeReview.filterBySpecificCommit",
+          "when": "view == code-review.list",
+          "group": "navigation@1"
+        },
+        {
           "command": "codeReview.filterByFilenameEnable",
           "when": "view == code-review.list && !isFilteredByFilename",
           "group": "navigation@2"
@@ -250,167 +269,191 @@
       ],
       "view/item/context": [
         {
+          "command": "codeReview.toggleResolved",
+          "when": "view == code-review.list && viewItem =~ /^comment/",
+          "group": "inline"
+        },
+        {
           "command": "codeReview.deleteNote",
-          "when": "view == code-review.list && viewItem == comment"
+          "when": "view == code-review.list && viewItem =~ /^comment/"
         }
       ]
     },
-    "configuration": {
-      "id": "code-review",
-      "type": "object",
-      "title": "Code Review",
-      "properties": {
-        "code-review.filename": {
-          "type": "string",
-          "title": "The filename for the csv file",
-          "description": "The name will be used for the file with the *.csv extension that contains the stored code review notes",
-          "default": "code-review.csv"
-        },
-        "code-review.baseUrl": {
-          "type": "string",
-          "title": "The base URL for a referenced file without the SHA",
-          "description": "The base URL is used to build a full link to the file (e.g. \"https://github.com/foo/bar/blob/b0b4...0175/src/file.txt#L12-L19\"). It will be appended with the GIT SHA if available followed by the relative path of the file and the selected lines as an anker. This setting is skipped when the setting `code-review.customUrl` is defined.",
-          "default": ""
-        },
-        "code-review.customUrl": {
-          "type": "string",
-          "title": "The URL mask with placeholders for a referenced file without the SHA",
-          "description": "The custom URL is used to build a full link to the file.\nThe following placeholders are available:\n - {sha}: insert the SHA ref for the file\n - {file}: insert the file name/path\n - {start}: insert the start of the lines selection as an anker\n - {end}: insert the end of the lines selection as an anker\ne.g. \"https://gitlab.com/foo/bar/baz/-/blob/{sha}/src/{file}#L{start}-{end}\" becomes this in the end: \"https://gitlab.com/foo/bar/baz/-/blob/b0b4...0175/src/file.txt#L12-19\"",
-          "default": ""
-        },
-        "code-review.categories": {
-          "type": "array",
-          "title": "Categories",
-          "description": "Configure categories to choose for review categorization",
-          "items": {
-            "type": "string"
+    "configuration": [
+      {
+        "id": "code-review",
+        "type": "object",
+        "title": "Code Review",
+        "properties": {
+          "code-review.filename": {
+            "type": "string",
+            "title": "The filename for the csv file",
+            "description": "The name will be used for the file with the *.csv extension that contains the stored code review notes",
+            "default": "code-review.csv"
           },
-          "default": [
-            "Architecture",
-            "Best Practices",
-            "Code-Style",
-            "Complexity",
-            "Error Handling",
-            "Maintainability",
-            "Performance",
-            "Reliability",
-            "Separation of concerns"
-          ]
-        },
-        "code-review.groupBy": {
-          "type": "string",
-          "enum": [
-            "filename",
-            "priority",
-            "category"
-          ],
-          "default": "filename",
-          "title": "Group report results",
-          "description": "You can choose one of the available options to group the report results by this property."
-        },
-        "code-review.reportWithCodeSelection": {
-          "type": "boolean",
-          "title": "Include Code Selection in Report",
-          "description": "Define whether to include the code selection(s) in generated reports or not.",
-          "default": false
-        },
-        "code-review.reportWithPrivateComments": {
-          "type": "boolean",
-          "title": "Include Private Comments in Report",
-          "description": "Define whether to include private comments in generated reports or not.",
-          "default": false
-        },
-        "code-review.defaultTemplatePath": {
-          "type": "string",
-          "title": "The path to a default Handlebars template to be used for HTML default export",
-          "description": "The template is used when choosing 'Export as HTML with default template' extension command. Otherwise the out-of-the-box template provided by this extension is used.",
-          "default": ""
-        },
-        "code-review.defaultMarkdownTemplatePath": {
-          "type": "string",
-          "title": "The path to a default Handlebars template to be used for Markdown default export",
-          "description": "The template is used when choosing 'Export as Markdown with default template' extension command. Otherwise the out-of-the-box template provided by this extension is used.",
-          "default": ""
-        },
-        "code-review.priorities": {
-          "type": "array",
-          "title": "Priority labels",
-          "description": "Configure the labels that should be used for the priorities.\nThe first label is used when no priority is defined.\nThe subsequent labels are given in ascending priority (max. 3 priority levels)",
-          "uniqueItems": true,
-          "maxItems": 4,
-          "minItems": 4,
-          "items": {
-            "type": "string"
+          "code-review.closePanelAfterAdd": {
+            "type": "boolean",
+            "title": "Close panel after adding a comment",
+            "description": "If enabled, the webview panel closes after each comment is added and a new panel is pre-warmed in the background for instant next use. If disabled, the panel stays open so you can add multiple comments to the same file quickly.",
+            "default": true
           },
-          "default": [
-            "none",
-            "low",
-            "medium",
-            "high"
-          ]
-        },
-        "code-review.gitDirectory": {
-          "type": "string",
-          "title": "The folder containing the Git repository",
-          "markdownDescription": "Use this setting when the Git repository is located in an other directory than the workspace one.\nThe path can be **relative** (prefixed with `.` or `..`) or **absolute** (prefixed with `/` on Linux/MacOS or `{drive}:\\` on Windows).\nExamples:\n- `./app`: for {workspace}/app (Linux/MacOS)\n- `../app`: for a folder at the same level as the workspace (Linux/MacOS)\n- `/path/to/my/app`: for an absolute path (Linux/MacOS)\n- `C:\\Path\\To\\My\\App`: for an absolute path (Windows)",
-          "default": "."
-        },
-        "code-review.privateCommentIcon": {
-          "type": "string",
-          "title": "Identifier of the icon to show next to a private comment",
-          "markdownDescription": "The available icons are listed in <https://code.visualstudio.com/api/references/icons-in-labels#icon-listing>.  \nA search engine can be found at <https://microsoft.github.io/vscode-codicons/dist/codicon.html>.",
-          "default": "eye-closed"
-        },
-        "code-review.filterCommentsByCommit": {
-          "type": "boolean",
-          "title": "Only view comments from the current commit",
-          "description": "Define whether to view only the comments from the current commit or not.",
-          "default": false
-        },
-        "code-review.filterCommentsByFilename": {
-          "type": "boolean",
-          "title": "Only view comments from the current file",
-          "description": "Define whether to view only the comments from the current file or not.",
-          "default": false
-        },
-        "code-review.filterCommentsByPriority": {
-          "type": "boolean",
-          "title": "Hide comments with green traffic light priority",
-          "description": "Define whether to hide the comments that have green priority.",
-          "default": false
-        },
-        "code-review.importBackup": {
-          "type": "boolean",
-          "title": "Make a copy of the comments before importing.",
-          "description": "Define whether to backup the existing comments before importing new ones or not.",
-          "default": true
-        },
-        "code-review.importCloneSuffix": {
-          "type": "string",
-          "title": "Cloned comments title suffix.",
-          "description": "Suffix to append to the title when existing comments are imported in 'clone' mode.",
-          "default": "(copy)"
-        },
-        "code-review.importConflictMode": {
-          "enum": [
-            "",
-            "skip",
-            "overwrite",
-            "clone"
-          ],
-          "default": "",
-          "title": "Import conflict action.",
-          "markdownDescription": "Action to automatically take when importing comments already present:\n- *empty*: always ask.\n- `skip`: keep the existing comment.\n- `overwrite`: replace the existing comment with the imported one.\n- `clone`: keep both the existing and the imported comment."
-        },
-        "code-review.codeSelectionBackgroundColor": {
-          "type": "string",
-          "title": "Code selection background color.",
-          "markdownDescription": "Background color used to highlight the code associated to a comment.\nMust be specified using a hexadecimal representation - with or without the alpha part (`#C8C832` or `#C8C83226`) - or a `rgba()` definition.",
-          "default": "codereview.code.selection.background"
+          "code-review.closePanelAfterEdit": {
+            "type": "boolean",
+            "title": "Close panel after editing a comment",
+            "description": "If enabled, the webview panel closes after updating a comment. If disabled, the panel stays open and shows the updated data.",
+            "default": false
+          },
+          "code-review.baseUrl": {
+            "type": "string",
+            "title": "The base URL for a referenced file without the SHA",
+            "description": "The base URL is used to build a full link to the file (e.g. \"https://github.com/foo/bar/blob/b0b4...0175/src/file.txt#L12-L19\"). It will be appended with the GIT SHA if available followed by the relative path of the file and the selected lines as an anker. This setting is skipped when the setting `code-review.customUrl` is defined.",
+            "default": ""
+          },
+          "code-review.customUrl": {
+            "type": "string",
+            "title": "The URL mask with placeholders for a referenced file without the SHA",
+            "description": "The custom URL is used to build a full link to the file.\nThe following placeholders are available:\n - {sha}: insert the SHA ref for the file\n - {file}: insert the file name/path\n - {start}: insert the start of the lines selection as an anker\n - {end}: insert the end of the lines selection as an anker\ne.g. \"https://gitlab.com/foo/bar/baz/-/blob/{sha}/src/{file}#L{start}-{end}\" becomes this in the end: \"https://gitlab.com/foo/bar/baz/-/blob/b0b4...0175/src/file.txt#L12-19\"",
+            "default": ""
+          },
+          "code-review.categories": {
+            "type": "array",
+            "title": "Categories",
+            "description": "Configure categories to choose for review categorization",
+            "items": {
+              "type": "string"
+            },
+            "default": [
+              "Architecture",
+              "Best Practices",
+              "Code-Style",
+              "Complexity",
+              "Error Handling",
+              "Maintainability",
+              "Performance",
+              "Reliability",
+              "Separation of concerns"
+            ]
+          },
+          "code-review.groupBy": {
+            "type": "string",
+            "enum": [
+              "filename",
+              "priority",
+              "category"
+            ],
+            "default": "filename",
+            "title": "Group report results",
+            "description": "You can choose one of the available options to group the report results by this property."
+          },
+          "code-review.reportWithCodeSelection": {
+            "type": "boolean",
+            "title": "Include Code Selection in Report",
+            "description": "Define whether to include the code selection(s) in generated reports or not.",
+            "default": false
+          },
+          "code-review.reportWithPrivateComments": {
+            "type": "boolean",
+            "title": "Include Private Comments in Report",
+            "description": "Define whether to include private comments in generated reports or not.",
+            "default": false
+          },
+          "code-review.defaultTemplatePath": {
+            "type": "string",
+            "title": "The path to a default Handlebars template to be used for HTML default export",
+            "description": "The template is used when choosing 'Export as HTML with default template' extension command. Otherwise the out-of-the-box template provided by this extension is used.",
+            "default": ""
+          },
+          "code-review.defaultMarkdownTemplatePath": {
+            "type": "string",
+            "title": "The path to a default Handlebars template to be used for Markdown default export",
+            "description": "The template is used when choosing 'Export as Markdown with default template' extension command. Otherwise the out-of-the-box template provided by this extension is used.",
+            "default": ""
+          },
+          "code-review.priorities": {
+            "type": "array",
+            "title": "Priority labels",
+            "description": "Configure the labels that should be used for the priorities.\nThe first label is used when no priority is defined.\nThe subsequent labels are given in ascending priority (max. 3 priority levels)",
+            "uniqueItems": true,
+            "maxItems": 4,
+            "minItems": 4,
+            "items": {
+              "type": "string"
+            },
+            "default": [
+              "none",
+              "low",
+              "medium",
+              "high"
+            ]
+          },
+          "code-review.gitDirectory": {
+            "type": "string",
+            "title": "The folder containing the Git repository",
+            "markdownDescription": "Use this setting when the Git repository is located in an other directory than the workspace one.\nThe path can be **relative** (prefixed with `.` or `..`) or **absolute** (prefixed with `/` on Linux/MacOS or `{drive}:\\` on Windows).\nExamples:\n- `./app`: for {workspace}/app (Linux/MacOS)\n- `../app`: for a folder at the same level as the workspace (Linux/MacOS)\n- `/path/to/my/app`: for an absolute path (Linux/MacOS)\n- `C:\\Path\\To\\My\\App`: for an absolute path (Windows)",
+            "default": "."
+          },
+          "code-review.privateCommentIcon": {
+            "type": "string",
+            "title": "Identifier of the icon to show next to a private comment",
+            "markdownDescription": "The available icons are listed in <https://code.visualstudio.com/api/references/icons-in-labels#icon-listing>.  \nA search engine can be found at <https://microsoft.github.io/vscode-codicons/dist/codicon.html>.",
+            "default": "eye-closed"
+          },
+          "code-review.filterCommentsByCommit": {
+            "type": "boolean",
+            "title": "Only view comments from the current commit",
+            "description": "Define whether to view only the comments from the current commit or not.",
+            "default": false
+          },
+          "code-review.filterCommentsByFilename": {
+            "type": "boolean",
+            "title": "Only view comments from the current file",
+            "description": "Define whether to view only the comments from the current file or not.",
+            "default": false
+          },
+          "code-review.filterCommentsByPriority": {
+            "type": "boolean",
+            "title": "Hide comments with green traffic light priority",
+            "description": "Define whether to hide the comments that have green priority.",
+            "default": false
+          },
+          "code-review.importBackup": {
+            "type": "boolean",
+            "title": "Make a copy of the comments before importing.",
+            "description": "Define whether to backup the existing comments before importing new ones or not.",
+            "default": true
+          },
+          "code-review.importCloneSuffix": {
+            "type": "string",
+            "title": "Cloned comments title suffix.",
+            "description": "Suffix to append to the title when existing comments are imported in 'clone' mode.",
+            "default": "(copy)"
+          },
+          "code-review.importConflictMode": {
+            "enum": [
+              "",
+              "skip",
+              "overwrite",
+              "clone"
+            ],
+            "default": "",
+            "title": "Import conflict action.",
+            "markdownDescription": "Action to automatically take when importing comments already present:\n- *empty*: always ask.\n- `skip`: keep the existing comment.\n- `overwrite`: replace the existing comment with the imported one.\n- `clone`: keep both the existing and the imported comment."
+          },
+          "code-review.codeSelectionBackgroundColor": {
+            "type": "string",
+            "title": "Code selection background color.",
+            "markdownDescription": "Background color used to highlight the code associated to a comment.\nMust be specified using a hexadecimal representation - with or without the alpha part (`#C8C832` or `#C8C83226`) - or a `rgba()` definition.",
+            "default": "codereview.code.selection.background"
+          }
         }
       }
-    },
+    ],
     "keybindings": [
+      {
+        "command": "annote.toggleMode",
+        "key": "ctrl+shift+a",
+        "mac": "cmd+shift+a"
+      },
       {
         "command": "codeReview.addNote",
         "key": "ctrl+shift+n",
@@ -509,6 +552,7 @@
     "@types/vscode": "^1.59.0",
     "@typescript-eslint/eslint-plugin": "^5.21.0",
     "@typescript-eslint/parser": "^5.21.0",
+    "@vscode/test-electron": "^2.5.2",
     "@vscode/vsce": "^3.9.1",
     "commitizen": "^4.2.4",
     "copy-webpack-plugin": "^10.2.4",
@@ -525,7 +569,6 @@
     "typescript": "^4.6.4",
     "vsce": "^2.7.0",
     "vscode-extension-tester": "^4.2.4",
-    "vscode-test": "^1.6.1",
     "webpack": "^5.72.0",
     "webpack-cli": "^4.9.2"
   },

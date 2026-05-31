@@ -1,6 +1,7 @@
 import * as fs from 'fs';
 import { window, workspace, TextEditor } from 'vscode';
 const gitCommitId = require('git-commit-id');
+import { parseFile } from '@fast-csv/parse';
 import { CsvEntry, CsvStructure } from './model';
 import {
   removeLeadingAndTrailingSlash,
@@ -65,6 +66,36 @@ export class ReviewCommentService {
 
     rows[updateRowIndex] = CsvStructure.formatAsCsvLine(this.finalizeComment(comment));
     setCsvFileLines(this.reviewFile, rows);
+  }
+
+  async toggleResolved(id: string): Promise<void> {
+    this.checkFileExists();
+
+    const entries: CsvEntry[] = [];
+    await new Promise<void>((resolve) => {
+      parseFile(this.reviewFile, {
+        delimiter: ',',
+        ignoreEmpty: true,
+        headers: true,
+      })
+        .on('error', () => resolve())
+        .on('data', (row: CsvEntry) => {
+          entries.push(CsvStructure.finalizeParse(row));
+        })
+        .on('end', () => resolve());
+    });
+
+    const target = entries.find((e) => (e.id || '').replace(/"/g, '') === id);
+    if (!target) return;
+
+    target.resolved = target.resolved ? 0 : 1;
+
+    const headerLine = CsvStructure.headerLine;
+    const csvLines = [headerLine];
+    for (const entry of entries) {
+      csvLines.push(CsvStructure.formatAsCsvLine(entry));
+    }
+    setCsvFileLines(this.reviewFile, csvLines);
   }
 
   async deleteComment(id: string, label: string) {

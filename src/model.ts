@@ -33,6 +33,11 @@ export interface CsvEntry {
    * 1 = private
    */
   private: number;
+  /** Resolved state of the entry
+   * 0 = unresolved
+   * 1 = resolved
+   */
+  resolved?: number;
 }
 
 /**
@@ -77,6 +82,7 @@ export class CsvStructure {
     'additional',
     'id',
     'private',
+    'resolved',
   ];
 
   /**
@@ -88,6 +94,7 @@ export class CsvStructure {
   private static readonly defaults: Map<string, () => any> = new Map([
     ['id', () => uuidv4()],
     ['private', () => 0],
+    ['resolved', () => 0],
   ]);
 
   /**
@@ -103,6 +110,7 @@ export class CsvStructure {
     ['additional', (additional: any) => (additional ? escapeDoubleQuotesForCsv(additional) : '')],
     ['category', (category: any) => category || ''],
     ['private', (priv: any) => priv || 0],
+    ['resolved', (resolved: any) => resolved || 0],
   ]);
 
   /**
@@ -175,6 +183,7 @@ export class CsvStructure {
     comment.comment = unescapeEndOfLineFromCsv(comment.comment);
     comment.priority = Number(comment.priority);
     comment.private = Number(comment.private);
+    comment.resolved = Number(comment.resolved);
 
     return comment;
   }

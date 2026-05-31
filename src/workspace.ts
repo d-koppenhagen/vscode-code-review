@@ -8,9 +8,9 @@ import {
   ViewColumn,
   QuickPickItem,
   Disposable,
+  DocumentFilter,
   FileSystemWatcher,
   TextEditor,
-  DocumentFilter,
   languages,
 } from 'vscode';
 import * as path from 'path';
@@ -43,6 +43,18 @@ export class WorkspaceContext {
   private commentsProvider!: CommentsProvider;
   private fileWatcher!: FileSystemWatcher;
 
+  get reviewCommentService(): ReviewCommentService {
+    return this.commentService;
+  }
+
+  get reviewCommentsProvider(): CommentsProvider {
+    return this.commentsProvider;
+  }
+
+  get fileGenerator(): FileGenerator {
+    return this.generator;
+  }
+
   private openSelectionRegistration!: Disposable;
   private addNoteRegistration!: Disposable;
   private filterByCommitEnableRegistration!: Disposable;
@@ -65,6 +77,8 @@ export class WorkspaceContext {
   private exportAsJsonRegistration!: Disposable;
   private importFromJsonRegistration!: Disposable;
   private commentCodeLensProviderregistration!: Disposable;
+  private toggleResolvedRegistration!: Disposable;
+  private filterBySpecificCommitRegistration!: Disposable;
   private decorations: Decorations;
 
   constructor(private context: ExtensionContext, public workspaceRoot: string) {
@@ -116,14 +130,22 @@ export class WorkspaceContext {
   highlightCommentsInActiveEditor(editor: TextEditor) {
     this.decorations.clear(editor);
 
+    // Quick check: does the CSV contain this file at all?
+    if (!this.exportFactory.csvContainsFile(editor.document.fileName)) {
+      return;
+    }
+
     this.exportFactory.getFilesContainingComments().then((fileEntries) => {
       const matchingFile = fileEntries.find((file) => editor.document.fileName.endsWith(file.label));
+      // iterate over all comments associated with this file
       if (matchingFile) {
-        // iterate over all comments associated with this file
         this.exportFactory.getComments(matchingFile).then((comments) => {
+          // Filter out resolved comments so their icons are hidden
           // comments[0] as we only need a single comment related to a line to identify the place where to put it
-          this.decorations.underlineDecoration(comments[0].data.lines, editor);
-          this.decorations.commentIconDecoration(comments[0].data.lines, editor);
+          const lines = comments[0].data.lines as CsvEntry[];
+          const unresolved = lines.filter((e) => !e.resolved);
+          this.decorations.underlineDecoration(unresolved, editor);
+          this.decorations.commentIconDecoration(unresolved, editor);
         });
       }
     });
@@ -261,9 +283,11 @@ export class WorkspaceContext {
         return;
       }
 
+      this.webview.onDidChange = () => {
+        this.commentsProvider.refresh();
+        this.updateDecorations();
+      };
       this.webview.addComment(this.commentService);
-      this.commentsProvider.refresh();
-      this.updateDecorations();
     });
 
     this.filterByCommitEnableRegistration = commands.registerCommand('codeReview.filterByCommitEnable', () => {
@@ -537,10 +561,59 @@ export class WorkspaceContext {
     /**
      * support code lens for comment annotations in files
      */
+    // CodeLens shows "Code Review: <title>" above commented ranges.
+    // Clicking the lens opens the edit window for that comment.
     const ALL_FILES: DocumentFilter = { language: '*', scheme: 'file' };
     this.commentCodeLensProviderregistration = languages.registerCodeLensProvider(
       ALL_FILES,
       new CommentLensProvider(this.exportFactory),
+    );
+
+    /**
+     * toggle resolved state of a comment
+     */
+    this.toggleResolvedRegistration = commands.registerCommand(
+      'codeReview.toggleResolved',
+      async (commentListEntry: CommentListEntry) => {
+        if (commentListEntry?.id) {
+          await this.commentService.toggleResolved(commentListEntry.id);
+          this.commentsProvider.refresh();
+          this.updateDecorations();
+        }
+      },
+    );
+
+    this.filterBySpecificCommitRegistration = commands.registerCommand(
+      'codeReview.filterBySpecificCommit',
+      async () => {
+        const commits = await this.exportFactory.getAvailableCommits();
+        if (commits.length === 0) {
+          window.showInformationMessage('No commits found in code review data.');
+          return;
+        }
+
+        const items: QuickPickItem[] = [
+          { label: '$(clear-all) All commits', description: '__all__' },
+          ...commits.map((c) => ({
+            label: c.label,
+            description: c.sha,
+          })),
+        ];
+
+        const selected = await window.showQuickPick(items, {
+          placeHolder: 'Select a commit to filter by...',
+        });
+
+        if (!selected) return;
+
+        if (selected.description === '__all__') {
+          this.setFilterByCommit(false);
+        } else if (selected.description !== undefined) {
+          this.exportFactory.setFilterBySpecificCommit(selected.description);
+          this.commentsProvider.refresh();
+          this.updateDecorations();
+        }
+      },
     );
 
     this.updateSubscriptions();
@@ -573,6 +646,8 @@ export class WorkspaceContext {
       this.exportAsJsonRegistration,
       this.importFromJsonRegistration,
       this.commentCodeLensProviderregistration,
+      this.toggleResolvedRegistration,
+      this.filterBySpecificCommitRegistration,
     );
   }
 
@@ -602,6 +677,8 @@ export class WorkspaceContext {
     this.exportAsJsonRegistration.dispose();
     this.importFromJsonRegistration.dispose();
     this.commentCodeLensProviderregistration.dispose();
+    this.toggleResolvedRegistration.dispose();
+    this.filterBySpecificCommitRegistration.dispose();
     this.updateSubscriptions();
   }
 
@@ -612,14 +689,16 @@ export class WorkspaceContext {
     this.registerCommands();
   }
 
-  private setFilterByFilename(state: boolean) {
-    this.exportFactory.setFilterByFilename(state);
-    this.commentsProvider.refresh();
-  }
-
   private setFilterByCommit(state: boolean) {
     this.exportFactory.setFilterByCommit(state);
     this.commentsProvider.refresh();
+    this.updateDecorations();
+  }
+
+  private setFilterByFilename(state: boolean) {
+    this.exportFactory.setFilterByFilename(state);
+    this.commentsProvider.refresh();
+    this.updateDecorations();
   }
 
   private setFilterByPriority(state: boolean) {
