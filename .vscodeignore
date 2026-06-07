@@ -5,14 +5,14 @@ node_modules/**
 src/**
 .gitignore
 .yarnrc
+esbuild.js
 vsc-extension-quickstart.md
 **/tsconfig.json
-**/.eslintrc.json
+**/eslint.config.mjs
 **/*.map
 **/*.ts
-commitlint.config.js
+**/.vscode-test.*
 .prettierignore
 .github/
 out/
 tsconfig.json
-webpack.config.js

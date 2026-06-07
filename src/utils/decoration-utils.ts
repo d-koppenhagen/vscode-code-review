@@ -1,4 +1,4 @@
-import path from 'path';
+import path from 'node:path';
 import {
   DecorationOptions,
   ExtensionContext,
@@ -16,31 +16,34 @@ import { rangesFromStringDefinition } from './workspace-util';
 export const EDITOR_MAX_LETTER = 1024;
 
 export class Decorations {
-  constructor(private readonly context: ExtensionContext) {}
+  readonly decorationDeclarationType: TextEditorDecorationType;
+  readonly commentDecorationType: TextEditorDecorationType;
 
-  readonly decorationDeclarationType = window.createTextEditorDecorationType({
-    isWholeLine: false,
-    opacity: '0.9',
-    borderWidth: '1px',
-    borderColor: '#0f0f0f',
-    borderStyle: 'none none dashed none',
-    dark: {
-      borderColor: '#F6F6F6',
-    },
-  });
-
-  readonly commentDecorationType = window.createTextEditorDecorationType({
-    isWholeLine: true,
-    after: {
-      contentIconPath: this.context.asAbsolutePath(path.join('dist', 'speech-bubble-light.svg')),
-      margin: '5px',
-    },
-    dark: {
-      after: {
-        contentIconPath: this.context.asAbsolutePath(path.join('dist', 'speech-bubble-dark.svg')),
+  constructor(private readonly context: ExtensionContext) {
+    this.decorationDeclarationType = window.createTextEditorDecorationType({
+      isWholeLine: false,
+      opacity: '0.9',
+      borderWidth: '1px',
+      borderColor: '#0f0f0f',
+      borderStyle: 'none none dashed none',
+      dark: {
+        borderColor: '#F6F6F6',
       },
-    },
-  });
+    });
+
+    this.commentDecorationType = window.createTextEditorDecorationType({
+      isWholeLine: true,
+      after: {
+        contentIconPath: this.context.asAbsolutePath(path.join('dist', 'speech-bubble-light.svg')),
+        margin: '5px',
+      },
+      dark: {
+        after: {
+          contentIconPath: this.context.asAbsolutePath(path.join('dist', 'speech-bubble-dark.svg')),
+        },
+      },
+    });
+  }
 
   /**
    * Highlight a matching review comment with decorations an underline decoration

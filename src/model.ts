@@ -1,5 +1,5 @@
-import * as fs from 'fs';
-import * as path from 'path';
+import * as fs from 'node:fs';
+import * as path from 'node:path';
 import { escapeDoubleQuotesForCsv, escapeEndOfLineForCsv, unescapeEndOfLineFromCsv } from './utils/workspace-util';
 const { v4: uuidv4, validate: uuidValidate } = require('uuid');
 

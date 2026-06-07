@@ -1,5 +1,5 @@
-import * as fs from 'fs';
-import { EOL } from 'os';
+import * as fs from 'node:fs';
+import { EOL } from 'node:os';
 
 /**
  * Keep only valid lines for storage

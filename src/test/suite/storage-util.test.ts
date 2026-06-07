@@ -1,8 +1,8 @@
 import * as assert from 'assert';
-import * as fs from 'fs';
+import * as fs from 'node:fs';
 import { afterEach } from 'mocha';
-import { EOL } from 'os';
-import path from 'path';
+import { EOL } from 'node:os';
+import path from 'node:path';
 import {
   cleanCsvStorage,
   getCsvFileHeader,

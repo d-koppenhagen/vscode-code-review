@@ -13,8 +13,8 @@ import {
   DocumentFilter,
   languages,
 } from 'vscode';
-import * as path from 'path';
-import * as fs from 'fs';
+import * as path from 'node:path';
+import * as fs from 'node:fs';
 import { CheckFlag, FileGenerator } from './file-generator';
 import { ReviewCommentService } from './review-comment';
 import { rangesFromStringDefinition } from './utils/workspace-util';
@@ -67,7 +67,10 @@ export class WorkspaceContext {
   private commentCodeLensProviderregistration!: Disposable;
   private decorations: Decorations;
 
-  constructor(private context: ExtensionContext, public workspaceRoot: string) {
+  constructor(
+    private context: ExtensionContext,
+    public workspaceRoot: string,
+  ) {
     // create a new file if not already exist
     this.webview = new WebViewComponent(context);
     this.decorations = new Decorations(context);
@@ -337,7 +340,6 @@ export class WorkspaceContext {
             canSelectMany: false,
             openLabel: 'Use template',
             filters: {
-              // eslint-disable-next-line @typescript-eslint/naming-convention
               Template: ['hbs', 'html', 'htm', 'handlebars'],
             },
           })
@@ -371,7 +373,6 @@ export class WorkspaceContext {
             canSelectMany: false,
             openLabel: 'Use template',
             filters: {
-              // eslint-disable-next-line @typescript-eslint/naming-convention
               Template: ['hbs', 'md', 'markdown', 'mdx', 'handlebars'],
             },
           })
@@ -465,7 +466,6 @@ export class WorkspaceContext {
           canSelectMany: false,
           openLabel: 'Select comments file to import',
           filters: {
-            // eslint-disable-next-line @typescript-eslint/naming-convention
             Template: ['json'],
           },
         })

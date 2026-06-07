@@ -1,7 +1,7 @@
 import * as assert from 'assert';
-import * as fs from 'fs';
-import path from 'path';
-import { EOL } from 'os';
+import * as fs from 'node:fs';
+import path from 'node:path';
+import { EOL } from 'node:os';
 
 import { WorkspaceFolder, Uri, Range, Position, TextEdit, TextEditor } from 'vscode';
 
@@ -384,133 +384,133 @@ suite('Workspace Utils', () => {
     });
 
     test('should detect null comment', () => {
-      assert.ok(!CsvStructure.isValidComment(({ comment: null } as unknown) as CsvEntry));
+      assert.ok(!CsvStructure.isValidComment({ comment: null } as unknown as CsvEntry));
     });
 
     test('should detect empty comment', () => {
-      assert.ok(!CsvStructure.isValidComment(({ comment: '' } as unknown) as CsvEntry));
+      assert.ok(!CsvStructure.isValidComment({ comment: '' } as unknown as CsvEntry));
     });
 
     test('should detect null filename', () => {
       assert.ok(
-        !CsvStructure.isValidComment(({
+        !CsvStructure.isValidComment({
           comment: 'lorem ipsum',
           filename: null,
-        } as unknown) as CsvEntry),
+        } as unknown as CsvEntry),
       );
     });
 
     test('should detect empty filename', () => {
       assert.ok(
-        !CsvStructure.isValidComment(({
+        !CsvStructure.isValidComment({
           comment: 'lorem ipsum',
           filename: '',
-        } as unknown) as CsvEntry),
+        } as unknown as CsvEntry),
       );
     });
 
     test('should detect empty filename', () => {
       assert.ok(
-        !CsvStructure.isValidComment(({
+        !CsvStructure.isValidComment({
           comment: 'lorem ipsum',
           filename: '/my/file.txt',
-        } as unknown) as CsvEntry),
+        } as unknown as CsvEntry),
       );
     });
 
     test('should detect null id', () => {
       assert.ok(
-        !CsvStructure.isValidComment(({
+        !CsvStructure.isValidComment({
           comment: 'lorem ipsum',
           filename: '/my/file.txt',
           id: null,
-        } as unknown) as CsvEntry),
+        } as unknown as CsvEntry),
       );
     });
 
     test('should detect empty id', () => {
       assert.ok(
-        !CsvStructure.isValidComment(({
+        !CsvStructure.isValidComment({
           comment: 'lorem ipsum',
           filename: '/my/file.txt',
           id: '',
-        } as unknown) as CsvEntry),
+        } as unknown as CsvEntry),
       );
     });
 
     test('should detect invalid id', () => {
       assert.ok(
-        !CsvStructure.isValidComment(({
+        !CsvStructure.isValidComment({
           comment: 'lorem ipsum',
           filename: '/my/file.txt',
           id: '123456',
-        } as unknown) as CsvEntry),
+        } as unknown as CsvEntry),
       );
     });
 
     test('should detect null lines', () => {
       assert.ok(
-        !CsvStructure.isValidComment(({
+        !CsvStructure.isValidComment({
           comment: 'lorem ipsum',
           filename: '/my/file.txt',
           id: '10c2d1ec-b98d-4b88-b7fc-ed141c66070c',
           lines: null,
-        } as unknown) as CsvEntry),
+        } as unknown as CsvEntry),
       );
     });
 
     test('should detect empty lines', () => {
       assert.ok(
-        !CsvStructure.isValidComment(({
+        !CsvStructure.isValidComment({
           comment: 'lorem ipsum',
           filename: '/my/file.txt',
           id: '10c2d1ec-b98d-4b88-b7fc-ed141c66070c',
           lines: '',
-        } as unknown) as CsvEntry),
+        } as unknown as CsvEntry),
       );
     });
 
     test('should detect invalid lines', () => {
       assert.ok(
-        !CsvStructure.isValidComment(({
+        !CsvStructure.isValidComment({
           comment: 'lorem ipsum',
           filename: '/my/file.txt',
           id: '10c2d1ec-b98d-4b88-b7fc-ed141c66070c',
           lines: '0:0',
-        } as unknown) as CsvEntry),
+        } as unknown as CsvEntry),
       );
     });
 
     test('should accept single selection', () => {
       assert.ok(
-        CsvStructure.isValidComment(({
+        CsvStructure.isValidComment({
           comment: 'lorem ipsum',
           filename: '/my/file.txt',
           id: '10c2d1ec-b98d-4b88-b7fc-ed141c66070c',
           lines: '0:0-0:0',
-        } as unknown) as CsvEntry),
+        } as unknown as CsvEntry),
       );
     });
 
     test('should accept multiple selection (1)', () => {
       assert.ok(
-        CsvStructure.isValidComment(({
+        CsvStructure.isValidComment({
           comment: 'lorem ipsum',
           filename: '/my/file.txt',
           id: '10c2d1ec-b98d-4b88-b7fc-ed141c66070c',
           lines: '0:0-0:0|0:0-0:0',
-        } as unknown) as CsvEntry),
+        } as unknown as CsvEntry),
       );
     });
 
     test('should accept multiple selection (2)', () => {
       assert.ok(
-        CsvStructure.isValidComment(({
+        CsvStructure.isValidComment({
           comment: 'lorem ipsum',
           filename: '/my/file.txt',
           id: '10c2d1ec-b98d-4b88-b7fc-ed141c66070c',
           lines: '0:0-0:0|0:0-0:0|0:0-0:0',
-        } as unknown) as CsvEntry),
+        } as unknown as CsvEntry),
       );
     });
   });

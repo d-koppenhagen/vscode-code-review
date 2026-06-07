@@ -1,4 +1,4 @@
-import * as fs from 'fs';
+import * as fs from 'node:fs';
 import { window, workspace } from 'vscode';
 import { FileGenerator } from './file-generator';
 import { CsvEntry, CsvStructure } from './model';
@@ -22,7 +22,11 @@ export class ImportFactory {
   private backupBeforeImport: boolean = true;
   private copySuffix: string | null;
 
-  constructor(private workspaceRoot: string, private reviewFile: string, private generator: FileGenerator) {
+  constructor(
+    private workspaceRoot: string,
+    private reviewFile: string,
+    private generator: FileGenerator,
+  ) {
     this.backupBeforeImport = workspace.getConfiguration().get('code-review.importBackup') as boolean;
     this.copySuffix = workspace.getConfiguration().get('code-review.importCloneSuffix') as string;
   }

@@ -1,6 +1,6 @@
-import * as fs from 'fs';
-import { EOL } from 'os';
-import path from 'path';
+import * as fs from 'node:fs';
+import { EOL } from 'node:os';
+import path from 'node:path';
 import { workspace, window } from 'vscode';
 import { CsvStructure } from './model';
 import { getCsvFileHeader, getCsvFileLinesAsIterable, setCsvFileContent } from './utils/storage-utils';

@@ -1,4 +1,4 @@
-import * as fs from 'fs';
+import * as fs from 'node:fs';
 import { window, workspace, TextEditor } from 'vscode';
 const gitCommitId = require('git-commit-id');
 import { CsvEntry, CsvStructure } from './model';
@@ -12,10 +12,13 @@ import {
 import { CommentListEntry } from './comment-list-entry';
 import { getSelectionStringDefinition, hasSelection } from './utils/editor-utils';
 import { getCsvFileLinesAsArray, setCsvFileLines } from './utils/storage-utils';
-import path from 'path';
+import path from 'node:path';
 
 export class ReviewCommentService {
-  constructor(private reviewFile: string, private workspaceRoot: string) {}
+  constructor(
+    private reviewFile: string,
+    private workspaceRoot: string,
+  ) {}
 
   /**
    * Append a new comment

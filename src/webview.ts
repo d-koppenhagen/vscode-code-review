@@ -1,6 +1,6 @@
 import { window, ViewColumn, ExtensionContext, workspace, Range, WebviewPanel, Uri, TextEditor } from 'vscode';
-import * as path from 'path';
-import * as fs from 'fs';
+import * as path from 'node:path';
+import * as fs from 'node:fs';
 
 import { ReviewCommentService } from './review-comment';
 import { createCommentFromObject, CsvEntry, CsvStructure } from './model';

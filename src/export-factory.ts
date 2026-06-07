@@ -1,5 +1,5 @@
-import * as fs from 'fs';
-import * as path from 'path';
+import * as fs from 'node:fs';
+import * as path from 'node:path';
 import { stripIndent } from 'common-tags';
 import handlebars from 'handlebars';
 
@@ -17,7 +17,7 @@ import {
 } from 'vscode';
 
 import { parseFile } from '@fast-csv/parse';
-import { EOL } from 'os';
+import { EOL } from 'node:os';
 import { encode, decode } from 'js-base64';
 
 import {
@@ -110,7 +110,7 @@ export class ExportFactory {
     return (
       (this.currentCommitId === null || entry.sha === this.currentCommitId) &&
       (this.currentFilename === null || entry.filename === this.currentFilename) &&
-      (!this.filterByPriority || entry.priority != 1) // prio value 1 = green traffic light
+      (!this.filterByPriority || entry.priority !== 1) // prio value 1 = green traffic light
     );
   }
 
@@ -359,7 +359,11 @@ export class ExportFactory {
   /**
    * for trying out: https://stackblitz.com/edit/code-review-template
    */
-  constructor(private context: ExtensionContext, private workspaceRoot: string, private generator: FileGenerator) {
+  constructor(
+    private context: ExtensionContext,
+    private workspaceRoot: string,
+    private generator: FileGenerator,
+  ) {
     let groupByConfig = workspace.getConfiguration().get('code-review.groupBy') as string;
     if (!groupByConfig || groupByConfig === '-') {
       groupByConfig = Group.filename;
@@ -509,7 +513,7 @@ export class ExportFactory {
     return Promise.resolve(result);
   }
 
-  private getIcon(prio: number, priv: number): { light: string; dark: string } | ThemeIcon {
+  private getIcon(prio: number, priv: number): { light: Uri; dark: Uri } | ThemeIcon {
     switch (priv) {
       default: {
         // Public comments
@@ -529,7 +533,7 @@ export class ExportFactory {
             break;
         }
 
-        const iPath = this.context.asAbsolutePath(path.join('dist', icon));
+        const iPath = Uri.file(this.context.asAbsolutePath(path.join('dist', icon)));
         return { light: iPath, dark: iPath };
       }
 
@@ -575,8 +579,8 @@ export class ExportFactory {
             };
             item.contextValue = 'file';
             item.iconPath = {
-              light: this.context.asAbsolutePath(path.join('dist', 'document-light.svg')),
-              dark: this.context.asAbsolutePath(path.join('dist', 'document-dark.svg')),
+              light: Uri.file(this.context.asAbsolutePath(path.join('dist', 'document-light.svg'))),
+              dark: Uri.file(this.context.asAbsolutePath(path.join('dist', 'document-dark.svg'))),
             };
 
             return item;
