@@ -494,7 +494,7 @@
     "release": "standard-version",
     "package": "npm run check-types && npm run lint && node esbuild.js --production",
     "compile-tests": "tsc -p . --outDir out",
-    "publish": "vsce package && vsce publish",
+    "publish": "npx @vscode/vsce package && npx @vscode/vsce publish",
     "publish:ovsx": "npx ovsx publish"
   },
   "devDependencies": {
